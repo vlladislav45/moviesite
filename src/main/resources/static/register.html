@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Register Form</title>
+    <link rel="stylesheet" href="styles/register.css">
+
+    <!--External Libraries-->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+          crossorigin="anonymous">
+</head>
+<body>
+
+    <h1>Създаване на профил</h1>
+
+    <form method="POST">
+        <label for="name">Имейл:</label>
+        <input id="name" name="name" type="text" placeholder="Въведете имейл адрес"/>
+
+        <label for="username">Потребителско Име:</label>
+        <input id="username" name="pwd" type="email" placeholder="Въведете потребителско име"/>
+
+        <label for="pwd">Парола:</label>
+        <input id="pwd" name="pwd" type="password" placeholder="Въведете парола поне с 8 символа"/>
+
+        <label for="confirm-pwd">Повторете паролата:</label>
+        <input id="confirm-pwd" name="confirm-pwd" type="password" placeholder="Въведете парола поне с 8 символа"/>
+
+        <label for="gender">Пол:</label>
+        <select id="gender">
+            <option>Мъж</option>
+            <option>Жена</option>
+        </select>
+
+        <input class="submit" type="submit" value="Вход">
+    </form>
+
+</body>
+</html>
