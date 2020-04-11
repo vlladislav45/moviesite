@@ -1,6 +1,8 @@
-# moviesite
+## moviesite
 
-## Comment
+#TODO: Repositories and services layers
+
+# Comment
 Cascade types doesn't work on hibernate that's why you have to make it them in manual. phpmyadmin has enough good instruments to make it easy
 
 ## Server-side technology
