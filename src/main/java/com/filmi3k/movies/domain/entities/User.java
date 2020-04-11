@@ -1,7 +1,6 @@
 package com.filmi3k.movies.domain.entities;
 
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
@@ -12,7 +11,6 @@ import java.util.*;
 @Table(name = "users")
 @Getter
 @Setter
-@NoArgsConstructor
 public class User extends BaseEntity {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
@@ -41,9 +39,14 @@ public class User extends BaseEntity {
 
     //MappedBy Variable user by type User in UserImage class
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<UserImage> userImages = new ArrayList<>();
+    private List<UserImage> userImages;
 
     //MappedBy Variable userReview by type User in Review class
     @OneToMany(mappedBy = "userReview", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Review> reviews = new ArrayList<>();
+    private List<Review> reviews;
+
+    public User() {
+        userImages = new ArrayList<>();
+        reviews = new ArrayList<>();
+    }
 }

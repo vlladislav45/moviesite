@@ -1,20 +1,19 @@
 package com.filmi3k.movies.domain.entities;
 
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
 @Table(name = "movie")
 @Getter
 @Setter
-@NoArgsConstructor
 public class Movie extends BaseEntity {
     @Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "movie_id", nullable = false, unique = true, updatable = false)
     private int movieId;
 
@@ -24,8 +23,8 @@ public class Movie extends BaseEntity {
     @ManyToMany(targetEntity = MovieType.class,cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinTable(
             name = "movies_types",
-            joinColumns = @JoinColumn(name = "movie_id"),
-            inverseJoinColumns = @JoinColumn(name = "movie_type_id")
+            joinColumns = @JoinColumn(name = "movie_type_id"),
+            inverseJoinColumns = @JoinColumn(name = "movie_id")
     )
     private Set<MovieType> movieTypes;
 
@@ -42,12 +41,17 @@ public class Movie extends BaseEntity {
     @ManyToMany(targetEntity = Actor.class, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinTable(
             name = "movies_actors",
-            joinColumns = @JoinColumn(name = "movie_id"),
-            inverseJoinColumns = @JoinColumn(name = "actor_id")
+            joinColumns = @JoinColumn(name = "actor_id"),
+            inverseJoinColumns = @JoinColumn(name = "movie_id")
     )
     private Set<Actor> actors;
 
     @OneToOne(mappedBy = "movie", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-    private MovieImage moiveImage;
+    private MovieImage movieImage;
+
+    public Movie() {
+        movieTypes = new HashSet<>();
+        actors = new HashSet<>();
+    }
 
 }

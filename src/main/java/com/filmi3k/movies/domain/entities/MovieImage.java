@@ -23,4 +23,9 @@ public class MovieImage extends BaseEntity {
     @OneToOne(targetEntity = Movie.class, fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "movie_id", nullable = false, unique = true)
     private Movie movie;
+
+    public MovieImage(String movieImageName, Movie movie) {
+        this.movieImageName = movieImageName;
+        this.movie = movie;
+    }
 }

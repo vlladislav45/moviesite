@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.Set;
 
 @Entity
 @Table(name = "movietype")
@@ -18,5 +19,10 @@ public class MovieType {
     private int movieTypeId;
 
     @Column(name = "movietype_label", length = 100, nullable = false, unique = true)
-    private String moveTypeLabel;
+    private String movieTypeLabel;
+
+    public MovieType(String movieTypeLabel) {
+        this.movieTypeLabel = movieTypeLabel;
+    }
+
 }
