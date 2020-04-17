@@ -11,6 +11,13 @@
 /*Logo*/
 .logo { display: flex; }
 
+/*Menu*/
+.menu { margin-left: 50px; display: flex; }
+.nav-btn { padding: 15px; border-radius: 8px; list-style: none; background: #343a40 !important; }
+.nav-btn + .nav-btn { margin-left: 8px;}
+.nav-btn a { text-decoration: none; color: white; }
+.nav-btn a:hover { cursor: pointer; color: #cccccc; }
+
 /*Title*/
 .header h1 { font-family: "Century Gothic"; }
 .header h1 a { text-decoration: none; color: black; }
@@ -42,6 +49,9 @@
 .play:hover { transform: scale(1.1); /* (110% zoom - Note: if the zoom is too large, it will go outside of the viewport) */
     background: #5bc0de; }
 
+/*Image*/
+.img-fluid { width: 350px; height: 180px; }
+
 /*Views*/
 .views { padding: 5px; }
 .views:after { content: ''; display: block; clear: both; }
@@ -51,5 +61,4 @@
 /* ------------------------------------------------------------ *\
     Footer
 \* ------------------------------------------------------------ */
-footer { margin-top: 50px; width: 100%; height: auto; background: darkcyan; }
-footer p { text-align: justify; }
+footer { margin-top: 50px; width: 100%; background: darkcyan; }

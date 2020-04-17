@@ -1,15 +1,11 @@
 package com.filmi3k.movies.domain.entities;
 
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import javax.persistence.*;
 
 @Entity
 @Table(name = "directors")
-@Setter
-@Getter
 @NoArgsConstructor
 public class Director extends BaseEntity {
 
@@ -20,4 +16,20 @@ public class Director extends BaseEntity {
 
     @Column(name = "director_name", nullable = false, unique = true)
     private String directorName;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getDirectorName() {
+        return directorName;
+    }
+
+    public void setDirectorName(String directorName) {
+        this.directorName = directorName;
+    }
 }

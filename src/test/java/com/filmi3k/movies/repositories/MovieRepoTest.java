@@ -57,7 +57,7 @@ public class MovieRepoTest {
         movie.getMovieTypes().add(horror);
         movie.getMovieTypes().add(adventure);
 
-        Actor theRock = actorRepository.findActorByActorName("The Rock");
+        Actor theRock = actorRepository.findActorByActorName("Al Pacino");
         movie.getActors().add(theRock);
 
         movieRepository.saveAndFlush(movie);

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
 <head>
     <meta charset="UTF-8">
     <title>Login Form</title>
@@ -14,9 +15,16 @@
 
     <h1>Влез в системата</h1>
 
-    <form method="POST">
+    <div th:if="${param.error}">
+        Invalid username and password.
+    </div>
+    <div th:if="${param.logout}">
+        You have been logged out.
+    </div>
+
+    <form action="/login" method="POST">
         <label for="email">Потребителско име:</label>
-        <input id="email" name="email" type="email" placeholder="Въведете имейл адрес или потребителско име"/>
+        <input id="email" name="text" type="text" placeholder="Въведете имейл адрес или потребителско име"/>
 
         <label for="pwd">Парола:</label>
         <input id="pwd" name="pwd" type="password" placeholder="Въведете парола поне с 8 символа "/>

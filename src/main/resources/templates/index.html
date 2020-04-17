@@ -5,14 +5,13 @@
     <title>Онлайн филми</title>
     <link rel="icon" href="images/logo.jpg">
 
-    <!-- Styles -->
-    <link rel="stylesheet" href="styles/main.css">
-
     <!-- External Libraries -->
     <link rel="stylesheet"
           href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
           integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
           crossorigin="anonymous">
+    <!-- Styles -->
+    <link rel="stylesheet" href="styles/main.css">
 </head>
 <body>
 
@@ -22,7 +21,13 @@
                 <img src="images/playvideo.png" alt="Play_video_logo" width="50" height="50">
             </a>
 
-            <h1><a href="index.html">Filmi 3k</a></h1>
+            <h1><a href="/index">Filmi 3k</a></h1>
+
+            <nav class="menu">
+                <li class="nav-btn"><a href="/login">Login</a></li>
+
+                <li class="nav-btn"><a href="/register">Register</a></li>
+            </nav>
         </div>
         <h2>Гледай филми онлайн</h2>
 
@@ -97,15 +102,36 @@
 
                     <h6 class="movie-title text-light">Movie Title</h6>
                 </div>
+
+                <div class="movie">
+                    <div class="play">
+                        <a href="#">
+                            <img src="images/fast_furious_8_121-696x392-1.jpg"
+                                 class="img-fluid"
+                                 alt="Fast and Furious 7"
+                                 width="250" height="200">
+                        </a>
+
+                        <div class="views">
+                            <img src="images/playvideo.png" alt="Views" width="15" height="15">
+
+                            <h6>15</h6>
+                        </div>
+                    </div>
+
+                    <h6 class="movie-title text-light">Movie Title</h6>
+                </div>
             </div>
         </div>
     </div>
 
     <footer>
-        <p class="text-justify">Гледайте филми онлайн на сайта filmi3k.com без никакви условия и напълно безплатно.
+        <div class="shell">
+            <p class="text-justify">Гледайте филми онлайн на сайта filmi3k.com без никакви условия и напълно безплатно.
 
-            Ако сте носител на авторско право и желаете премахването на филми от сайта свържете се с нас чрез <a href="/register.html">формата за контакт</a>.
-        </p>
+                Ако сте носител на авторско право и желаете премахването на филми от сайта свържете се с нас чрез <a href="/templates/register.html">формата за контакт</a>
+            </p>
+        </div>
     </footer>
 
 </body>
