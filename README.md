@@ -13,6 +13,6 @@ Cascade types doesn't work on hibernate that's why you have to make it them in m
 * JUnit tests are makes for repositories, services
 
 ## Client-side technology
-* Vanilla.js because it's simple and easy for use
 * HTML5 
-* CSS for styling
+* CSS
+* Thymeleaf
