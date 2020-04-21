@@ -29,3 +29,5 @@ input { padding: 12px 20px; border: 1px solid #ccc; margin: 8px 0; display: inli
     background-color: #343a40; border-radius: 4px; cursor: pointer;  }
 .submit:hover { background: #5bbca8; }
 
+.error { color: red; }
+

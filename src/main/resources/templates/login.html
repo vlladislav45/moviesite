@@ -15,21 +15,21 @@
 
     <h1>Влез в системата</h1>
 
-    <div th:if="${param.error}">
-        Invalid username and password.
-    </div>
-    <div th:if="${param.logout}">
-        You have been logged out.
-    </div>
+    <form name="login" action="/login" method="POST">
+        <label for="username">Потребителско име:</label>
+        <input id="username" name="username" type="text" placeholder="Въведете потребителско име"/>
 
-    <form action="/login" method="POST">
-        <label for="email">Потребителско име:</label>
-        <input id="email" name="text" type="text" placeholder="Въведете имейл адрес или потребителско име"/>
-
-        <label for="pwd">Парола:</label>
-        <input id="pwd" name="pwd" type="password" placeholder="Въведете парола поне с 8 символа "/>
+        <label for="password">Парола:</label>
+        <input id="password" name="password" type="password" placeholder="Въведете парола поне с 8 символа "/>
 
         <input class="submit" type="submit" value="Вход">
+
+        <div class="error" th:if="${param.error}">
+            * Invalid username and password.
+        </div>
+        <div class="error" th:if="${param.logout}">
+            * You have been logged out.
+        </div>
     </form>
 
 </body>

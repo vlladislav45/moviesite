@@ -30,4 +30,9 @@ public class UserController extends BaseController {
         }
     }
 
+    @GetMapping("/login")
+    public String login() {
+        return "login";
+    }
+
 }

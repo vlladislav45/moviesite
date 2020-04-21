@@ -30,13 +30,13 @@ public class User extends BaseEntity implements UserDetails {
     @JoinColumn(name = "gender", nullable = false)
     private Gender gender;
 
-    @ManyToMany(targetEntity = UserRole.class, fetch = FetchType.EAGER)
+    @ManyToMany(cascade = CascadeType.ALL, targetEntity = UserRole.class, fetch = FetchType.EAGER)
     @JoinTable(
             name = "users_roles",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
-    private Set<UserRole> authorities;
+    private List<UserRole> authorities;
 
     //MappedBy Variable user by type User in UserImage class
 //    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -57,7 +57,7 @@ public class User extends BaseEntity implements UserDetails {
     public User() {
 //        userImages = new ArrayList<>();
 //        reviews = new ArrayList<>();
-        authorities = new HashSet<>();
+        authorities = new ArrayList<>();
     }
 
     @Override
@@ -95,11 +95,11 @@ public class User extends BaseEntity implements UserDetails {
     }
 
     @Override
-    public Set<UserRole> getAuthorities() {
+    public List<UserRole> getAuthorities() {
         return this.authorities;
     }
 
-    public void setRoles(Set<UserRole> authorities) {
+    public void setAuthorities(List<UserRole> authorities) {
         this.authorities = authorities;
     }
 
