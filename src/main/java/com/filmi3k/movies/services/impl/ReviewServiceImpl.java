@@ -4,9 +4,11 @@ import com.filmi3k.movies.domain.entities.Review;
 import com.filmi3k.movies.repositories.api.ReviewRepository;
 import com.filmi3k.movies.services.base.ReviewService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+@Service
 public class ReviewServiceImpl implements ReviewService {
     private final ReviewRepository reviewRepository;
 

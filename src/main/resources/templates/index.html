@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
 <head>
     <meta charset="UTF-8">
     <title>Онлайн филми</title>
@@ -24,9 +25,13 @@
             <h1><a href="/index">Filmi 3k</a></h1>
 
             <nav class="menu">
-                <li class="nav-btn"><a href="/login">Login</a></li>
+                <li class="nav-btn" th:if="${session.user == null}"><a href="/login">Login</a></li>
 
-                <li class="nav-btn"><a href="/register">Register</a></li>
+                <li class="nav-btn" th:if="${session.user == null}"><a href="/register">Register</a></li>
+
+                <li class="nav-btn" th:if="${session.user != null}"><a href="/logout">Logout</a></li>
+
+                <li class="nav-btn" sec:authorize="hasRole('ADMIN')"><a href="/admin/add_movie">Add Movie</a></li>
             </nav>
         </div>
         <h2>Гледай филми онлайн</h2>
@@ -65,62 +70,28 @@
             <div class="trending bg-dark rounded">
                 <h5>Трендинг</h5>
             </div>
-            <div class="main bg-dark">
-                <div class="movie">
+
+            <div th:each="movie, rowStatus : ${movies}" class="main bg-dark" th:if="${rowStatus.index % 3} == 0">
+
+                <div th:each="movie, iStat : ${movies}" class="movie"
+                     th:if="${iStat.index lt rowStatus.index + 3 and iStat.index ge rowStatus.index}">>
                     <div class="play">
                         <a href="#">
-                            <img src="movies/f9.jpg"
+                            <img th:src="@{/movies/{image}(image=${movie.getMovieImage().getMovieImageName()})}"
                                  class="img-fluid"
-                                 alt="Fast and Furious 7">
+                                 th:alt="${movie.getMovieName()}">
                         </a>
 
                         <div class="views">
                             <img src="images/playvideo.png" alt="Views" width="15" height="15">
 
-                            <h6>15</h6>
+                            <h6 th:text="${movie.getMovieRunningTime()}">15</h6>
                         </div>
                     </div>
 
-                    <h6 class="movie-title text-light">Movie Title</h6>
+                    <h6 th:text="${movie.getMovieName()}" class="movie-title text-light">1</h6>
                 </div>
 
-                <div class="movie">
-                    <div class="play">
-                        <a href="#">
-                            <img src="images/fast_furious_8_121-696x392-1.jpg"
-                                 class="img-fluid"
-                                 alt="Fast and Furious 7"
-                                 width="250" height="200">
-                        </a>
-
-                        <div class="views">
-                            <img src="images/playvideo.png" alt="Views" width="15" height="15">
-
-                            <h6>15</h6>
-                        </div>
-                    </div>
-
-                    <h6 class="movie-title text-light">Movie Title</h6>
-                </div>
-
-                <div class="movie">
-                    <div class="play">
-                        <a href="#">
-                            <img src="images/fast_furious_8_121-696x392-1.jpg"
-                                 class="img-fluid"
-                                 alt="Fast and Furious 7"
-                                 width="250" height="200">
-                        </a>
-
-                        <div class="views">
-                            <img src="images/playvideo.png" alt="Views" width="15" height="15">
-
-                            <h6>15</h6>
-                        </div>
-                    </div>
-
-                    <h6 class="movie-title text-light">Movie Title</h6>
-                </div>
             </div>
         </div>
     </div>
@@ -129,7 +100,7 @@
         <div class="shell">
             <p class="text-justify">Гледайте филми онлайн на сайта filmi3k.com без никакви условия и напълно безплатно.
 
-                Ако сте носител на авторско право и желаете премахването на филми от сайта свържете се с нас чрез <a href="/templates/register.html">формата за контакт</a>
+                Ако сте носител на авторско право и желаете премахването на филми от сайта свържете се с нас чрез <a href="#">формата за контакт</a>
             </p>
         </div>
     </footer>

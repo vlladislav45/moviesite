@@ -50,7 +50,7 @@ public class MovieRepoTest {
         movie.setMovieRunningTime(0);
         movie.setMovieYear("1990");
         movie.setMovieDirector(directorRepository.findByDirectorName("James Wan"));
-        movie.setMovieImage(new MovieImage("test.jpg", movie));
+        movie.setMovieImage(new MovieImage("test.jpg",movie));
 
         MovieType horror = movieTypeRepository.findByMovieTypeLabel("Horror");
         MovieType adventure = movieTypeRepository.findByMovieTypeLabel("Adventure");
@@ -66,5 +66,14 @@ public class MovieRepoTest {
 
         Assert.assertEquals("Movie is not exist", movie, actual);
 
+    }
+
+    @Test
+    void getAllMovies() {
+        Set<Movie> movies = new HashSet<>(movieRepository.findAll());
+
+        for (Movie movie: movies) {
+            System.out.println(movie.getMovieName());
+        }
     }
 }

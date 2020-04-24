@@ -9,7 +9,6 @@ import com.filmi3k.movies.repositories.api.UserRepository;
 import com.filmi3k.movies.services.base.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -42,6 +41,12 @@ public class UserServiceImpl implements UserService {
 
         userEntity.setPassword(this.bCryptPasswordEncoder.encode(userEntity.getPassword()));
 
+        //rules
+        userEntity.setAccountNonExpired(true);
+        userEntity.setAccountNonLocked(true);
+        userEntity.setCredentialsNonExpired(true);
+        userEntity.setEnabled(true);
+
         if(this.userRepository.findAll().isEmpty()) {
             List<UserRole> roles = new ArrayList<>();
             roles.add(roleRepository.getUserRoleByAuthority("USER"));
@@ -65,6 +70,12 @@ public class UserServiceImpl implements UserService {
     @Override
     public Set<User> getAllUsers() {
         return new HashSet<>(this.userRepository.findAll());
+    }
+
+    @Override
+    public User getUserByUsername(String username) {
+        User user = userRepository.getUserByUsername(username);
+        return user;
     }
 
     @Override

@@ -8,10 +8,8 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "movie_images")
-@Getter
-@Setter
 @NoArgsConstructor
-public class MovieImage extends BaseEntity {
+public class MovieImage {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     @Column(name = "id", nullable = false, unique = true, updatable = false)
@@ -26,6 +24,22 @@ public class MovieImage extends BaseEntity {
 
     public MovieImage(String movieImageName, Movie movie) {
         this.movieImageName = movieImageName;
+        this.movie = movie;
+    }
+
+    public String getMovieImageName() {
+        return movieImageName;
+    }
+
+    public void setMovieImageName(String movieImageName) {
+        this.movieImageName = movieImageName;
+    }
+
+    public Movie getMovie() {
+        return movie;
+    }
+
+    public void setMovie(Movie movie) {
         this.movie = movie;
     }
 }

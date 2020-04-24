@@ -12,7 +12,7 @@ import java.sql.Date;
 @Getter
 @Setter
 @NoArgsConstructor
-public class Review extends BaseEntity {
+public class Review {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false, unique = true, updatable = false)

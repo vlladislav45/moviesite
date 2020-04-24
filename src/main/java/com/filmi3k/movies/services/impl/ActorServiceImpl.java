@@ -4,9 +4,11 @@ import com.filmi3k.movies.domain.entities.Actor;
 import com.filmi3k.movies.repositories.api.ActorRepository;
 import com.filmi3k.movies.services.base.ActorService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+@Service
 public class ActorServiceImpl implements ActorService {
     private final ActorRepository actorRepository;
 

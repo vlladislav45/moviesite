@@ -6,4 +6,6 @@ import java.util.Set;
 
 public interface MovieTypeService {
     Set<MovieType> findAll();
+
+    MovieType findByMovieType(String genre);
 }

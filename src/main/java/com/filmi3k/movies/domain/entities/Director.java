@@ -7,7 +7,7 @@ import javax.persistence.*;
 @Entity
 @Table(name = "directors")
 @NoArgsConstructor
-public class Director extends BaseEntity {
+public class Director {
 
     @Id
     @GeneratedValue(strategy =  GenerationType.IDENTITY)
@@ -16,6 +16,8 @@ public class Director extends BaseEntity {
 
     @Column(name = "director_name", nullable = false, unique = true)
     private String directorName;
+
+    public Director(String directorName) { this.directorName = directorName; }
 
     public int getId() {
         return id;

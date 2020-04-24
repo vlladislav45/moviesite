@@ -12,7 +12,7 @@ import java.sql.Date;
 @Getter
 @Setter
 @NoArgsConstructor
-public class UserImage extends BaseEntity {
+public class UserImage {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     @Column(name = "id", nullable = false, unique = true, updatable = false)

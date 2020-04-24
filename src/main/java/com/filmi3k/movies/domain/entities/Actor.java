@@ -12,7 +12,7 @@ import javax.persistence.*;
 @Getter
 @Setter
 @NoArgsConstructor
-public class Actor extends BaseEntity {
+public class Actor {
     @Id
     @GeneratedValue(strategy =  GenerationType.IDENTITY)
     @Column(name = "id", nullable = false, unique = true, updatable = false)

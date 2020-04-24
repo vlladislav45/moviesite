@@ -1,11 +1,14 @@
 package com.filmi3k.movies.controllers;
 
+import com.filmi3k.movies.domain.entities.User;
 import com.filmi3k.movies.models.binding.UserRegisterBindingModel;
 import com.filmi3k.movies.services.base.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+
+import javax.servlet.http.HttpSession;
 
 @Controller
 public class UserController extends BaseController {
@@ -34,5 +37,4 @@ public class UserController extends BaseController {
     public String login() {
         return "login";
     }
-
 }

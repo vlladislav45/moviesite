@@ -13,5 +13,7 @@ public interface UserService extends UserDetailsService {
 
     Set<User> getAllUsers();
 
+    User getUserByUsername(String username);
+
     User getById(int id);
 }

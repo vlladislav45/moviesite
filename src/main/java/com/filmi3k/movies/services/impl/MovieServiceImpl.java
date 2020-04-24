@@ -6,11 +6,13 @@ import com.filmi3k.movies.repositories.api.MovieRepository;
 import com.filmi3k.movies.repositories.api.MovieTypeRepository;
 import com.filmi3k.movies.services.base.MovieService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
+@Service
 public class MovieServiceImpl implements MovieService {
     private final MovieRepository movieRepository;
 
@@ -32,7 +34,8 @@ public class MovieServiceImpl implements MovieService {
 
     @Override
     public Set<Movie> findAll() {
-        return (HashSet<Movie>) movieRepository.findAll();
+        Set<Movie> movies = new HashSet<>(movieRepository.findAll());
+        return movies;
     }
 
     @Override

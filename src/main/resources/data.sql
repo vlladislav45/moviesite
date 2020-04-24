@@ -119,8 +119,13 @@ INSERT INTO actors (actor_name) VALUES ('Jude Law');
 INSERT INTO actors (actor_name) VALUES ('Alec Baldwin');
 INSERT INTO actors (actor_name) VALUES ('Javier Bardem');
 
-INSERT INTO movie (movie_name, movie_running_time, movie_year, movie_director_id) VALUES ('Fast and Furious 7', 0, 2015, 1);
-INSERT INTO movie (movie_name, movie_running_time, movie_year, movie_director_id) VALUES ('Fast and Furious 6', 0, 2013, 2);
+INSERT INTO movie (movie_name, movie_running_time, movie_year, movie_director_id) VALUES ('Fast and Furious 7', 128, 2015, 1);
+INSERT INTO movie (movie_name, movie_running_time, movie_year, movie_director_id) VALUES ('Fast and Furious 6', 5, 2013, 2);
+INSERT INTO movie (movie_name, movie_running_time, movie_year, movie_director_id) VALUES ('Onward', 5000, 2020, 2);
+INSERT INTO movie (movie_name, movie_running_time, movie_year, movie_director_id) VALUES ('Original CIN', 200, 2001, 2);
 
-INSERT INTO movie_images (movie_image_name, movie_id) VALUES ('recived_0274812', 1);
-INSERT INTO movie_images (movie_image_name, movie_id) VALUES ('recived_0274222', 2);
+
+INSERT INTO movie_images (movie_image_name, movie_id) VALUES ('f9.jpg', 1);
+INSERT INTO movie_images (movie_image_name, movie_id) VALUES ('f8.jpg', 2);
+insert into movie_images (movie_image_name, movie_id) VALUES ('onward.jpg', 3);
+insert into movie_images (movie_image_name, movie_id) VALUES ('originalcin.jpg', 4);

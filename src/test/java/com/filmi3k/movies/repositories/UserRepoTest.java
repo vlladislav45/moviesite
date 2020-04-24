@@ -33,18 +33,7 @@ public class UserRepoTest {
     @Test
     @Transactional
     void testHashSet() {
-        Set<UserRole> roles = new HashSet<>();
-        UserRole ADMIN = roleRepository.getUserRoleByAuthority("ADMIN");
-        UserRole USER = roleRepository.getUserRoleByAuthority("USER");
-        ADMIN.equals(USER);
-        roles.add(ADMIN);
-        roles.add(USER);
-
-
-
-        for(UserRole role : roles) {
-            System.out.println(role.getAuthority());
-        }
+        System.out.println(userRepository.getUserByUsername("vladislavl2a"));
     }
 
     @Test

@@ -8,7 +8,7 @@ import javax.persistence.*;
 @Entity
 @Table(name = "user_roles")
 @NoArgsConstructor
-public class UserRole extends BaseEntity implements GrantedAuthority {
+public class UserRole implements GrantedAuthority {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false, updatable = false, unique = true)
@@ -18,16 +18,6 @@ public class UserRole extends BaseEntity implements GrantedAuthority {
     private String authority;
 
     public UserRole(String authority) { this.authority = authority;}
-
-    @Override
-    public int getId() {
-        return id;
-    }
-
-    @Override
-    public void setId(int id) {
-        this.id = id;
-    }
 
     @Override
     public String getAuthority() {
