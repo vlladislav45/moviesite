@@ -1,6 +1,6 @@
 ## moviesite
 
-#TODO: Repository JUnit tests. Login from db
+#TODO: Repository JUnit tests
 
 # Comment
 Cascade types doesn't work on hibernate that's why you have to make it them in manual. phpmyadmin has enough good instruments to make it easy
