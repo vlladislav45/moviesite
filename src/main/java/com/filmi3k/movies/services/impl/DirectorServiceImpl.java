@@ -1,7 +1,7 @@
 package com.filmi3k.movies.services.impl;
 
 import com.filmi3k.movies.domain.entities.Director;
-import com.filmi3k.movies.repositories.api.DirectorRepository;
+import com.filmi3k.movies.repository.api.DirectorRepository;
 import com.filmi3k.movies.services.base.DirectorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

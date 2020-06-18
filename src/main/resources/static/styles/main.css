@@ -62,3 +62,6 @@
     Footer
 \* ------------------------------------------------------------ */
 footer { margin-top: 50px; width: 100%; background: darkcyan; }
+footer .users { display: flex; }
+.user + .user { margin-left: 18px; }
+footer li { list-style: none; }

@@ -17,6 +17,7 @@ INSERT INTO movietype (movietype_label) VALUES ('Wars');
 INSERT INTO movietype (movietype_label) VALUES ('Crime');
 INSERT INTO movietype (movietype_label) VALUES ('Fantasy');
 INSERT INTO movietype (movietype_label) VALUES ('Mystery');
+INSERT INTO movietype (movietype_label) VALUES ('Anime');
 
 INSERT INTO directors (director_name) VALUES ('James Wan');
 INSERT INTO directors (director_name) VALUES ('Justin Lin');
@@ -123,7 +124,6 @@ INSERT INTO movie (movie_name, movie_running_time, movie_year, movie_director_id
 INSERT INTO movie (movie_name, movie_running_time, movie_year, movie_director_id) VALUES ('Fast and Furious 6', 5, 2013, 2);
 INSERT INTO movie (movie_name, movie_running_time, movie_year, movie_director_id) VALUES ('Onward', 5000, 2020, 2);
 INSERT INTO movie (movie_name, movie_running_time, movie_year, movie_director_id) VALUES ('Original CIN', 200, 2001, 2);
-
 
 INSERT INTO movie_images (movie_image_name, movie_id) VALUES ('f9.jpg', 1);
 INSERT INTO movie_images (movie_image_name, movie_id) VALUES ('f8.jpg', 2);

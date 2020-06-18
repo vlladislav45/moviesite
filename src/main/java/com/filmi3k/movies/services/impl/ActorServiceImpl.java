@@ -1,7 +1,7 @@
 package com.filmi3k.movies.services.impl;
 
 import com.filmi3k.movies.domain.entities.Actor;
-import com.filmi3k.movies.repositories.api.ActorRepository;
+import com.filmi3k.movies.repository.api.ActorRepository;
 import com.filmi3k.movies.services.base.ActorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
