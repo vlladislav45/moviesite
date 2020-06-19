@@ -1,11 +1,11 @@
 package com.filmi3k.movies.services.base;
 
-import com.filmi3k.movies.domain.entities.Review;
+import com.filmi3k.movies.domain.entities.Comment;
 
 public interface ReviewService {
-    void add(Review review);
+    void add(Comment comment);
 
-    Review getById(int id);
+    Comment getById(int id);
 
-    void delete(Review review);
+    void delete(Comment comment);
 }

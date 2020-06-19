@@ -1,17 +1,31 @@
 package com.filmi3k.movies.domain.entities;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
+import java.sql.Date;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Objects;
 
-@Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
+
 abstract class BaseEntity
 {
-    private LocalDate dateCreated = LocalDate.now();
+    private final LocalDateTime dateTimeCreated = LocalDateTime.now();
+
+    public BaseEntity() { }
+
+    public LocalDateTime getDateTimeCreated() {
+        return dateTimeCreated;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof BaseEntity)) return false;
+        BaseEntity that = (BaseEntity) o;
+        return Objects.equals(dateTimeCreated, that.dateTimeCreated);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(dateTimeCreated);
+    }
 }

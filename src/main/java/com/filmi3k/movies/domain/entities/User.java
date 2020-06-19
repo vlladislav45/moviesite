@@ -4,15 +4,16 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Entity
-@Table(name = "users")
+@Table(name = "user")
 public class User extends BaseEntity implements UserDetails {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false, unique = true, updatable = false)
-    private int id;
+    @Column(name = "user_id", nullable = false, unique = true, updatable = false)
+    private int userId;
 
     @Column(name = "email", length = 50, nullable = false, unique = true)
     private String email;
@@ -20,17 +21,17 @@ public class User extends BaseEntity implements UserDetails {
     @Column(name = "username", length = 13, nullable = false, unique = true)
     private String username;
 
-    @Column(name = "password",  length = 255, nullable = false)
+    @Column(name = "password", nullable = false)
     private String password;
 
     @Column(name = "created_time", nullable = false)
-    private LocalDate createdTime;
+    private LocalDateTime createdTime;
 
     @ManyToOne(targetEntity = Gender.class, fetch = FetchType.EAGER)
     @JoinColumn(name = "gender", nullable = false)
     private Gender gender;
 
-    @ManyToMany(cascade = CascadeType.ALL, targetEntity = UserRole.class, fetch = FetchType.EAGER)
+    @ManyToMany(targetEntity = UserRole.class, fetch = FetchType.EAGER)
     @JoinTable(
             name = "users_roles",
             joinColumns = @JoinColumn(name = "user_id"),
@@ -39,12 +40,12 @@ public class User extends BaseEntity implements UserDetails {
     private List<UserRole> authorities;
 
     //MappedBy Variable user by type User in UserImage class
-//    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-//    private List<UserImage> userImages;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<UserImage> userImages = new ArrayList<>();
 
     //MappedBy Variable userReview by type User in Review class
-//    @OneToMany(mappedBy = "userReview", cascade = CascadeType.ALL, orphanRemoval = true)
-//    private List<Review> reviews;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Comment> comments = new ArrayList<>();
 
     private boolean isAccountNonExpired;
 
@@ -55,11 +56,16 @@ public class User extends BaseEntity implements UserDetails {
     private boolean isEnabled;
 
     public User() {
-//        userImages = new ArrayList<>();
-//        reviews = new ArrayList<>();
         authorities = new ArrayList<>();
     }
 
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
+    }
 
     public String getEmail() {
         return email;
@@ -69,11 +75,11 @@ public class User extends BaseEntity implements UserDetails {
         this.email = email;
     }
 
-    public LocalDate getCreatedTime() {
+    public LocalDateTime getCreatedTime() {
         return createdTime;
     }
 
-    public void setCreatedTime(LocalDate createdTime) {
+    public void setCreatedTime(LocalDateTime createdTime) {
         this.createdTime = createdTime;
     }
 

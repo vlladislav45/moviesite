@@ -2,7 +2,7 @@ package com.filmi3k.movies.models.view;
 
 import com.filmi3k.movies.domain.entities.Actor;
 import com.filmi3k.movies.domain.entities.Movie;
-import com.filmi3k.movies.domain.entities.MovieType;
+import com.filmi3k.movies.domain.entities.MovieGenre;
 import org.springframework.util.StreamUtils;
 
 import javax.imageio.IIOImage;
@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 
 public class MovieViewModel {
     private String movieName;
-    private String year;
+    private int year;
     private List<String> actors;
     private List<String> genres;
     private byte[] moviePoster;
@@ -32,11 +32,11 @@ public class MovieViewModel {
         this.movieName = movieName;
     }
 
-    public String getYear() {
+    public int getYear() {
         return year;
     }
 
-    public void setYear(String year) {
+    public void setYear(int year) {
         this.year = year;
     }
 
@@ -69,10 +69,10 @@ public class MovieViewModel {
         viewModel.actors = movie.getActors().stream().map(Actor::getActorName).collect(Collectors.toList());
         viewModel.movieName = movie.getMovieName();
         viewModel.year = movie.getMovieYear();
-        viewModel.genres = movie.getMovieTypes().stream().map(MovieType::getMovieTypeLabel).collect(Collectors.toList());
+        viewModel.genres = movie.getMovieGenres().stream().map(MovieGenre::getMovieGenreName).collect(Collectors.toList());
 
         //viewModel.posterName = movie.getMovieImage().getMovieImageName();
-        InputStream in = MovieViewModel.class.getResourceAsStream("/static/posters/" + movie.getMovieImage().getMovieImageName());
+        InputStream in = MovieViewModel.class.getResourceAsStream("/static/posters/" + movie.getPoster().getPosterName());
 
         try {
             viewModel.moviePoster = StreamUtils.copyToByteArray(in);

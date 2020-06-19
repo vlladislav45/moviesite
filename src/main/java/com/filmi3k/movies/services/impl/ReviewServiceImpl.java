@@ -1,6 +1,6 @@
 package com.filmi3k.movies.services.impl;
 
-import com.filmi3k.movies.domain.entities.Review;
+import com.filmi3k.movies.domain.entities.Comment;
 import com.filmi3k.movies.repository.api.ReviewRepository;
 import com.filmi3k.movies.services.base.ReviewService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,18 +18,18 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public void add(Review review) {
-        reviewRepository.saveAndFlush(review);
+    public void add(Comment comment) {
+        reviewRepository.saveAndFlush(comment);
     }
 
     @Override
-    public Review getById(int id) {
-        Optional<Review> review = reviewRepository.findById(id);
+    public Comment getById(int id) {
+        Optional<Comment> review = reviewRepository.findById(id);
         return review.get();
     }
 
     @Override
-    public void delete(Review review) {
-        reviewRepository.delete(review);
+    public void delete(Comment comment) {
+        reviewRepository.delete(comment);
     }
 }

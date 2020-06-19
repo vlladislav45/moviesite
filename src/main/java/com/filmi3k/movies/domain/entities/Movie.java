@@ -1,9 +1,6 @@
 package com.filmi3k.movies.domain.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.HashSet;
@@ -17,29 +14,32 @@ public class Movie {
     @Column(name = "movie_id", nullable = false, unique = true, updatable = false)
     private int movieId;
 
-    @Column(name = "movie_name", nullable = false, unique = true)
+    @Column(name = "movie_name", nullable = false)
     private String movieName;
 
     @JsonIgnore
-    @ManyToMany(targetEntity = MovieType.class,cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToMany(targetEntity = MovieGenre.class, fetch = FetchType.EAGER)
     @JoinTable(
-            name = "movies_types",
+            name = "movies_genres",
             joinColumns = @JoinColumn(name = "movie_id"),
-            inverseJoinColumns = @JoinColumn(name = "movie_type_id")
+            inverseJoinColumns = @JoinColumn(name = "movie_genre_id")
     )
-    private Set<MovieType> movieTypes;
+    private Set<MovieGenre> movieGenres;
 
     @Column(name = "movie_year", length=4, nullable = false)
-    private String movieYear;
+    private int movieYear;
 
     @ManyToOne(targetEntity = Director.class, fetch = FetchType.EAGER)
     @JoinColumn(name = "movie_director_id", nullable = false)
     private Director movieDirector;
 
-    @Column(name = "movie_running_time", nullable = false)
-    private int movieRunningTime;
+    @Column(name = "movie_views", nullable = false)
+    private int movieViews;
 
-    @ManyToMany(targetEntity = Actor.class, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @Column(name = "movie_rating", nullable = false)
+    private int movieRating;
+
+    @ManyToMany(targetEntity = Actor.class, fetch = FetchType.EAGER)
     @JoinTable(
             name = "movies_actors",
             joinColumns = @JoinColumn(name = "movie_id"),
@@ -49,10 +49,10 @@ public class Movie {
 
     @JsonIgnore
     @OneToOne(mappedBy = "movie", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-    private MovieImage movieImage;
+    private Poster poster;
 
     public Movie() {
-        movieTypes = new HashSet<>();
+        movieGenres = new HashSet<>();
         actors = new HashSet<>();
     }
 
@@ -72,19 +72,19 @@ public class Movie {
         this.movieName = movieName;
     }
 
-    public Set<MovieType> getMovieTypes() {
-        return movieTypes;
+    public Set<MovieGenre> getMovieGenres() {
+        return movieGenres;
     }
 
-    public void setMovieTypes(Set<MovieType> movieTypes) {
-        this.movieTypes = movieTypes;
+    public void setMovieGenres(Set<MovieGenre> movieGenres) {
+        this.movieGenres = movieGenres;
     }
 
-    public String getMovieYear() {
+    public int getMovieYear() {
         return movieYear;
     }
 
-    public void setMovieYear(String movieYear) {
+    public void setMovieYear(int movieYear) {
         this.movieYear = movieYear;
     }
 
@@ -96,12 +96,20 @@ public class Movie {
         this.movieDirector = movieDirector;
     }
 
-    public int getMovieRunningTime() {
-        return movieRunningTime;
+    public int getMovieViews() {
+        return movieViews;
     }
 
-    public void setMovieRunningTime(int movieRunningTime) {
-        this.movieRunningTime = movieRunningTime;
+    public void setMovieViews(int movieViews) {
+        this.movieViews = movieViews;
+    }
+
+    public int getMovieRating() {
+        return movieRating;
+    }
+
+    public void setMovieRating(int movieRating) {
+        this.movieRating = movieRating;
     }
 
     public Set<Actor> getActors() {
@@ -112,11 +120,11 @@ public class Movie {
         this.actors = actors;
     }
 
-    public MovieImage getMovieImage() {
-        return movieImage;
+    public Poster getPoster() {
+        return poster;
     }
 
-    public void setMovieImage(MovieImage movieImage) {
-        this.movieImage = movieImage;
+    public void setPoster(Poster poster) {
+        this.poster = poster;
     }
 }

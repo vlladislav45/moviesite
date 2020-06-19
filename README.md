@@ -1,9 +1,14 @@
 ## moviesite
 
-#TODO: Repository JUnit tests. Login from db
+#TODO: 
+1. Comprase image at the upload (JPG formats, size limit)
+2. Add movie by moderator/s
+3. Request form for everyone who wants to be moderator
+4. Level system
+5. Common chat only for moderators
 
 # Comment
-Cascade types doesn't work on hibernate that's why you have to make it them in manual. phpmyadmin has enough good instruments to make it easy
+JDK is updated to latest version
 
 ## Server-side technology
 # Spring Framework
