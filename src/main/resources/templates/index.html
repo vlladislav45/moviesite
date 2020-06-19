@@ -79,7 +79,7 @@
                      th:if="${iStat.index lt rowStatus.index + 3 and iStat.index ge rowStatus.index}">>
                     <div class="play">
                         <a th:href="@{movie?id={id}(id=${movie.getMovieId()})}">
-                            <img th:src="@{posters}"
+                            <img th:src="@{/posters/{image}(image=${movie.getPoster().getPosterName()})}"
                                  class="img-fluid"
                                  th:alt="${movie.getMovieName()}">
                         </a>
@@ -87,7 +87,7 @@
                         <div class="views">
                             <img src="images/playvideo.png" alt="Views" width="15" height="15">
 
-                            <h6 th:text="${movie.getMovieRunningTime()}">15</h6>
+                            <h6 th:text="${movie.getMovieViews()}">15</h6>
                         </div>
                     </div>
 

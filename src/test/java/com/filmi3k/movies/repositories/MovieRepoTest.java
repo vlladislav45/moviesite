@@ -3,12 +3,12 @@ package com.filmi3k.movies.repositories;
 import com.filmi3k.movies.MoviesApplication;
 import com.filmi3k.movies.domain.entities.Actor;
 import com.filmi3k.movies.domain.entities.Movie;
-import com.filmi3k.movies.domain.entities.MovieImage;
-import com.filmi3k.movies.domain.entities.MovieType;
+import com.filmi3k.movies.domain.entities.Poster;
+import com.filmi3k.movies.domain.entities.MovieGenre;
 import com.filmi3k.movies.repository.api.ActorRepository;
 import com.filmi3k.movies.repository.api.DirectorRepository;
 import com.filmi3k.movies.repository.api.MovieRepository;
-import com.filmi3k.movies.repository.api.MovieTypeRepository;
+import com.filmi3k.movies.repository.api.MovieGenreRepository;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +23,7 @@ public class MovieRepoTest {
     private MovieRepository movieRepository; //Instance
 
     @Autowired
-    private MovieTypeRepository movieTypeRepository;
+    private MovieGenreRepository movieGenreRepository;
 
     @Autowired
     private DirectorRepository directorRepository;
@@ -34,10 +34,10 @@ public class MovieRepoTest {
     @Test
     @Transactional
     void testMovieTypeRepo() {
-        MovieType actual = movieTypeRepository.saveAndFlush(new MovieType("Anime"));
+        MovieGenre actual = movieGenreRepository.saveAndFlush(new MovieGenre("Anime"));
 
-        MovieType expected = movieTypeRepository.findByMovieTypeLabel("Anime");
-        Assert.assertEquals("Anime movie type is not matched", expected.getMovieTypeLabel(), actual.getMovieTypeLabel());
+        MovieGenre expected = movieGenreRepository.findByMovieGenreName("Anime");
+        Assert.assertEquals("Anime movie type is not matched", expected.getMovieGenreName(), actual.getMovieGenreName());
     }
 
     @Test
@@ -45,15 +45,15 @@ public class MovieRepoTest {
     void testMovieRepo() {
         Movie movie = new Movie();
         movie.setMovieName("Test");
-        movie.setMovieRunningTime(0);
-        movie.setMovieYear("1990");
+        movie.setMovieViews(0);
+        movie.setMovieYear(1990);
         movie.setMovieDirector(directorRepository.findByDirectorName("James Wan"));
-        movie.setMovieImage(new MovieImage("test.jpg",movie));
+        movie.setPoster(new Poster("test.jpg",movie));
 
-        MovieType horror = movieTypeRepository.findByMovieTypeLabel("Horror");
-        MovieType adventure = movieTypeRepository.findByMovieTypeLabel("Adventure");
-        movie.getMovieTypes().add(horror);
-        movie.getMovieTypes().add(adventure);
+        MovieGenre horror = movieGenreRepository.findByMovieGenreName("Horror");
+    MovieGenre adventure = movieGenreRepository.findByMovieGenreName("Adventure");
+        movie.getMovieGenres().add(horror);
+        movie.getMovieGenres().add(adventure);
 
         Actor theRock = actorRepository.findActorByActorName("Al Pacino");
         movie.getActors().add(theRock);
@@ -67,6 +67,7 @@ public class MovieRepoTest {
     }
 
     @Test
+    @Transactional
     void getAllMovies() {
         Set<Movie> movies = new HashSet<>(movieRepository.findAll());
 
@@ -74,4 +75,32 @@ public class MovieRepoTest {
             System.out.println(movie.getMovieName());
         }
     }
+
+    @Test
+    void giveGenres() {
+        MovieGenre comedy = movieGenreRepository.findByMovieGenreName("Comedy");
+        MovieGenre adventure = movieGenreRepository.findByMovieGenreName("Adventure");
+        Set<MovieGenre> genres = new HashSet<>();
+        genres.add(comedy);
+        genres.add(adventure);
+
+        Movie movie = movieRepository.findByMovieName("Jumanji");
+        movie.setMovieGenres(genres);
+
+        movieRepository.saveAndFlush(movie);
+
+        movieRepository.delete(movie);
+
+//        Movie actual = movieRepository.findByMovieName("Onward");
+//        Assert.assertEquals("Movie is not exist", movie, actual);
+    }
+
+    @Test
+    void deleteMovie() {
+
+
+//        Movie actual = movieRepository.findByMovieName("Onward");
+//        Assert.assertEquals("Movie is deleted", movie, actual);
+    }
+
 }

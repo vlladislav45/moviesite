@@ -37,7 +37,7 @@ public class UserServiceImpl implements UserService {
     public boolean add(UserRegisterBindingModel userRegisterBindingModel) {
         User userEntity = this.modelMapper.map(userRegisterBindingModel, User.class);
         userEntity.setGender(genderRepository.findByGenderName(userRegisterBindingModel.getGender()));
-        userEntity.setCreatedTime(userEntity.getDateCreated());
+        userEntity.setCreatedTime(userEntity.getDateTimeCreated());
 
         userEntity.setPassword(this.bCryptPasswordEncoder.encode(userEntity.getPassword()));
 

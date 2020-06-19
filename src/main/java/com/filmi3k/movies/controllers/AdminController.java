@@ -4,7 +4,7 @@ import com.filmi3k.movies.domain.entities.*;
 import com.filmi3k.movies.services.base.ActorService;
 import com.filmi3k.movies.services.base.DirectorService;
 import com.filmi3k.movies.services.base.MovieService;
-import com.filmi3k.movies.services.base.MovieTypeService;
+import com.filmi3k.movies.services.base.MovieGenreService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,23 +18,21 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.Principal;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 @Controller
 public class AdminController extends BaseController {
-    private final String folder = "src/main/resources/static/movies/";
+    private final String folder = "src/main/resources/static/posters/";
     private final DirectorService directorService;
     private final MovieService movieService;
-    private final MovieTypeService movieTypeService;
+    private final MovieGenreService movieGenreService;
     private final ActorService actorService;
 
     @Autowired
-    public AdminController(DirectorService directorService, MovieService movieService, MovieTypeService movieTypeService, ActorService actorService) {
+    public AdminController(DirectorService directorService, MovieService movieService, MovieGenreService movieGenreService, ActorService actorService) {
         this.directorService = directorService;
         this.movieService = movieService;
-        this.movieTypeService = movieTypeService;
+        this.movieGenreService = movieGenreService;
         this.actorService = actorService;
     }
 
@@ -50,7 +48,7 @@ public class AdminController extends BaseController {
         boolean isMovieParametersAlright = false;
         String movieName = "";
         int movieRunningTime = 0;
-        String movieYear = "";
+        int movieYear = 0;
         String movieDirector = "";
         String movieGenre = "";
         String movieActor = "";
@@ -62,13 +60,13 @@ public class AdminController extends BaseController {
                 movieName = requestParams.get("movieName");
                 isMovieParametersAlright = true;
             }
-            MovieType movieType = this.movieTypeService.findByMovieType(requestParams.get("movieType"));
+            MovieGenre movieType = this.movieGenreService.findByMovieType(requestParams.get("movieType"));
             if(movieType != null) {
                 movieGenre = requestParams.get("movieType");
                 isMovieParametersAlright = true;
             }
             movieRunningTime= Integer.parseInt(requestParams.get("movieRunningTime"));
-            movieYear=requestParams.get("movieYear");
+            movieYear=Integer.parseInt(requestParams.get("movieYear"));
 
             Director director = this.directorService.findByName(requestParams.get("movieDirector"));
             if(director != null) {
@@ -90,15 +88,15 @@ public class AdminController extends BaseController {
 
             Movie movie = new Movie();
             movie.setMovieName(movieName);
-            movie.setMovieRunningTime(movieRunningTime);
+            movie.setMovieViews(movieRunningTime);
             movie.setMovieYear(movieYear);
             movie.setMovieDirector(directorService.findByName(movieDirector));
             Actor actor = actorService.findByName(movieActor);
             movie.getActors().add(actor);
-            MovieType genre = movieTypeService.findByMovieType(movieGenre);
-            movie.getMovieTypes().add(genre);
-            MovieImage movieImage = new MovieImage(file.getOriginalFilename(), movie);
-            movie.setMovieImage(movieImage);
+            MovieGenre genre = movieGenreService.findByMovieType(movieGenre);
+            movie.getMovieGenres().add(genre);
+            Poster poster = new Poster(file.getOriginalFilename(), movie);
+            movie.setPoster(poster);
             movieService.add(movie);
         }
     }

@@ -7,13 +7,18 @@ import com.filmi3k.movies.services.base.UserService;
 import com.filmi3k.movies.utils.JSONparser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.util.StreamUtils;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.URL;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static com.filmi3k.movies.utils.CompraseImage.compraseImage;
 
 @RestController
 public class MovieController extends BaseController {
@@ -42,14 +47,34 @@ public class MovieController extends BaseController {
         return movieService.count();
     }
 
-//    @GetMapping(
-//            value = "/movies/poster",
-//            produces = MediaType.IMAGE_PNG_VALUE)
-//    public @ResponseBody
-//    byte[] getPoster(@RequestParam String posterName) throws IOException {
-//        InputStream in = getClass()
-//                .getResourceAsStream("/static/posters/" + posterName);
-//
-//        return StreamUtils.copyToByteArray(in);
-//    }
+    @GetMapping("/movies/poster/{posterName}")
+    public ResponseEntity<byte[]> getPoster(@PathVariable String posterName) throws IOException {
+        URL url = getClass().getResource("/static/posters/" + posterName);
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+
+        try (InputStream inputStream = url.openStream()) {
+            int n = 0;
+            byte [] buffer = new byte[ 1024 ];
+            while (-1 != (n = inputStream.read(buffer))) {
+                output.write(buffer, 0, n);
+            }
+        }
+
+//        OutputStream outputStream = url.openStream();
+//        compraseImage(url.toString(), outputStream);
+
+        ResponseEntity<byte[]> retVal = ResponseEntity.ok()
+                .contentType(MediaType.valueOf(MediaType.IMAGE_JPEG_VALUE))
+                .body(output.toByteArray());
+        return retVal;
+    }
+
+    @GetMapping("/movies/single/{id}")
+    @ResponseBody
+    public ResponseEntity<Movie> getMovieInformation(@PathVariable int id) {
+        ResponseEntity<Movie> movie = ResponseEntity.ok()
+                .body(movieService.findById(id));
+        return movie;
+    }
+
 }
