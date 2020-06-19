@@ -1,14 +1,15 @@
 package com.filmi3k.movies.services.impl;
 
 import com.filmi3k.movies.domain.entities.Movie;
-import com.filmi3k.movies.domain.entities.MovieType;
-import com.filmi3k.movies.repositories.api.MovieRepository;
-import com.filmi3k.movies.repositories.api.MovieTypeRepository;
+import com.filmi3k.movies.repository.api.MovieRepository;
 import com.filmi3k.movies.services.base.MovieService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -36,6 +37,17 @@ public class MovieServiceImpl implements MovieService {
     public Set<Movie> findAll() {
         Set<Movie> movies = new HashSet<>(movieRepository.findAll());
         return movies;
+    }
+
+    @Override
+    public List<Movie> findAllPaginated(int count, int offset) {
+        Pageable p = PageRequest.of(offset, count);
+        return movieRepository.findAll(p).getContent();
+    }
+
+    @Override
+    public long count() {
+        return movieRepository.count();
     }
 
     @Override

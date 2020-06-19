@@ -5,17 +5,15 @@ import com.filmi3k.movies.domain.entities.Actor;
 import com.filmi3k.movies.domain.entities.Movie;
 import com.filmi3k.movies.domain.entities.MovieImage;
 import com.filmi3k.movies.domain.entities.MovieType;
-import com.filmi3k.movies.repositories.api.ActorRepository;
-import com.filmi3k.movies.repositories.api.DirectorRepository;
-import com.filmi3k.movies.repositories.api.MovieRepository;
-import com.filmi3k.movies.repositories.api.MovieTypeRepository;
+import com.filmi3k.movies.repository.api.ActorRepository;
+import com.filmi3k.movies.repository.api.DirectorRepository;
+import com.filmi3k.movies.repository.api.MovieRepository;
+import com.filmi3k.movies.repository.api.MovieTypeRepository;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 import java.util.*;
 

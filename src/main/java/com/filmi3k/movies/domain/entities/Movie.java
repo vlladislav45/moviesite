@@ -1,5 +1,6 @@
 package com.filmi3k.movies.domain.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -19,11 +20,12 @@ public class Movie {
     @Column(name = "movie_name", nullable = false, unique = true)
     private String movieName;
 
+    @JsonIgnore
     @ManyToMany(targetEntity = MovieType.class,cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinTable(
             name = "movies_types",
-            joinColumns = @JoinColumn(name = "movie_type_id"),
-            inverseJoinColumns = @JoinColumn(name = "movie_id")
+            joinColumns = @JoinColumn(name = "movie_id"),
+            inverseJoinColumns = @JoinColumn(name = "movie_type_id")
     )
     private Set<MovieType> movieTypes;
 
@@ -40,11 +42,12 @@ public class Movie {
     @ManyToMany(targetEntity = Actor.class, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinTable(
             name = "movies_actors",
-            joinColumns = @JoinColumn(name = "actor_id"),
-            inverseJoinColumns = @JoinColumn(name = "movie_id")
+            joinColumns = @JoinColumn(name = "movie_id"),
+            inverseJoinColumns = @JoinColumn(name = "actor_id")
     )
     private Set<Actor> actors;
 
+    @JsonIgnore
     @OneToOne(mappedBy = "movie", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private MovieImage movieImage;
 

@@ -1,12 +1,10 @@
 package com.filmi3k.movies.repositories;
 
-import com.filmi3k.movies.domain.entities.Gender;
-import com.filmi3k.movies.domain.entities.Movie;
 import com.filmi3k.movies.domain.entities.User;
 import com.filmi3k.movies.domain.entities.UserRole;
-import com.filmi3k.movies.repositories.api.GenderRepository;
-import com.filmi3k.movies.repositories.api.RoleRepository;
-import com.filmi3k.movies.repositories.api.UserRepository;
+import com.filmi3k.movies.repository.api.GenderRepository;
+import com.filmi3k.movies.repository.api.RoleRepository;
+import com.filmi3k.movies.repository.api.UserRepository;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
