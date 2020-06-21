@@ -7,16 +7,20 @@ import javax.imageio.ImageWriter;
 import javax.imageio.stream.ImageOutputStream;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.Paths;
 import java.util.Iterator;
 
-public class CompraseImage {
-    public static void compraseImage(String imagePath, OutputStream outputStream) throws IOException {
-        //TODO: Comprase image quality
-        File imageFile = new File(imagePath);
+import static com.filmi3k.movies.config.Config.IMAGE_QUALITY;
+
+public class CompressImage {
+    public static void compressImage(URL poster, OutputStream outputStream) throws IOException, URISyntaxException {
+        File imageFile = Paths.get(poster.toURI()).toFile();
 
         InputStream inputStream = new FileInputStream(imageFile);
 
-        float imageQuality = 0.3f;
+        float imageQuality = IMAGE_QUALITY;
 
         //Create the buffered image
         BufferedImage bufferedImage = ImageIO.read(inputStream);
@@ -39,8 +43,6 @@ public class CompraseImage {
 
         //Created image
         imageWriter.write(null, new IIOImage(bufferedImage, null, null), imageWriteParam);
-        System.out.println(bufferedImage);
-
 
         // close all streams
         inputStream.close();

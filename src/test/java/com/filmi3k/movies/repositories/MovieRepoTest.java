@@ -33,16 +33,7 @@ public class MovieRepoTest {
 
     @Test
     @Transactional
-    void testMovieTypeRepo() {
-        MovieGenre actual = movieGenreRepository.saveAndFlush(new MovieGenre("Anime"));
-
-        MovieGenre expected = movieGenreRepository.findByMovieGenreName("Anime");
-        Assert.assertEquals("Anime movie type is not matched", expected.getMovieGenreName(), actual.getMovieGenreName());
-    }
-
-    @Test
-    @Transactional
-    void testMovieRepo() {
+    void addMovie() {
         Movie movie = new Movie();
         movie.setMovieName("Test");
         movie.setMovieViews(0);
@@ -77,30 +68,22 @@ public class MovieRepoTest {
     }
 
     @Test
-    void giveGenres() {
+    @Transactional
+    void takeGenres() {
         MovieGenre comedy = movieGenreRepository.findByMovieGenreName("Comedy");
         MovieGenre adventure = movieGenreRepository.findByMovieGenreName("Adventure");
         Set<MovieGenre> genres = new HashSet<>();
         genres.add(comedy);
         genres.add(adventure);
 
-        Movie movie = movieRepository.findByMovieName("Jumanji");
+        Movie movie = movieRepository.findByMovieName("Onward");
         movie.setMovieGenres(genres);
 
         movieRepository.saveAndFlush(movie);
 
-        movieRepository.delete(movie);
-
-//        Movie actual = movieRepository.findByMovieName("Onward");
-//        Assert.assertEquals("Movie is not exist", movie, actual);
+        Movie actual = movieRepository.findByMovieName("Onward");
+        Assert.assertEquals("Movie is not exist", movie, actual);
     }
 
-    @Test
-    void deleteMovie() {
-
-
-//        Movie actual = movieRepository.findByMovieName("Onward");
-//        Assert.assertEquals("Movie is deleted", movie, actual);
-    }
 
 }

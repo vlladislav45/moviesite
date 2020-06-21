@@ -10,15 +10,15 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
+import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.filmi3k.movies.utils.CompraseImage.compraseImage;
+import static com.filmi3k.movies.utils.CompressImage.compressImage;
 
 @RestController
 public class MovieController extends BaseController {
@@ -48,20 +48,11 @@ public class MovieController extends BaseController {
     }
 
     @GetMapping("/movies/poster/{posterName}")
-    public ResponseEntity<byte[]> getPoster(@PathVariable String posterName) throws IOException {
+    public ResponseEntity<byte[]> getPoster(@PathVariable String posterName) throws IOException, URISyntaxException {
         URL url = getClass().getResource("/static/posters/" + posterName);
         ByteArrayOutputStream output = new ByteArrayOutputStream();
 
-        try (InputStream inputStream = url.openStream()) {
-            int n = 0;
-            byte [] buffer = new byte[ 1024 ];
-            while (-1 != (n = inputStream.read(buffer))) {
-                output.write(buffer, 0, n);
-            }
-        }
-
-//        OutputStream outputStream = url.openStream();
-//        compraseImage(url.toString(), outputStream);
+        compressImage(url, output);
 
         ResponseEntity<byte[]> retVal = ResponseEntity.ok()
                 .contentType(MediaType.valueOf(MediaType.IMAGE_JPEG_VALUE))

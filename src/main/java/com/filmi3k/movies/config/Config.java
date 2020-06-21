@@ -1,6 +1,7 @@
 package com.filmi3k.movies.config;
 
 public class Config {
+    //Movie stream properties
     public static final String VIDEO = "/static/movies/";
 
     public static final String CONTENT_TYPE = "Content-Type";
@@ -10,6 +11,9 @@ public class Config {
     public static final String ACCEPT_RANGES = "Accept-Ranges";
     public static final String BYTES = "bytes";
     public static final int BYTE_RANGE = 1024;
+
+    // Poster quality
+    public static final float IMAGE_QUALITY = 0.3f; //default is 30 percent from 100
 
     public Config() {
     }

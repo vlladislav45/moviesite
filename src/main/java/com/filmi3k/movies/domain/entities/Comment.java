@@ -39,4 +39,13 @@ public class Comment {
     @ManyToOne(targetEntity = Anime.class)
     @JoinColumn(name = "comment_anime_id", nullable = true)
     private Anime anime;
+
+    public Comment(LocalDateTime commentCreated, String comment, int commentRating, Movie movie, User user, Anime anime) {
+        this.commentCreated = commentCreated;
+        this.comment = comment;
+        this.commentRating = commentRating;
+        this.movie = movie;
+        this.user = user;
+        this.anime = anime;
+    }
 }

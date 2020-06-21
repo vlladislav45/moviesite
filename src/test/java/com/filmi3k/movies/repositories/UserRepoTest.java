@@ -1,6 +1,5 @@
 package com.filmi3k.movies.repositories;
 
-import com.filmi3k.movies.domain.entities.Movie;
 import com.filmi3k.movies.domain.entities.User;
 import com.filmi3k.movies.domain.entities.UserRole;
 import com.filmi3k.movies.repository.api.GenderRepository;
@@ -31,16 +30,10 @@ public class UserRepoTest {
 
     @Test
     @Transactional
-    void testHashSet() {
-        System.out.println(userRepository.getUserByUsername("vladislavl2a"));
-    }
-
-    @Test
-    @Transactional
-    void testUserRepo() {
+    void addUser() {
         User user = new User();
-        user.setUsername("vladislavl2a");
-        user.setEmail("vladislavl2a@abv.bg");
+        user.setUsername("vladislavl3");
+        user.setEmail("vladislavl3@abv.bg");
         user.setGender(genderRepository.findByGenderName("male"));
         user.setCreatedTime(user.getDateTimeCreated());
 
@@ -59,16 +52,7 @@ public class UserRepoTest {
 
         this.userRepository.saveAndFlush(user);
 
-        User actual = userRepository.getUserByUsername("vladislavl2a");
+        User actual = userRepository.getUserByUsername("vladislavl3");
         Assert.assertEquals("User is not exist", user, actual);
-    }
-
-    @Test
-    void deleteUser() {
-        User user = userRepository.getUserByUsername("vladislavl2a");
-        userRepository.delete(user);
-
-//        Movie actual = movieRepository.findByMovieName("Onward");
-//        Assert.assertEquals("Movie is deleted", movie, actual);
     }
 }
