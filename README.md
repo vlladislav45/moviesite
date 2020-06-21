@@ -1,14 +1,5 @@
 ## moviesite
 
-#TODO: 
-1. Comprase image at the upload (JPG formats, size limit)
-2. Add movie by moderator/s
-3. Request form for everyone who wants to be moderator
-4. Level system
-5. Common chat only for moderators
-
-# Comment
-JDK is updated to latest version
 
 ## Server-side technology
 # Spring Framework
@@ -18,6 +9,7 @@ JDK is updated to latest version
 * JUnit tests are makes for repositories, services
 
 ## Client-side technology
+* Thymeleaf library
 * HTML5 
 * CSS
-* Thymeleaf
+* JavaScript
