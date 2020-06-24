@@ -15,10 +15,8 @@ import java.util.Iterator;
 import static com.filmi3k.movies.config.Config.IMAGE_QUALITY;
 
 public class CompressImage {
-    public static void compressImage(URL poster, OutputStream outputStream) throws IOException, URISyntaxException {
-        File imageFile = Paths.get(poster.toURI()).toFile();
-
-        InputStream inputStream = new FileInputStream(imageFile);
+    public static void compressImage(File poster, OutputStream outputStream) throws IOException, URISyntaxException {
+        InputStream inputStream = new FileInputStream(poster);
 
         float imageQuality = IMAGE_QUALITY;
 

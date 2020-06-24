@@ -16,4 +16,12 @@ public interface UserService extends UserDetailsService {
     User getUserByUsername(String username);
 
     User getById(int id);
+
+    User ban(User user);
+
+    Set<User> getBannedUsers();
+
+    User getUserByIpAddress(String ipAddress);
+
+    boolean getIsEnabledByUserId(int id);
 }

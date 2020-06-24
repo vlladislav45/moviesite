@@ -1,8 +1,14 @@
 package com.filmi3k.movies.config;
 
+/**
+ * @author Vladislav Enev
+ */
 public class Config {
+    //Main resource directory
+    public static final String BASE_DIR = "/static";
+
     //Movie stream properties
-    public static final String VIDEO = "/static/movies/";
+    public static final String VIDEO = BASE_DIR + "/movies/";
 
     public static final String CONTENT_TYPE = "Content-Type";
     public static final String CONTENT_LENGTH = "Content-Length";
@@ -14,6 +20,12 @@ public class Config {
 
     // Poster quality
     public static final float IMAGE_QUALITY = 0.3f; //default is 30 percent from 100
+
+    //Check IP address
+    public static final String CHECK_IP = "http://checkip.amazonaws.com";
+
+    //Whitelist
+    public static final String WHITELIST = "/whitelist.txt";
 
     public Config() {
     }

@@ -9,7 +9,7 @@ public class UserRegisterBindingModel {
 
     private String confirmPassword;
 
-    private String gender;
+    private String ipAddress;
 
     public UserRegisterBindingModel() {}
 
@@ -45,11 +45,11 @@ public class UserRegisterBindingModel {
         this.email = email;
     }
 
-    public String getGender() {
-        return gender;
+    public String getIpAddress() {
+        return ipAddress;
     }
 
-    public void setGender(String gender) {
-        this.gender = gender;
+    public void setIpAddress(String ipAddress) {
+        this.ipAddress = ipAddress;
     }
 }

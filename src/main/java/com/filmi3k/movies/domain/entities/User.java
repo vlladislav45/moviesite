@@ -1,5 +1,6 @@
 package com.filmi3k.movies.domain.entities;
 
+import com.filmi3k.movies.domain.entities.enums.BanAccount;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
@@ -18,7 +19,7 @@ public class User extends BaseEntity implements UserDetails {
     @Column(name = "email", length = 50, nullable = false, unique = true)
     private String email;
 
-    @Column(name = "username", length = 13, nullable = false, unique = true)
+    @Column(name = "username", length = 20, nullable = false, unique = true)
     private String username;
 
     @Column(name = "password", nullable = false)
@@ -27,8 +28,8 @@ public class User extends BaseEntity implements UserDetails {
     @Column(name = "created_time", nullable = false)
     private LocalDateTime createdTime;
 
-    @ManyToOne(targetEntity = Gender.class, fetch = FetchType.EAGER)
-    @JoinColumn(name = "gender", nullable = false)
+    @ManyToOne(targetEntity = Gender.class, fetch = FetchType.LAZY)
+    @JoinColumn(name = "gender", nullable = true)
     private Gender gender;
 
     @ManyToMany(targetEntity = UserRole.class, fetch = FetchType.EAGER)
@@ -54,6 +55,9 @@ public class User extends BaseEntity implements UserDetails {
     private boolean isCredentialsNonExpired;
 
     private boolean isEnabled;
+
+    @Column(name = "ip_address", nullable = true)
+    private String ipAddress;
 
     public User() {
         authorities = new ArrayList<>();
@@ -135,7 +139,7 @@ public class User extends BaseEntity implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return isEnabled;
     }
 
     public void setAccountNonExpired(boolean accountNonExpired) {
@@ -152,5 +156,13 @@ public class User extends BaseEntity implements UserDetails {
 
     public void setEnabled(boolean enabled) {
         isEnabled = enabled;
+    }
+
+    public String getIpAddress() {
+        return ipAddress;
+    }
+
+    public void setIpAddress(String ipAddress) {
+        this.ipAddress = ipAddress;
     }
 }

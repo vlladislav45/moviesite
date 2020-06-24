@@ -2,11 +2,14 @@ package com.filmi3k.movies.services.impl;
 
 import com.filmi3k.movies.domain.entities.User;
 import com.filmi3k.movies.domain.entities.UserRole;
+import com.filmi3k.movies.domain.entities.enums.BanAccount;
 import com.filmi3k.movies.models.binding.UserRegisterBindingModel;
 import com.filmi3k.movies.repository.api.GenderRepository;
 import com.filmi3k.movies.repository.api.RoleRepository;
 import com.filmi3k.movies.repository.api.UserRepository;
 import com.filmi3k.movies.services.base.UserService;
+import com.filmi3k.movies.utils.FileParser;
+import com.filmi3k.movies.utils.getIPAddress;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -36,7 +39,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean add(UserRegisterBindingModel userRegisterBindingModel) {
         User userEntity = this.modelMapper.map(userRegisterBindingModel, User.class);
-        userEntity.setGender(genderRepository.findByGenderName(userRegisterBindingModel.getGender()));
+        try {
+            userEntity.setIpAddress(getIPAddress.getIp());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         userEntity.setCreatedTime(userEntity.getDateTimeCreated());
 
         userEntity.setPassword(this.bCryptPasswordEncoder.encode(userEntity.getPassword()));
@@ -92,5 +99,35 @@ public class UserServiceImpl implements UserService {
         }else {
             throw new UsernameNotFoundException("Username not found");
         }
+    }
+
+
+    @Override
+    public User ban(User user) {
+        user.setEnabled(BanAccount.YES.toBoolean());
+        userRepository.save(user);
+
+        FileParser parser = FileParser.initialize();
+        parser.addBannedIPAddress(user.getIpAddress()); // To whitelist
+
+        if(userRepository.getIsEnabledByUserId(user.getUserId()) == BanAccount.YES.toBoolean()) {
+            return user;
+        }
+        return null;
+    }
+
+    @Override
+    public Set<User> getBannedUsers() {
+        return userRepository.getAllByIsEnabled(BanAccount.YES.toBoolean());
+    }
+
+    @Override
+    public User getUserByIpAddress(String ipAddress) {
+        return userRepository.getUserByIpAddress(ipAddress);
+    }
+
+    @Override
+    public boolean getIsEnabledByUserId(int id) {
+        return userRepository.getIsEnabledByUserId(id);
     }
 }
