@@ -1,21 +1,28 @@
 package com.filmi3k.movies.models.view;
 
+import com.filmi3k.movies.domain.entities.Actor;
 import com.filmi3k.movies.domain.entities.Movie;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 public class MovieViewModel {
-    private int id;
+    private int movieId;
     private String movieName;
-    private int year;
-    private String posterName;
+    private int movieYear;
     private int movieViews;
     private double movieRating;
+    private String directorName;
+    List<String> actorNames;
 
-    public int getId() {
-        return id;
+    public MovieViewModel() { }
+
+    public int getMovieId() {
+        return movieId;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setMovieId(int movieId) {
+        this.movieId = movieId;
     }
 
     public String getMovieName() {
@@ -26,20 +33,28 @@ public class MovieViewModel {
         this.movieName = movieName;
     }
 
-    public int getYear() {
-        return year;
+    public int getMovieYear() {
+        return movieYear;
     }
 
-    public void setYear(int year) {
-        this.year = year;
+    public void setMovieYear(int movieYear) {
+        this.movieYear = movieYear;
     }
 
-    public String getPosterName() {
-        return posterName;
+    public String getDirectorName() {
+        return directorName;
     }
 
-    public void setPosterName(String posterName) {
-        this.posterName = posterName;
+    public void setDirectorName(String directorName) {
+        this.directorName = directorName;
+    }
+
+    public List<String> getActorNames() {
+        return actorNames;
+    }
+
+    public void setActorNames(List<String> actorNames) {
+        this.actorNames = actorNames;
     }
 
     public int getMovieViews() {
@@ -59,15 +74,14 @@ public class MovieViewModel {
     }
 
     public static MovieViewModel toViewModel(Movie movie) {
-        //TODO: Query for these properties from the main entity
         MovieViewModel viewModel = new MovieViewModel();
-        viewModel.id = movie.getMovieId();
+        viewModel.movieId = movie.getMovieId();
         viewModel.movieName = movie.getMovieName();
-        viewModel.year = movie.getMovieYear();
-        //viewModel.genres = movie.getMovieGenres().stream().map(MovieGenre::getMovieGenreName).collect(Collectors.toList());
-        viewModel.posterName = movie.getPoster().getPosterName();
-        viewModel.movieViews = movie.getMovieViews();
+        viewModel.movieYear = movie.getMovieYear();
         viewModel.movieRating = movie.getMovieRating();
+        viewModel.movieViews = movie.getMovieViews();
+        viewModel.directorName = movie.getMovieDirector().getDirectorName();
+        viewModel.actorNames = movie.getActors().stream().map(Actor::getActorName).collect(Collectors.toList());
 
         return viewModel;
     }
