@@ -12,6 +12,8 @@ public class MovieViewModel {
     private int movieYear;
     private int movieViews;
     private double movieRating;
+    private String movieSummary;
+    private String posterName;
     private String directorName;
     List<String> actorNames;
 
@@ -41,22 +43,6 @@ public class MovieViewModel {
         this.movieYear = movieYear;
     }
 
-    public String getDirectorName() {
-        return directorName;
-    }
-
-    public void setDirectorName(String directorName) {
-        this.directorName = directorName;
-    }
-
-    public List<String> getActorNames() {
-        return actorNames;
-    }
-
-    public void setActorNames(List<String> actorNames) {
-        this.actorNames = actorNames;
-    }
-
     public int getMovieViews() {
         return movieViews;
     }
@@ -73,6 +59,38 @@ public class MovieViewModel {
         this.movieRating = movieRating;
     }
 
+    public String getMovieSummary() {
+        return movieSummary;
+    }
+
+    public void setMovieSummary(String movieSummary) {
+        this.movieSummary = movieSummary;
+    }
+
+    public String getPosterName() {
+        return posterName;
+    }
+
+    public void setPosterName(String posterName) {
+        this.posterName = posterName;
+    }
+
+    public String getDirectorName() {
+        return directorName;
+    }
+
+    public void setDirectorName(String directorName) {
+        this.directorName = directorName;
+    }
+
+    public List<String> getActorNames() {
+        return actorNames;
+    }
+
+    public void setActorNames(List<String> actorNames) {
+        this.actorNames = actorNames;
+    }
+
     public static MovieViewModel toViewModel(Movie movie) {
         MovieViewModel viewModel = new MovieViewModel();
         viewModel.movieId = movie.getMovieId();
@@ -80,6 +98,8 @@ public class MovieViewModel {
         viewModel.movieYear = movie.getMovieYear();
         viewModel.movieRating = movie.getMovieRating();
         viewModel.movieViews = movie.getMovieViews();
+        viewModel.movieSummary = movie.getMovieSummary();
+        viewModel.posterName = movie.getPoster().getPosterName();
         viewModel.directorName = movie.getMovieDirector().getDirectorName();
         viewModel.actorNames = movie.getActors().stream().map(Actor::getActorName).collect(Collectors.toList());
 

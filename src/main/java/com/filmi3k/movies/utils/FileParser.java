@@ -23,7 +23,7 @@ public class FileParser {
 
             return instance;
         }
-        return null;
+        return instance;
     }
 
     public void parseBannedIPAddresses(List<String> bannedIPs) throws FileNotFoundException {

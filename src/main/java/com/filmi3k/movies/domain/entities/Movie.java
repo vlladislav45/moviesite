@@ -39,6 +39,9 @@ public class Movie {
     @Column(name = "movie_rating", nullable = false)
     private double movieRating;
 
+    @Column(name = "movie_summary", nullable = false)
+    private String movieSummary;
+
     @ManyToMany(targetEntity = Actor.class, fetch = FetchType.EAGER)
     @JoinTable(
             name = "movies_actors",
@@ -110,6 +113,14 @@ public class Movie {
 
     public void setMovieRating(double movieRating) {
         this.movieRating = movieRating;
+    }
+
+    public String getMovieSummary() {
+        return movieSummary;
+    }
+
+    public void setMovieSummary(String movieSummary) {
+        this.movieSummary = movieSummary;
     }
 
     public Set<Actor> getActors() {

@@ -17,6 +17,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.io.FileNotFoundException;
 import java.util.*;
 
 @Service
@@ -103,12 +104,11 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public User ban(User user) {
+    public User ban(User user, FileParser fileParser) {
         user.setEnabled(BanAccount.YES.toBoolean());
         userRepository.save(user);
 
-        FileParser parser = FileParser.initialize();
-        parser.addBannedIPAddress(user.getIpAddress()); // To whitelist
+        if(fileParser != null) fileParser.addBannedIPAddress(user.getIpAddress()); // To whitelist
 
         if(userRepository.getIsEnabledByUserId(user.getUserId()) == BanAccount.YES.toBoolean()) {
             return user;
@@ -129,5 +129,25 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean getIsEnabledByUserId(int id) {
         return userRepository.getIsEnabledByUserId(id);
+    }
+
+    @Override
+    public void banUsersByIP(FileParser fileParser) {
+        List<String> bannedIPs = new ArrayList<>();
+        try {
+            assert fileParser != null;
+            fileParser.parseBannedIPAddresses(bannedIPs);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        for(String ip : bannedIPs) {
+            if(userRepository.getUserByIpAddress(ip) != null) {
+                User user = userRepository.getUserByIpAddress(ip);
+
+                if (userRepository.getIsEnabledByUserId(user.getUserId())){
+                    this.ban(user, fileParser);
+                }
+            }
+        }
     }
 }

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.io.*;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Files;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -62,11 +63,22 @@ public class MovieController extends BaseController {
     }
 
     @GetMapping("/movies/single/{id}")
-    @ResponseBody
     public ResponseEntity<MovieViewModel> getMovieInformation(@PathVariable int id) {
         ResponseEntity<MovieViewModel> movie = ResponseEntity.ok()
                 .body(MovieViewModel.toViewModel(movieService.findById(id)));
         return movie;
+    }
+
+    @GetMapping("movies/single/hdPoster/{posterName}")
+    public ResponseEntity<byte[]> getHdPoster(@PathVariable String posterName) throws IOException {
+        URL url = getClass().getResource(BASE_DIR + "/posters/" + posterName);
+        File imagePoster = new File(url.getFile());
+        byte[] fileContent = Files.readAllBytes(imagePoster.toPath());
+
+        ResponseEntity<byte[]> retVal = ResponseEntity.ok()
+                .contentType(MediaType.valueOf(MediaType.IMAGE_JPEG_VALUE))
+                .body(fileContent);
+        return retVal;
     }
 
 }
