@@ -2,14 +2,12 @@ package com.filmi3k.movies.services.impl;
 
 import com.filmi3k.movies.domain.entities.User;
 import com.filmi3k.movies.domain.entities.UserRole;
-import com.filmi3k.movies.domain.entities.enums.BanAccount;
 import com.filmi3k.movies.models.binding.UserRegisterBindingModel;
 import com.filmi3k.movies.repository.api.GenderRepository;
 import com.filmi3k.movies.repository.api.RoleRepository;
 import com.filmi3k.movies.repository.api.UserRepository;
 import com.filmi3k.movies.services.base.UserService;
 import com.filmi3k.movies.utils.FileParser;
-import com.filmi3k.movies.utils.getIPAddress;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -40,11 +38,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean add(UserRegisterBindingModel userRegisterBindingModel) {
         User userEntity = this.modelMapper.map(userRegisterBindingModel, User.class);
-        try {
-            userEntity.setIpAddress(getIPAddress.getIp());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        userEntity.setIpAddress("127.0.0.1");
         userEntity.setCreatedTime(userEntity.getDateTimeCreated());
 
         userEntity.setPassword(this.bCryptPasswordEncoder.encode(userEntity.getPassword()));
@@ -105,12 +99,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User ban(User user, FileParser fileParser) {
-        user.setEnabled(BanAccount.YES.toBoolean());
+        user.setEnabled(false);
         userRepository.save(user);
 
         if(fileParser != null) fileParser.addBannedIPAddress(user.getIpAddress()); // To whitelist
 
-        if(userRepository.getIsEnabledByUserId(user.getUserId()) == BanAccount.YES.toBoolean()) {
+        if(!userRepository.isEnabledUser(user.getUserId())) {
             return user;
         }
         return null;
@@ -118,7 +112,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Set<User> getBannedUsers() {
-        return userRepository.getAllByIsEnabled(BanAccount.YES.toBoolean());
+        return userRepository.getAllByIsEnabled(false);
     }
 
     @Override
@@ -127,16 +121,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean getIsEnabledByUserId(int id) {
-        return userRepository.getIsEnabledByUserId(id);
+    public boolean isEnabledUser(int id) {
+        return userRepository.isEnabledUser(id);
     }
 
     @Override
     public void banUsersByIP(FileParser fileParser) {
         List<String> bannedIPs = new ArrayList<>();
         try {
-            assert fileParser != null;
-            fileParser.parseBannedIPAddresses(bannedIPs);
+            if(fileParser != null) fileParser.parseBannedIPAddresses(bannedIPs);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
@@ -144,7 +137,7 @@ public class UserServiceImpl implements UserService {
             if(userRepository.getUserByIpAddress(ip) != null) {
                 User user = userRepository.getUserByIpAddress(ip);
 
-                if (userRepository.getIsEnabledByUserId(user.getUserId())){
+                if (userRepository.isEnabledUser(user.getUserId())){
                     this.ban(user, fileParser);
                 }
             }

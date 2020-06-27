@@ -20,12 +20,11 @@ public class MovieGenreServiceImpl implements MovieGenreService {
 
     @Override
     public Set<MovieGenre> findAll() {
-        return (HashSet<MovieGenre>) movieGenreRepository.findAll();
+        return new HashSet<>(movieGenreRepository.findAll());
     }
 
     @Override
     public MovieGenre findByMovieType(String genre) {
-        MovieGenre movieGenre = this.movieGenreRepository.findByMovieGenreName(genre);
-        return movieGenre;
+        return this.movieGenreRepository.findByMovieGenreName(genre);
     }
 }

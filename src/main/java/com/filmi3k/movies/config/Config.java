@@ -21,9 +21,6 @@ public class Config {
     // Poster quality
     public static final float IMAGE_QUALITY = 0.3f; //default is 30 percent from 100
 
-    //Check IP address
-    public static final String CHECK_IP = "http://checkip.amazonaws.com";
-
     //Whitelist
     public static final String WHITELIST = "/whitelist.txt";
 

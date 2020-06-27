@@ -12,8 +12,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.servlet.ServletContext;
-import javax.servlet.ServletContextEvent;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,7 +37,7 @@ public class UserServiceTest {
             if(userService.getUserByIpAddress(ip) != null) {
                 User user = userService.getUserByIpAddress(ip);
 
-                if (userService.getIsEnabledByUserId(user.getUserId())){
+                if (userService.isEnabledUser(user.getUserId())){
                     assert userService.ban(user,parser) != null;
                     parser.addBannedIPAddress(ip);
                 }

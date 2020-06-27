@@ -1,10 +1,8 @@
 package com.filmi3k.movies.domain.entities;
 
-import com.filmi3k.movies.domain.entities.enums.BanAccount;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 

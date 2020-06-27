@@ -3,11 +3,13 @@ package com.filmi3k.movies.controllers;
 import com.filmi3k.movies.models.binding.UserRegisterBindingModel;
 import com.filmi3k.movies.services.base.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
-@Controller
+@RestController
 public class UserController extends BaseController {
     private final UserService userService;
 
@@ -16,22 +18,39 @@ public class UserController extends BaseController {
         this.userService = userService;
     }
 
-    @GetMapping("/register")
-    public String register() { return "register"; }
-
-    @PostMapping("/register")
-    public ModelAndView registerConfirm(@ModelAttribute UserRegisterBindingModel userRegisterBindingModel) {
-        //(Binding model) that means is binding front-end with our back-end binding model
+    @PostMapping("/register_user")
+    public ResponseEntity<String> register(@RequestBody UserRegisterBindingModel userRegisterBindingModel) {
         if(!userRegisterBindingModel.getPassword().equals(userRegisterBindingModel.getConfirmPassword())) {
-            return view("register");
+            return new ResponseEntity<>(
+                    "The password does not match the confirmation password",
+                    HttpStatus.OK
+            );
         }else {
             this.userService.add(userRegisterBindingModel);
-            return view("login");
         }
+        return new ResponseEntity<>(
+                "NULL",
+                HttpStatus.OK
+        );
     }
 
-    @GetMapping("/login")
-    public String login() {
+    @GetMapping("/register/userAvailable/{username}")
+    public ResponseEntity<String> getUsernameIfExist(@PathVariable String username) {
+        if(userService.getUserByUsername(username) != null) {
+//            return new ResponseEntity<>(
+//                    "true",
+//                    HttpStatus.OK);
+            ResponseEntity<String> usernameAvailable = ResponseEntity.ok()
+                    .body("true");
+            return usernameAvailable;
+        }
+        ResponseEntity<String> usernameError = ResponseEntity.ok()
+                .body("false");
+        return usernameError;
+    }
+
+    @GetMapping
+    public String getLogin() {
         return "login";
     }
 }

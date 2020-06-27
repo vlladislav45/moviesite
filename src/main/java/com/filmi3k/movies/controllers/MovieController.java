@@ -1,10 +1,11 @@
 package com.filmi3k.movies.controllers;
 
 import com.filmi3k.movies.domain.entities.Movie;
+import com.filmi3k.movies.domain.entities.MovieGenre;
 import com.filmi3k.movies.models.view.MoviePosterViewModel;
 import com.filmi3k.movies.models.view.MovieViewModel;
+import com.filmi3k.movies.services.base.MovieGenreService;
 import com.filmi3k.movies.services.base.MovieService;
-import com.filmi3k.movies.services.base.UserService;
 import com.filmi3k.movies.utils.JSONparser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -16,6 +17,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.filmi3k.movies.config.Config.BASE_DIR;
@@ -24,10 +26,12 @@ import static com.filmi3k.movies.utils.CompressImage.compressImage;
 @RestController
 public class MovieController extends BaseController {
     private final MovieService movieService;
+    private final MovieGenreService movieGenreService;
 
     @Autowired
-    public MovieController(MovieService movieService) {
+    public MovieController(MovieService movieService, MovieGenreService movieGenreService) {
         this.movieService = movieService;
+        this.movieGenreService = movieGenreService;
     }
 
     @GetMapping("/movies")
@@ -81,4 +85,10 @@ public class MovieController extends BaseController {
         return retVal;
     }
 
+    @GetMapping("movies/genres")
+    public ResponseEntity<Set<MovieGenre>> getGenres() {
+        ResponseEntity<Set<MovieGenre>> genres = ResponseEntity.ok()
+                .body(movieGenreService.findAll());
+        return genres;
+    }
 }
