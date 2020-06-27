@@ -36,68 +36,61 @@ public class AdminController extends BaseController {
         this.actorService = actorService;
     }
 
-    @GetMapping("/admin/add_movie")
-    public ModelAndView addMovie(Principal principal, ModelAndView modelAndView) {
-        modelAndView.addObject("username",  principal.getName());
-
-        return view("add_movie", modelAndView);
-    }
-
-    @PostMapping("/admin/add_movie")
-    public void addMovieToDB(@RequestParam Map<String,String> requestParams, @RequestParam("file") MultipartFile file) throws IOException {
-        boolean isMovieParametersAlright = false;
-        String movieName = "";
-        int movieRunningTime = 0;
-        int movieYear = 0;
-        String movieDirector = "";
-        String movieGenre = "";
-        String movieActor = "";
-        if(requestParams.get("movieName") != null && requestParams.get("movieRunningTime") != null
-                && requestParams.get("movieYear") != null && requestParams.get("movieDirector") != null
-        &&  requestParams.get("movieActor") != null &&  requestParams.get("movieType") != null) {
-            Movie movie = this.movieService.findByName(requestParams.get("movieName"));
-            if(movie == null) {
-                movieName = requestParams.get("movieName");
-                isMovieParametersAlright = true;
-            }
-            MovieGenre movieType = this.movieGenreService.findByMovieType(requestParams.get("movieType"));
-            if(movieType != null) {
-                movieGenre = requestParams.get("movieType");
-                isMovieParametersAlright = true;
-            }
-            movieRunningTime= Integer.parseInt(requestParams.get("movieRunningTime"));
-            movieYear=Integer.parseInt(requestParams.get("movieYear"));
-
-            Director director = this.directorService.findByName(requestParams.get("movieDirector"));
-            if(director != null) {
-                movieDirector = director.getDirectorName();
-                isMovieParametersAlright = true;
-            }
-
-            Actor actor = this.actorService.findByName(requestParams.get("movieActor"));
-            if(actor != null) {
-                movieActor = requestParams.get("movieActor");
-                isMovieParametersAlright = true;
-            }
-        }
-
-        if(file != null && isMovieParametersAlright) {
-            byte[] bytes = file.getBytes();
-            Path path = Paths.get(folder + file.getOriginalFilename());
-            Files.write(path, bytes);
-
-            Movie movie = new Movie();
-            movie.setMovieName(movieName);
-            movie.setMovieViews(movieRunningTime);
-            movie.setMovieYear(movieYear);
-            movie.setMovieDirector(directorService.findByName(movieDirector));
-            Actor actor = actorService.findByName(movieActor);
-            movie.getActors().add(actor);
-            MovieGenre genre = movieGenreService.findByMovieType(movieGenre);
-            movie.getMovieGenres().add(genre);
-            Poster poster = new Poster(file.getOriginalFilename(), movie);
-            movie.setPoster(poster);
-            movieService.add(movie);
-        }
-    }
+//    @PostMapping("/admin/add_movie")
+//    public void addMovieToDB(@RequestParam Map<String,String> requestParams, @RequestParam("file") MultipartFile file) throws IOException {
+//        boolean isMovieParametersAlright = false;
+//        String movieName = "";
+//        int movieRunningTime = 0;
+//        int movieYear = 0;
+//        String movieDirector = "";
+//        String movieGenre = "";
+//        String movieActor = "";
+//        if(requestParams.get("movieName") != null && requestParams.get("movieRunningTime") != null
+//                && requestParams.get("movieYear") != null && requestParams.get("movieDirector") != null
+//        &&  requestParams.get("movieActor") != null &&  requestParams.get("movieType") != null) {
+//            Movie movie = this.movieService.findByName(requestParams.get("movieName"));
+//            if(movie == null) {
+//                movieName = requestParams.get("movieName");
+//                isMovieParametersAlright = true;
+//            }
+//            MovieGenre movieType = this.movieGenreService.findByMovieType(requestParams.get("movieType"));
+//            if(movieType != null) {
+//                movieGenre = requestParams.get("movieType");
+//                isMovieParametersAlright = true;
+//            }
+//            movieRunningTime= Integer.parseInt(requestParams.get("movieRunningTime"));
+//            movieYear=Integer.parseInt(requestParams.get("movieYear"));
+//
+//            Director director = this.directorService.findByName(requestParams.get("movieDirector"));
+//            if(director != null) {
+//                movieDirector = director.getDirectorName();
+//                isMovieParametersAlright = true;
+//            }
+//
+//            Actor actor = this.actorService.findByName(requestParams.get("movieActor"));
+//            if(actor != null) {
+//                movieActor = requestParams.get("movieActor");
+//                isMovieParametersAlright = true;
+//            }
+//        }
+//
+//        if(file != null && isMovieParametersAlright) {
+//            byte[] bytes = file.getBytes();
+//            Path path = Paths.get(folder + file.getOriginalFilename());
+//            Files.write(path, bytes);
+//
+//            Movie movie = new Movie();
+//            movie.setMovieName(movieName);
+//            movie.setMovieViews(movieRunningTime);
+//            movie.setMovieYear(movieYear);
+//            movie.setMovieDirector(directorService.findByName(movieDirector));
+//            Actor actor = actorService.findByName(movieActor);
+//            movie.getActors().add(actor);
+//            MovieGenre genre = movieGenreService.findByMovieType(movieGenre);
+//            movie.getMovieGenres().add(genre);
+//            Poster poster = new Poster(file.getOriginalFilename(), movie);
+//            movie.setPoster(poster);
+//            movieService.add(movie);
+//        }
+//    }
 }

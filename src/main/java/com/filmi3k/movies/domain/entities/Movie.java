@@ -1,6 +1,7 @@
 package com.filmi3k.movies.domain.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.util.HashSet;
@@ -40,6 +41,7 @@ public class Movie {
     private double movieRating;
 
     @Column(name = "movie_summary", nullable = false)
+    @Type(type = "text")
     private String movieSummary;
 
     @ManyToMany(targetEntity = Actor.class, fetch = FetchType.EAGER)

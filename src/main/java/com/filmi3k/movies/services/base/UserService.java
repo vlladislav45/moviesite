@@ -24,7 +24,7 @@ public interface UserService extends UserDetailsService {
 
     User getUserByIpAddress(String ipAddress);
 
-    boolean getIsEnabledByUserId(int id);
+    boolean isEnabledUser(int id);
 
     void banUsersByIP(FileParser fileParser);
 

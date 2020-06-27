@@ -42,7 +42,7 @@ public class MovieRepoTest {
         movie.setPoster(new Poster("test.jpg",movie));
 
         MovieGenre horror = movieGenreRepository.findByMovieGenreName("Horror");
-    MovieGenre adventure = movieGenreRepository.findByMovieGenreName("Adventure");
+        MovieGenre adventure = movieGenreRepository.findByMovieGenreName("Adventure");
         movie.getMovieGenres().add(horror);
         movie.getMovieGenres().add(adventure);
 
@@ -85,5 +85,11 @@ public class MovieRepoTest {
         Assert.assertEquals("Movie is not exist", movie, actual);
     }
 
-
+    @Test
+    void takeActors() {
+       Movie movie = movieRepository.findByMovieName("Fast and Furious 1");
+       for(Actor actor : movie.getActors()) {
+           System.out.println(actor.getActorName());
+       }
+    }
 }

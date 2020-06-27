@@ -13,7 +13,7 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 
     @Query(value = "SELECT is_enabled FROM user WHERE user_id=?",
            nativeQuery=true)
-    boolean getIsEnabledByUserId(int id);
+    boolean isEnabledUser(int id);
 
     Set<User> getAllByIsEnabled(boolean isEnabled);
 
