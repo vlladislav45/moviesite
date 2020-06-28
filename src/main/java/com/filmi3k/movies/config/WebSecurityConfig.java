@@ -71,7 +71,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             @Override
             public void onAuthenticationFailure(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, AuthenticationException e) throws IOException, ServletException {
                 Map<String, String> error = new HashMap<>();
-                error.put("Error", e.getLocalizedMessage());
+                error.put("еrror", e.getLocalizedMessage());
                 httpServletResponse.getWriter().write(JSONparser.toJson(error));
             }
         };
