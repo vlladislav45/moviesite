@@ -30,21 +30,6 @@ public class UserServiceTest {
     @Autowired
     private UserService userService;
 
-    @Autowired
-    private BCryptPasswordEncoder bCryptPasswordEncoder;
-
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private RoleRepository roleRepository;
-
-    @Autowired
-    private UserInfoRepository userInfoRepository;
-
-    @Autowired
-    private UserPreferencesRepository userPreferencesRepository;
-
     @Test
     @Transactional
     public void banUsersByIP() {

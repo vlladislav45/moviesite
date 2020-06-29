@@ -71,11 +71,4 @@ public class UserRepoTest {
         int id = 3;
         Assert.assertTrue(userRepository.isEnabledUser(id));
     }
-
-    @Test
-    @Transactional
-    void CheckUserIsBannedById() {
-        int id = 3;
-        Assert.assertNotNull(userRepository.isEnabledUser(id));
-    }
 }
