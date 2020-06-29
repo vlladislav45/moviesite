@@ -1,5 +1,7 @@
 package com.filmi3k.movies.domain.entities;
 
+import lombok.NoArgsConstructor;
+
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
@@ -8,6 +10,7 @@ import java.util.*;
 
 @Entity
 @Table(name = "user")
+@NoArgsConstructor
 public class User extends BaseEntity implements UserDetails {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
@@ -26,9 +29,8 @@ public class User extends BaseEntity implements UserDetails {
     @Column(name = "created_time", nullable = false)
     private LocalDateTime createdTime;
 
-    @ManyToOne(targetEntity = Gender.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "gender", nullable = true)
-    private Gender gender;
+    @Column(name = "ip_address", nullable = true)
+    private String ipAddress;
 
     @ManyToMany(targetEntity = UserRole.class, fetch = FetchType.EAGER)
     @JoinTable(
@@ -36,14 +38,16 @@ public class User extends BaseEntity implements UserDetails {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
-    private List<UserRole> authorities;
+    private List<UserRole> authorities = new ArrayList<>();
 
-    //MappedBy Variable user by type User in UserImage class
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<UserImage> userImages = new ArrayList<>();
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    private UserPreferences userPreferences;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    private UserInfo userInfo;
 
     //MappedBy Variable userReview by type User in Review class
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private List<Comment> comments = new ArrayList<>();
 
     private boolean isAccountNonExpired;
@@ -53,13 +57,6 @@ public class User extends BaseEntity implements UserDetails {
     private boolean isCredentialsNonExpired;
 
     private boolean isEnabled;
-
-    @Column(name = "ip_address", nullable = true)
-    private String ipAddress;
-
-    public User() {
-        authorities = new ArrayList<>();
-    }
 
     public int getUserId() {
         return userId;
@@ -75,31 +72,6 @@ public class User extends BaseEntity implements UserDetails {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public LocalDateTime getCreatedTime() {
-        return createdTime;
-    }
-
-    public void setCreatedTime(LocalDateTime createdTime) {
-        this.createdTime = createdTime;
-    }
-
-    public Gender getGender() {
-        return gender;
-    }
-
-    public void setGender(Gender gender) {
-        this.gender = gender;
-    }
-
-    @Override
-    public List<UserRole> getAuthorities() {
-        return this.authorities;
-    }
-
-    public void setAuthorities(List<UserRole> authorities) {
-        this.authorities = authorities;
     }
 
     @Override
@@ -118,6 +90,31 @@ public class User extends BaseEntity implements UserDetails {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public LocalDateTime getCreatedTime() {
+        return createdTime;
+    }
+
+    public void setCreatedTime(LocalDateTime createdTime) {
+        this.createdTime = createdTime;
+    }
+
+    public String getIpAddress() {
+        return ipAddress;
+    }
+
+    public void setIpAddress(String ipAddress) {
+        this.ipAddress = ipAddress;
+    }
+
+    @Override
+    public List<UserRole> getAuthorities() {
+        return this.authorities;
+    }
+
+    public void setAuthorities(List<UserRole> authorities) {
+        this.authorities = authorities;
     }
 
     @Override
@@ -148,19 +145,27 @@ public class User extends BaseEntity implements UserDetails {
         isAccountNonLocked = accountNonLocked;
     }
 
-    public void setCredentialsNonExpired(boolean credentialsNonExpired) {
-        isCredentialsNonExpired = credentialsNonExpired;
-    }
+    public void setCredentialsNonExpired(boolean credentialsNonExpired) { isCredentialsNonExpired = credentialsNonExpired; }
 
     public void setEnabled(boolean enabled) {
         isEnabled = enabled;
     }
 
-    public String getIpAddress() {
-        return ipAddress;
-    }
+    public UserPreferences getUserPreferences() { return userPreferences; }
 
-    public void setIpAddress(String ipAddress) {
-        this.ipAddress = ipAddress;
+    public void setUserPreferences(UserPreferences userPreferences) { this.userPreferences = userPreferences; }
+
+    public UserInfo getUserInfo() { return userInfo; }
+
+    public void setUserInfo(UserInfo userInfo) { this.userInfo = userInfo; }
+
+    public List<Comment> getComments() { return comments; }
+
+    public void setComments(List<Comment> comments) { this.comments = comments; }
+
+    public User(String email, String username, String password) {
+        this.email = email;
+        this.username = username;
+        this.password = password;
     }
 }

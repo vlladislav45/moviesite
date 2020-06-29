@@ -24,6 +24,9 @@ public class Config {
     //Whitelist
     public static final String WHITELIST = "/whitelist.txt";
 
-    public Config() {
-    }
+    //User properties
+    public static final String BASE_THEME = "BASE_THEME";
+    public static final String DARK_THEME = "DARK_THEME";
+
+    public Config() { }
 }

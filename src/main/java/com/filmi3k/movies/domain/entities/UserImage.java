@@ -22,10 +22,10 @@ public class UserImage {
     @Column(name = "image_name", nullable = false, unique = true)
     private String imageName;
 
-    @ManyToOne(targetEntity = User.class)
-    @JoinColumn(name = "image_user_id", nullable = false)
-    private User user;
-
     @Column(name = "image_created", nullable = false)
     private LocalDateTime imageCreated;
+
+    @ManyToOne(targetEntity = UserInfo.class)
+    @JoinColumn(name = "user_info_id", nullable = false)
+    private UserInfo userInfo;
 }

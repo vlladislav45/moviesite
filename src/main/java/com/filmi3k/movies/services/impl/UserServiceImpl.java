@@ -1,11 +1,11 @@
 package com.filmi3k.movies.services.impl;
 
 import com.filmi3k.movies.domain.entities.User;
+import com.filmi3k.movies.domain.entities.UserInfo;
+import com.filmi3k.movies.domain.entities.UserPreferences;
 import com.filmi3k.movies.domain.entities.UserRole;
 import com.filmi3k.movies.models.binding.UserRegisterBindingModel;
-import com.filmi3k.movies.repository.api.GenderRepository;
-import com.filmi3k.movies.repository.api.RoleRepository;
-import com.filmi3k.movies.repository.api.UserRepository;
+import com.filmi3k.movies.repository.api.*;
 import com.filmi3k.movies.services.base.UserService;
 import com.filmi3k.movies.utils.FileParser;
 import org.modelmapper.ModelMapper;
@@ -25,14 +25,18 @@ public class UserServiceImpl implements UserService {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final GenderRepository genderRepository;
     private final RoleRepository roleRepository;
+    private final UserPreferencesRepository userPreferencesRepository;
+    private final UserInfoRepository userInfoRepository;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, ModelMapper map, BCryptPasswordEncoder bCryptPasswordEncoder, GenderRepository genderRepository, RoleRepository roleRepository) {
+    public UserServiceImpl(UserRepository userRepository, ModelMapper map, BCryptPasswordEncoder bCryptPasswordEncoder, GenderRepository genderRepository, RoleRepository roleRepository, UserPreferencesRepository userPreferencesRepository, UserInfoRepository userInfoRepository) {
         this.userRepository = userRepository;
         this.modelMapper = map;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.genderRepository = genderRepository;
         this.roleRepository = roleRepository;
+        this.userPreferencesRepository = userPreferencesRepository;
+        this.userInfoRepository = userInfoRepository;
     }
 
     @Override
@@ -59,8 +63,12 @@ public class UserServiceImpl implements UserService {
             roles.add(roleRepository.getUserRoleByAuthority("USER"));
             userEntity.setAuthorities(roles);
         }
-
         this.userRepository.saveAndFlush(userEntity);
+
+        this.userInfoRepository.saveAndFlush(new UserInfo(userEntity)); //Create the relationship between User and User Info
+        this.userPreferencesRepository.saveAndFlush(new UserPreferences(userEntity)); // Create the relationship between User and User Preferences
+
+
         return true;
     }
 
