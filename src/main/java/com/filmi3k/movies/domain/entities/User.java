@@ -1,6 +1,7 @@
 package com.filmi3k.movies.domain.entities;
 
 import lombok.NoArgsConstructor;
+
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;

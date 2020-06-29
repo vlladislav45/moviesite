@@ -40,6 +40,7 @@ public class UserRepoTest {
     void addUser() {
         User user = new User("vladislavl3@abv.bg", "vladislavl3", "123456");
         user.setIpAddress("127.0.0.1");
+
         user.setCreatedTime(user.getDateTimeCreated());
 
         user.setPassword(this.bCryptPasswordEncoder.encode(user.getPassword()));
@@ -69,5 +70,12 @@ public class UserRepoTest {
     void CheckUserIsBannedById() {
         int id = 3;
         Assert.assertTrue(userRepository.isEnabledUser(id));
+    }
+
+    @Test
+    @Transactional
+    void CheckUserIsBannedById() {
+        int id = 3;
+        Assert.assertNotNull(userRepository.isEnabledUser(id));
     }
 }
