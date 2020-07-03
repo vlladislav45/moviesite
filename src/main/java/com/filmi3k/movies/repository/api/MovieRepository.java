@@ -21,6 +21,4 @@ public interface MovieRepository extends JpaRepository<Movie, Integer> {
     long count();
 
     Page<Movie> findAllByMovieGenres(MovieGenre movieGenre, Pageable pageable);
-
-    Set<Movie> getMoviesByMovieGenres(MovieGenre movieGenre);
 }
