@@ -1,17 +1,15 @@
 package com.filmi3k.movies.controllers;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.filmi3k.movies.domain.entities.Movie;
 import com.filmi3k.movies.domain.entities.MovieGenre;
 import com.filmi3k.movies.models.view.MoviePosterViewModel;
-import com.filmi3k.movies.models.view.MoviesFilterViewModel;
+import com.filmi3k.movies.filters.MoviesFilter;
 import com.filmi3k.movies.services.base.MovieGenreService;
 import com.filmi3k.movies.services.base.MovieService;
 import com.filmi3k.movies.utils.JSONparser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,10 +28,10 @@ public class MoviesFilterController {
     }
 
     @PostMapping("movies/filter")
-    public ResponseEntity<String> filteredMoviesByGenre(@RequestBody MoviesFilterViewModel moviesFilterViewModel, @RequestParam int page, @RequestParam int size) {
+    public ResponseEntity<String> filteredMoviesByGenre(@RequestBody MoviesFilter moviesFilter, @RequestParam int page, @RequestParam int size) {
         Set<MovieGenre> movieGenres = new HashSet<>();
-        for(int i = 0; i < moviesFilterViewModel.getGenreIds().size(); i++) {
-            movieGenres.add(movieGenreService.findById(moviesFilterViewModel.getGenreIds().get(i)));
+        for(int i = 0; i < moviesFilter.getGenreIds().size(); i++) {
+            movieGenres.add(movieGenreService.findById(moviesFilter.getGenreIds().get(i)));
         }
 
         Page<Movie> pageMovies = null;
