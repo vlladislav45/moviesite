@@ -8,6 +8,8 @@ import com.filmi3k.movies.services.base.MovieGenreService;
 import com.filmi3k.movies.services.base.MovieService;
 import com.filmi3k.movies.utils.JSONparser;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,8 +18,7 @@ import java.io.*;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.filmi3k.movies.config.Config.BASE_DIR;

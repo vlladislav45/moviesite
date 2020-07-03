@@ -7,5 +7,7 @@ import java.util.Set;
 public interface MovieGenreService {
     Set<MovieGenre> findAll();
 
+    MovieGenre findById(int id);
+
     MovieGenre findByMovieType(String genre);
 }
