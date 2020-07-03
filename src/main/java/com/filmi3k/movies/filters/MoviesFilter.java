@@ -1,11 +1,11 @@
-package com.filmi3k.movies.models.view;
+package com.filmi3k.movies.filters;
 
 import java.util.List;
 
-public class MoviesFilterViewModel {
+public class MoviesFilter {
     private List<Integer> genreIds;
 
-    MoviesFilterViewModel() { }
+    MoviesFilter() { }
 
     public List<Integer> getGenreIds() {
         return genreIds;
