@@ -1,6 +1,8 @@
 package com.filmi3k.movies.services.base;
 
 import com.filmi3k.movies.domain.entities.Movie;
+import com.filmi3k.movies.domain.entities.MovieGenre;
+import org.springframework.data.domain.Page;
 
 import java.util.Set;
 import java.util.List;
@@ -22,4 +24,6 @@ public interface MovieService {
     void update(Movie movie);
 
     void delete(Movie movie);
+
+    Page<Movie> browseMoviesByGenre(MovieGenre movieGenre, int page, int size);
 }

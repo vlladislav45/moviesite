@@ -16,11 +16,11 @@ public class Poster {
     @Column(name = "poster_name", nullable = false)
     private String posterName;
 
-    @OneToOne(targetEntity = Movie.class, fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(targetEntity = Movie.class)
     @JoinColumn(name = "movie_id", nullable = true, unique = true)
     private Movie movie;
 
-    @OneToOne(targetEntity = Anime.class, fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(targetEntity = Anime.class)
     @JoinColumn(name = "anime_id", nullable = true, unique = true)
     private Anime anime;
 

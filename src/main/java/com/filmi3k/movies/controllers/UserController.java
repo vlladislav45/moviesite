@@ -37,9 +37,6 @@ public class UserController extends BaseController {
     @GetMapping("/register/userAvailable/{username}")
     public ResponseEntity<String> getUsernameIfExist(@PathVariable String username) {
         if(userService.getUserByUsername(username) != null) {
-//            return new ResponseEntity<>(
-//                    "true",
-//                    HttpStatus.OK);
             ResponseEntity<String> usernameAvailable = ResponseEntity.ok()
                     .body("true");
             return usernameAvailable;

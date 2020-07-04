@@ -53,7 +53,7 @@ public class Movie {
     private Set<Actor> actors;
 
     @JsonIgnore
-    @OneToOne(mappedBy = "movie", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @OneToOne(mappedBy = "movie", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     private Poster poster;
 
     public Movie() {

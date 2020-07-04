@@ -51,16 +51,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .successHandler(getSuccessHandler())
                 .failureHandler(getFailureHandler())
             .and()
+                .logout()
+                .deleteCookies("JSESSIONID")
+                .permitAll()
+            .and()
                 .rememberMe()
-                .rememberMeParameter("rememberMe")
                 .key("remember")
                 .userDetailsService(this.userService)
-                .tokenValiditySeconds(10)
-            .and()
-                .logout()
-                .invalidateHttpSession(true)
-                .deleteCookies("remember")
-                .permitAll()
+                .tokenValiditySeconds(20)
             .and()
                 .exceptionHandling()
                 .accessDeniedPage("/unauthorized");
@@ -71,7 +69,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             @Override
             public void onAuthenticationFailure(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, AuthenticationException e) throws IOException, ServletException {
                 Map<String, String> error = new HashMap<>();
-                error.put("Error", e.getLocalizedMessage());
+                error.put("еrror", e.getLocalizedMessage());
                 httpServletResponse.getWriter().write(JSONparser.toJson(error));
             }
         };
