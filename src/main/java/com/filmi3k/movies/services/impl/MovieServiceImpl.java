@@ -62,7 +62,7 @@ public class MovieServiceImpl implements MovieService {
     public void delete(Movie movie) { movieRepository.delete(movie); }
 
     @Override
-    public Page<Movie> browseMoviesByGenre(MovieGenre movieGenre, int page, int size) {
-        return movieRepository.findAllByMovieGenres(movieGenre, PageRequest.of(page,size,Sort.by("movieRating").descending()));
+    public Page<Movie> browseMoviesByGenres(Set<MovieGenre> movieGenres, int page, int size) {
+        return movieRepository.findDistinctByMovieGenresIn(movieGenres, PageRequest.of(page,size,Sort.by("movieRating").descending()));
     }
 }

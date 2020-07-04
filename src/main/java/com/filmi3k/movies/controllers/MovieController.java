@@ -10,7 +10,6 @@ import com.filmi3k.movies.services.base.MovieService;
 import com.filmi3k.movies.utils.JSONparser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -30,6 +29,8 @@ public class MovieController extends BaseController {
     private final MovieService movieService;
     private final MovieGenreService movieGenreService;
 
+    private List<MoviePosterViewModel> moviesViewModels;
+
     @Autowired
     public MovieController(MovieService movieService, MovieGenreService movieGenreService) {
         this.movieService = movieService;
@@ -40,7 +41,7 @@ public class MovieController extends BaseController {
     @ResponseBody
     public String getMovies(@RequestParam("count") int count, @RequestParam("offset") int offset) {
         List<Movie> movies = movieService.findAllPaginated(count, offset);
-        List<MoviePosterViewModel> moviesViewModels = movies.stream().map(MoviePosterViewModel::toViewModel).collect(Collectors.toList());
+        moviesViewModels = movies.stream().map(MoviePosterViewModel::toViewModel).collect(Collectors.toList());
         String resp = "[";
         String moviesJson = moviesViewModels.stream().map(JSONparser::toJson).collect(Collectors.joining(","));
         resp += moviesJson + "]";
@@ -62,10 +63,9 @@ public class MovieController extends BaseController {
 
         compressImage(imagePoster, output);
 
-        ResponseEntity<byte[]> retVal = ResponseEntity.ok()
+        return ResponseEntity.ok()
                 .contentType(MediaType.valueOf(MediaType.IMAGE_JPEG_VALUE))
                 .body(output.toByteArray());
-        return retVal;
     }
 
     @GetMapping("/movies/single/{id}")
@@ -92,21 +92,19 @@ public class MovieController extends BaseController {
                 .body(movieGenreService.findAll());
     }
 
-    //Filters
-    @PostMapping("movies/filter")
+    @PostMapping("movies/genre/filter")
     public ResponseEntity<String> filteredMoviesByGenre(@RequestBody MoviesFilter moviesFilter, @RequestParam int page, @RequestParam int size) {
+        //Movie filter by selected genres(example: horror, scientist)
         Set<MovieGenre> movieGenres = new HashSet<>();
         for(int i = 0; i < moviesFilter.getGenres().size(); i++) {
-            if(movieGenreService.findByMovieType(moviesFilter.getGenres().get(i)) != null) {
-                movieGenres.add(movieGenreService.findByMovieType(moviesFilter.getGenres().get(i)));
+            if(movieGenreService.findByMovieGenreName(moviesFilter.getGenres().get(i)) != null) {
+                movieGenres.add(movieGenreService.findByMovieGenreName(moviesFilter.getGenres().get(i)));
             }
         }
 
         Page<Movie> pageMovies = null;
         if(movieGenres.size() > 0) {
-            for (MovieGenre movieGenre : movieGenres) {
-                pageMovies = movieService.browseMoviesByGenre(movieGenre, page, size);
-            }
+            pageMovies = movieService.browseMoviesByGenres(movieGenres, page, size);
         }
 
         List<Movie> movies = new ArrayList<>();
@@ -120,8 +118,7 @@ public class MovieController extends BaseController {
             e.printStackTrace();
         }
 
-
-        List<MoviePosterViewModel> moviesViewModels = movies.stream().map(MoviePosterViewModel::toViewModel).collect(Collectors.toList());
+        moviesViewModels = movies.stream().map(MoviePosterViewModel::toViewModel).collect(Collectors.toList());
         String resp = "[";
         String moviesJson = moviesViewModels.stream().map(JSONparser::toJson).collect(Collectors.joining(","));
         resp += moviesJson + "]";

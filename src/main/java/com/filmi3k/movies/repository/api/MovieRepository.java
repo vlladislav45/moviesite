@@ -8,7 +8,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
 import java.util.Set;
 
 @Repository
@@ -20,5 +19,8 @@ public interface MovieRepository extends JpaRepository<Movie, Integer> {
             nativeQuery = true)
     long count();
 
-    Page<Movie> findAllByMovieGenres(MovieGenre movieGenre, Pageable pageable);
+    //    select distinct(movie.movie_name) from movie
+    //    inner join movies_genres on movies_genres.movie_id = movie.movie_id
+    //    where movies_genres.movie_genre_id IN (1,2);
+    Page<Movie> findDistinctByMovieGenresIn(Set<MovieGenre> movieGenres, Pageable pageable);
 }

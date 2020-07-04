@@ -25,5 +25,5 @@ public interface MovieService {
 
     void delete(Movie movie);
 
-    Page<Movie> browseMoviesByGenre(MovieGenre movieGenre, int page, int size);
+    Page<Movie> browseMoviesByGenres(Set<MovieGenre> movieGenres, int page, int size);
 }

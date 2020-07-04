@@ -31,7 +31,7 @@ public class MovieGenreServiceImpl implements MovieGenreService {
     }
 
     @Override
-    public MovieGenre findByMovieType(String genre) {
+    public MovieGenre findByMovieGenreName(String genre) {
         return this.movieGenreRepository.findByMovieGenreName(genre);
     }
 }
