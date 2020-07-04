@@ -1,17 +1,18 @@
 package com.filmi3k.movies.filters;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MoviesFilter {
-    private List<Integer> genreIds;
+    private List<String> genres = new ArrayList<>();
 
     MoviesFilter() { }
 
-    public List<Integer> getGenreIds() {
-        return genreIds;
+    public List<String> getGenres() {
+        return genres;
     }
 
-    public void setGenreIds(List<Integer> genreIds) {
-        this.genreIds = genreIds;
+    public void setGenres(List<String> genres) {
+        this.genres = genres;
     }
 }

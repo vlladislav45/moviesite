@@ -2,6 +2,7 @@ package com.filmi3k.movies.controllers;
 
 import com.filmi3k.movies.domain.entities.Movie;
 import com.filmi3k.movies.domain.entities.MovieGenre;
+import com.filmi3k.movies.filters.MoviesFilter;
 import com.filmi3k.movies.models.view.MoviePosterViewModel;
 import com.filmi3k.movies.models.view.MovieViewModel;
 import com.filmi3k.movies.services.base.MovieGenreService;
@@ -80,16 +81,53 @@ public class MovieController extends BaseController {
         File imagePoster = new File(url.getFile());
         byte[] fileContent = Files.readAllBytes(imagePoster.toPath());
 
-        ResponseEntity<byte[]> retVal = ResponseEntity.ok()
+        return ResponseEntity.ok()
                 .contentType(MediaType.valueOf(MediaType.IMAGE_JPEG_VALUE))
                 .body(fileContent);
-        return retVal;
     }
 
     @GetMapping("movies/genres")
     public ResponseEntity<Set<MovieGenre>> getGenres() {
-        ResponseEntity<Set<MovieGenre>> genres = ResponseEntity.ok()
+        return ResponseEntity.ok()
                 .body(movieGenreService.findAll());
-        return genres;
     }
+
+    //Filters
+    @PostMapping("movies/filter")
+    public ResponseEntity<String> filteredMoviesByGenre(@RequestBody MoviesFilter moviesFilter, @RequestParam int page, @RequestParam int size) {
+        Set<MovieGenre> movieGenres = new HashSet<>();
+        for(int i = 0; i < moviesFilter.getGenres().size(); i++) {
+            if(movieGenreService.findByMovieType(moviesFilter.getGenres().get(i)) != null) {
+                movieGenres.add(movieGenreService.findByMovieType(moviesFilter.getGenres().get(i)));
+            }
+        }
+
+        Page<Movie> pageMovies = null;
+        if(movieGenres.size() > 0) {
+            for (MovieGenre movieGenre : movieGenres) {
+                pageMovies = movieService.browseMoviesByGenre(movieGenre, page, size);
+            }
+        }
+
+        List<Movie> movies = new ArrayList<>();
+        try {
+            if(pageMovies == null) {
+                throw new NullPointerException("Page movies is null, most likely because the wrong genres have been sent");
+            }else {
+                movies = pageMovies.getContent();
+            }
+        }catch (NullPointerException e) {
+            e.printStackTrace();
+        }
+
+
+        List<MoviePosterViewModel> moviesViewModels = movies.stream().map(MoviePosterViewModel::toViewModel).collect(Collectors.toList());
+        String resp = "[";
+        String moviesJson = moviesViewModels.stream().map(JSONparser::toJson).collect(Collectors.joining(","));
+        resp += moviesJson + "]";
+
+        return ResponseEntity.ok()
+                .body(resp);
+    }
+
 }
