@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -39,14 +40,19 @@ public class MovieServiceImpl implements MovieService {
     }
 
     @Override
+    public Page<Movie> findAll(Specification<Movie> specification, Pageable pageable) {
+        return movieRepository.findAll(specification,pageable);
+    }
+
+    @Override
     public List<Movie> findAllPaginated(int count, int offset) {
         Pageable p = PageRequest.of(offset, count, Sort.by("movieRating").descending());
         return movieRepository.findAll(p).getContent();
     }
 
     @Override
-    public long count() {
-        return movieRepository.count();
+    public long count(Specification<Movie> specification) {
+        return movieRepository.count(specification);
     }
 
     @Override
@@ -60,9 +66,4 @@ public class MovieServiceImpl implements MovieService {
 
     @Override
     public void delete(Movie movie) { movieRepository.delete(movie); }
-
-    @Override
-    public Page<Movie> browseMoviesByGenre(MovieGenre movieGenre, int page, int size) {
-        return movieRepository.findAllByMovieGenres(movieGenre, PageRequest.of(page,size,Sort.by("movieRating").descending()));
-    }
 }

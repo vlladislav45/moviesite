@@ -18,7 +18,6 @@ public class Movie {
     @Column(name = "movie_name", nullable = false)
     private String movieName;
 
-    @JsonIgnore
     @ManyToMany(targetEntity = MovieGenre.class, fetch = FetchType.EAGER)
     @JoinTable(
             name = "movies_genres",

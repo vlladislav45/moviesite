@@ -2,6 +2,7 @@ package com.filmi3k.movies.models.view;
 
 import com.filmi3k.movies.domain.entities.Actor;
 import com.filmi3k.movies.domain.entities.Movie;
+import com.filmi3k.movies.domain.entities.MovieGenre;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -16,6 +17,7 @@ public class MovieViewModel {
     private String posterName;
     private String directorName;
     List<String> actorNames;
+    List<String> movieGenres;
 
     public MovieViewModel() { }
 
@@ -91,6 +93,14 @@ public class MovieViewModel {
         this.actorNames = actorNames;
     }
 
+    public List<String> getMovieGenres() {
+        return movieGenres;
+    }
+
+    public void setMovieGenres(List<String> movieGenres) {
+        this.movieGenres = movieGenres;
+    }
+
     public static MovieViewModel toViewModel(Movie movie) {
         MovieViewModel viewModel = new MovieViewModel();
         viewModel.movieId = movie.getMovieId();
@@ -102,6 +112,7 @@ public class MovieViewModel {
         viewModel.posterName = movie.getPoster().getPosterName();
         viewModel.directorName = movie.getMovieDirector().getDirectorName();
         viewModel.actorNames = movie.getActors().stream().map(Actor::getActorName).collect(Collectors.toList());
+        viewModel.movieGenres = movie.getMovieGenres().stream().map(MovieGenre::getMovieGenreName).collect(Collectors.toList());
 
         return viewModel;
     }

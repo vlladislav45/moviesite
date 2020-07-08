@@ -9,5 +9,5 @@ public interface MovieGenreService {
 
     MovieGenre findById(int id);
 
-    MovieGenre findByMovieType(String genre);
+    MovieGenre findByMovieGenreName(String genre);
 }

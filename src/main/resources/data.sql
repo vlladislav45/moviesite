@@ -324,3 +324,24 @@ INSERT INTO movies_actors (movie_id, actor_id) VALUES (4, 8);
 INSERT INTO movies_actors (movie_id, actor_id) VALUES (5, 8);
 INSERT INTO movies_actors (movie_id, actor_id) VALUES (5, 23);
 INSERT INTO movies_actors (movie_id, actor_id) VALUES (6, 12);
+
+INSERT INTO `movies_genres` (`movie_id`, `movie_genre_id`) VALUES
+(1, 1),
+(1, 2),
+(1, 3),
+(1, 5),
+(2, 1),
+(2, 3),
+(4, 1),
+(4, 3),
+(4, 7),
+(5, 1),
+(5, 2),
+(5, 3),
+(5, 11),
+(5, 12),
+(6, 1),
+(6, 2),
+(6, 3),
+(7, 2),
+(8, 3);

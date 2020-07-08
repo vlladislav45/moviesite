@@ -2,14 +2,18 @@ package com.filmi3k.movies.controllers;
 
 import com.filmi3k.movies.domain.entities.Movie;
 import com.filmi3k.movies.domain.entities.MovieGenre;
+import com.filmi3k.movies.filters.MovieFilters;
+import com.filmi3k.movies.filters.MovieSpecification;
 import com.filmi3k.movies.models.view.MoviePosterViewModel;
 import com.filmi3k.movies.models.view.MovieViewModel;
+import com.filmi3k.movies.repository.api.MovieRepository;
 import com.filmi3k.movies.services.base.MovieGenreService;
 import com.filmi3k.movies.services.base.MovieService;
 import com.filmi3k.movies.utils.JSONparser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.http.HttpStatus;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -30,27 +34,34 @@ public class MovieController extends BaseController {
     private final MovieGenreService movieGenreService;
 
     @Autowired
-    public MovieController(MovieService movieService, MovieGenreService movieGenreService) {
+    public MovieController(MovieService movieService, MovieGenreService movieGenreService, MovieRepository movieRepository) {
         this.movieService = movieService;
         this.movieGenreService = movieGenreService;
     }
 
-    @GetMapping("/movies")
-    @ResponseBody
-    public String getMovies(@RequestParam("count") int count, @RequestParam("offset") int offset) {
-        List<Movie> movies = movieService.findAllPaginated(count, offset);
-        List<MoviePosterViewModel> moviesViewModels = movies.stream().map(MoviePosterViewModel::toViewModel).collect(Collectors.toList());
+    @PostMapping("/movies/count")
+    public ResponseEntity<Long> countFilteredMovies(@RequestBody MovieFilters movieFilters) {
+        long count = movieService.count(Specification.where(MovieSpecification.withNameLike(movieFilters.getSearch())
+                .and(MovieSpecification.withGenres(movieFilters.getGenres()))));
+
+        return ResponseEntity.ok()
+                .body(count);
+    }
+
+    @PostMapping("/movies")
+    public ResponseEntity<String> filteredMovies(@RequestBody MovieFilters movieFilters, @RequestParam int page, @RequestParam int size) {
+        Page<Movie> filteredMovies = movieService.findAll(Specification
+                        .where(MovieSpecification.withNameLike(movieFilters.getSearch())
+                                .and(MovieSpecification.withGenres(movieFilters.getGenres()))),
+                PageRequest.of(page, size));
+
+        List<MoviePosterViewModel> moviesViewModels = filteredMovies.stream().map(MoviePosterViewModel::toViewModel).collect(Collectors.toList());
         String resp = "[";
         String moviesJson = moviesViewModels.stream().map(JSONparser::toJson).collect(Collectors.joining(","));
         resp += moviesJson + "]";
 
-        return resp;
-    }
-
-    @GetMapping("/movies/count")
-    @ResponseBody
-    public long getAllMovies() {
-        return movieService.count();
+        return ResponseEntity.ok()
+                .body(resp);
     }
 
     @GetMapping("/movies/poster/{posterName}")
@@ -61,35 +72,32 @@ public class MovieController extends BaseController {
 
         compressImage(imagePoster, output);
 
-        ResponseEntity<byte[]> retVal = ResponseEntity.ok()
+        return ResponseEntity.ok()
                 .contentType(MediaType.valueOf(MediaType.IMAGE_JPEG_VALUE))
                 .body(output.toByteArray());
-        return retVal;
     }
 
     @GetMapping("/movies/single/{id}")
     public ResponseEntity<MovieViewModel> getMovieInformation(@PathVariable int id) {
-        ResponseEntity<MovieViewModel> movie = ResponseEntity.ok()
+        return ResponseEntity.ok()
                 .body(MovieViewModel.toViewModel(movieService.findById(id)));
-        return movie;
     }
 
-    @GetMapping("movies/single/hdPoster/{posterName}")
+    @GetMapping("/movies/single/hdPoster/{posterName}")
     public ResponseEntity<byte[]> getHdPoster(@PathVariable String posterName) throws IOException {
         URL url = getClass().getResource(BASE_DIR + "/posters/" + posterName);
         File imagePoster = new File(url.getFile());
         byte[] fileContent = Files.readAllBytes(imagePoster.toPath());
 
-        ResponseEntity<byte[]> retVal = ResponseEntity.ok()
+        return ResponseEntity.ok()
                 .contentType(MediaType.valueOf(MediaType.IMAGE_JPEG_VALUE))
                 .body(fileContent);
-        return retVal;
     }
 
-    @GetMapping("movies/genres")
+    @GetMapping("/movies/genres")
     public ResponseEntity<Set<MovieGenre>> getGenres() {
-        ResponseEntity<Set<MovieGenre>> genres = ResponseEntity.ok()
+        return ResponseEntity.ok()
                 .body(movieGenreService.findAll());
-        return genres;
     }
+
 }
