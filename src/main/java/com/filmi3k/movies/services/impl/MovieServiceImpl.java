@@ -1,17 +1,18 @@
 package com.filmi3k.movies.services.impl;
 
 import com.filmi3k.movies.domain.entities.Movie;
+import com.filmi3k.movies.domain.entities.MovieGenre;
 import com.filmi3k.movies.repository.api.MovieRepository;
 import com.filmi3k.movies.services.base.MovieService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class MovieServiceImpl implements MovieService {
@@ -35,19 +36,23 @@ public class MovieServiceImpl implements MovieService {
 
     @Override
     public Set<Movie> findAll() {
-        Set<Movie> movies = new HashSet<>(movieRepository.findAll());
-        return movies;
+        return new HashSet<>(movieRepository.findAll());
+    }
+
+    @Override
+    public Page<Movie> findAll(Specification<Movie> specification, Pageable pageable) {
+        return movieRepository.findAll(specification,pageable);
     }
 
     @Override
     public List<Movie> findAllPaginated(int count, int offset) {
-        Pageable p = PageRequest.of(offset, count);
+        Pageable p = PageRequest.of(offset, count, Sort.by("movieRating").descending());
         return movieRepository.findAll(p).getContent();
     }
 
     @Override
-    public long count() {
-        return movieRepository.count();
+    public long count(Specification<Movie> specification) {
+        return movieRepository.count(specification);
     }
 
     @Override

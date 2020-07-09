@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -24,7 +25,13 @@ public class MovieGenreServiceImpl implements MovieGenreService {
     }
 
     @Override
-    public MovieGenre findByMovieType(String genre) {
+    public MovieGenre findById(int id) {
+        Optional<MovieGenre> movieGenreOptional = movieGenreRepository.findById(id);
+        return movieGenreOptional.get();
+    }
+
+    @Override
+    public MovieGenre findByMovieGenreName(String genre) {
         return this.movieGenreRepository.findByMovieGenreName(genre);
     }
 }
