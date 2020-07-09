@@ -24,7 +24,7 @@ import static com.filmi3k.movies.config.Config.BASE_DIR;
 import static com.filmi3k.movies.utils.CompressImage.compressImage;
 
 @RestController
-public class MovieController extends BaseController {
+public class MovieController {
     private final MovieService movieService;
     private final MovieGenreService movieGenreService;
 

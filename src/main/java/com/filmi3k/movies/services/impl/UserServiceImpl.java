@@ -23,17 +23,15 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
-    private final GenderRepository genderRepository;
     private final RoleRepository roleRepository;
     private final UserPreferencesRepository userPreferencesRepository;
     private final UserInfoRepository userInfoRepository;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, ModelMapper map, BCryptPasswordEncoder bCryptPasswordEncoder, GenderRepository genderRepository, RoleRepository roleRepository, UserPreferencesRepository userPreferencesRepository, UserInfoRepository userInfoRepository) {
+    public UserServiceImpl(UserRepository userRepository, ModelMapper map, BCryptPasswordEncoder bCryptPasswordEncoder, RoleRepository roleRepository, UserPreferencesRepository userPreferencesRepository, UserInfoRepository userInfoRepository) {
         this.userRepository = userRepository;
         this.modelMapper = map;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
-        this.genderRepository = genderRepository;
         this.roleRepository = roleRepository;
         this.userPreferencesRepository = userPreferencesRepository;
         this.userInfoRepository = userInfoRepository;
@@ -63,11 +61,11 @@ public class UserServiceImpl implements UserService {
             roles.add(roleRepository.getUserRoleByAuthority("USER"));
             userEntity.setAuthorities(roles);
         }
+
         this.userRepository.saveAndFlush(userEntity);
 
         this.userInfoRepository.saveAndFlush(new UserInfo(userEntity)); //Create the relationship between User and User Info
         this.userPreferencesRepository.saveAndFlush(new UserPreferences(userEntity)); // Create the relationship between User and User Preferences
-
 
         return true;
     }
@@ -83,9 +81,19 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getUserByUsername(String username) {
+    public boolean getUserByUsername(String username) {
         User user = userRepository.getUserByUsername(username);
-        return user;
+        if(user != null)
+            return true;
+        return false;
+    }
+
+    @Override
+    public boolean getUserByEmail(String email) {
+        User user = userRepository.getUserByEmail(email);
+        if(user != null)
+            return true;
+        return false;
     }
 
     @Override

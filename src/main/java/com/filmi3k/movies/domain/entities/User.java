@@ -58,6 +58,12 @@ public class User extends BaseEntity implements UserDetails {
 
     private boolean isEnabled;
 
+    public User(String email, String username, String password) {
+        this.email = email;
+        this.username = username;
+        this.password = password;
+    }
+
     public int getUserId() {
         return userId;
     }
@@ -162,10 +168,4 @@ public class User extends BaseEntity implements UserDetails {
     public List<Comment> getComments() { return comments; }
 
     public void setComments(List<Comment> comments) { this.comments = comments; }
-
-    public User(String email, String username, String password) {
-        this.email = email;
-        this.username = username;
-        this.password = password;
-    }
 }

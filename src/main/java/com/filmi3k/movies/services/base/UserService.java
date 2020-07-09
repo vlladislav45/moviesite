@@ -14,7 +14,9 @@ public interface UserService extends UserDetailsService {
 
     Set<User> getAllUsers();
 
-    User getUserByUsername(String username);
+    boolean getUserByUsername(String username);
+
+    boolean getUserByEmail(String email);
 
     User getById(int id);
 

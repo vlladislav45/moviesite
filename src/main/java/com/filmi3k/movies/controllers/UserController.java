@@ -3,14 +3,11 @@ package com.filmi3k.movies.controllers;
 import com.filmi3k.movies.models.binding.UserRegisterBindingModel;
 import com.filmi3k.movies.services.base.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
 
 @RestController
-public class UserController extends BaseController {
+public class UserController {
     private final UserService userService;
 
     @Autowired
@@ -21,32 +18,23 @@ public class UserController extends BaseController {
     @PostMapping("/register_user")
     public ResponseEntity<String> register(@RequestBody UserRegisterBindingModel userRegisterBindingModel) {
         if(!userRegisterBindingModel.getPassword().equals(userRegisterBindingModel.getConfirmPassword())) {
-            return new ResponseEntity<>(
-                    "The password does not match the confirmation password",
-                    HttpStatus.OK
-            );
+            return ResponseEntity.ok().body("The password does not match the confirmation password");
         }else {
+            if(userService.getUserByUsername(userRegisterBindingModel.getUsername()) || userService.getUserByEmail(userRegisterBindingModel.getEmail()))
+                return ResponseEntity.ok().body("This user is already registered");
             this.userService.add(userRegisterBindingModel);
         }
-        return new ResponseEntity<>(
-                "NULL",
-                HttpStatus.OK
-        );
+        return ResponseEntity.ok().body("Your successfully register an account");
     }
 
     @GetMapping("/register/userAvailable/{username}")
     public ResponseEntity<String> getUsernameIfExist(@PathVariable String username) {
-        if(userService.getUserByUsername(username) != null) {
-//            return new ResponseEntity<>(
-//                    "true",
-//                    HttpStatus.OK);
-            ResponseEntity<String> usernameAvailable = ResponseEntity.ok()
+        if(userService.getUserByUsername(username)) {
+            return ResponseEntity.ok()
                     .body("true");
-            return usernameAvailable;
         }
-        ResponseEntity<String> usernameError = ResponseEntity.ok()
+        return ResponseEntity.ok()
                 .body("false");
-        return usernameError;
     }
 
     @GetMapping
