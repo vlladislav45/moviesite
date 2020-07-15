@@ -1,9 +1,7 @@
 package com.filmi3k.movies.services.impl;
 
-import com.filmi3k.movies.domain.entities.User;
-import com.filmi3k.movies.domain.entities.UserInfo;
-import com.filmi3k.movies.domain.entities.UserPreferences;
-import com.filmi3k.movies.domain.entities.UserRole;
+import com.filmi3k.movies.domain.entities.*;
+import com.filmi3k.movies.models.binding.UserRatingBindingModel;
 import com.filmi3k.movies.models.binding.UserRegisterBindingModel;
 import com.filmi3k.movies.repository.api.*;
 import com.filmi3k.movies.services.base.UserService;
@@ -26,15 +24,17 @@ public class UserServiceImpl implements UserService {
     private final RoleRepository roleRepository;
     private final UserPreferencesRepository userPreferencesRepository;
     private final UserInfoRepository userInfoRepository;
+    private final UsersRatingRepository usersRatingRepository;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, ModelMapper map, BCryptPasswordEncoder bCryptPasswordEncoder, RoleRepository roleRepository, UserPreferencesRepository userPreferencesRepository, UserInfoRepository userInfoRepository) {
+    public UserServiceImpl(UserRepository userRepository, ModelMapper map, BCryptPasswordEncoder bCryptPasswordEncoder, RoleRepository roleRepository, UserPreferencesRepository userPreferencesRepository, UserInfoRepository userInfoRepository, UsersRatingRepository usersRatingRepository) {
         this.userRepository = userRepository;
         this.modelMapper = map;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.roleRepository = roleRepository;
         this.userPreferencesRepository = userPreferencesRepository;
         this.userInfoRepository = userInfoRepository;
+        this.usersRatingRepository = usersRatingRepository;
     }
 
     @Override
@@ -83,17 +83,13 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean getUserByUsername(String username) {
         User user = userRepository.getUserByUsername(username);
-        if(user != null)
-            return true;
-        return false;
+        return user != null;
     }
 
     @Override
     public boolean getUserByEmail(String email) {
         User user = userRepository.getUserByEmail(email);
-        if(user != null)
-            return true;
-        return false;
+        return user != null;
     }
 
     @Override
@@ -158,5 +154,15 @@ public class UserServiceImpl implements UserService {
                 }
             }
         }
+    }
+
+    @Override
+    public boolean checkRating(User user, Movie movie) {
+        return usersRatingRepository.findUsersRatingByUserAndMovie(user, movie) != null;
+    }
+
+    @Override
+    public void addUserRating(User user, Movie movie, double userRating, String comment) {
+        usersRatingRepository.saveAndFlush(new UsersRating(user, movie, userRating, comment));
     }
 }

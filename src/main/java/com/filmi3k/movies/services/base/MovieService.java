@@ -1,6 +1,7 @@
 package com.filmi3k.movies.services.base;
 
 import com.filmi3k.movies.domain.entities.Movie;
+import com.filmi3k.movies.models.binding.UserRatingBindingModel;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -19,9 +20,9 @@ public interface MovieService {
 
     Page<Movie> findAll(@Nullable Specification<Movie> specification, Pageable pageable);
 
-    List<Movie> findAllPaginated(int count, int offset);
-
     long count(@Nullable Specification<Movie> specification);
+
+    double updateRating(UserRatingBindingModel movieRatingBindingModel);
 
     Movie findByName(String movieName);
 
