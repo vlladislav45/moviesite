@@ -1,14 +1,15 @@
 package com.filmi3k.movies.services.impl;
 
 import com.filmi3k.movies.domain.entities.Movie;
-import com.filmi3k.movies.domain.entities.MovieGenre;
+import com.filmi3k.movies.models.binding.UserRatingBindingModel;
 import com.filmi3k.movies.repository.api.MovieRepository;
+import com.filmi3k.movies.repository.api.UsersRatingRepository;
 import com.filmi3k.movies.services.base.MovieService;
+import com.filmi3k.movies.utils.Math;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -17,10 +18,12 @@ import java.util.*;
 @Service
 public class MovieServiceImpl implements MovieService {
     private final MovieRepository movieRepository;
+    private final UsersRatingRepository usersRatingRepository;
 
     @Autowired
-    public MovieServiceImpl(MovieRepository movieRepository) {
+    public MovieServiceImpl(MovieRepository movieRepository, UsersRatingRepository usersRatingRepository) {
         this.movieRepository = movieRepository;
+        this.usersRatingRepository = usersRatingRepository;
     }
 
     @Override
@@ -45,14 +48,24 @@ public class MovieServiceImpl implements MovieService {
     }
 
     @Override
-    public List<Movie> findAllPaginated(int count, int offset) {
-        Pageable p = PageRequest.of(offset, count, Sort.by("movieRating").descending());
-        return movieRepository.findAll(p).getContent();
+    public long count(Specification<Movie> specification) {
+        return movieRepository.count(specification);
     }
 
     @Override
-    public long count(Specification<Movie> specification) {
-        return movieRepository.count(specification);
+    public double updateRating(UserRatingBindingModel userRatingBindingModel) {
+        double sum = usersRatingRepository.sumAllUsersRatingByMovie(userRatingBindingModel.getMovieId());
+        int count = usersRatingRepository.countUsersRatingByMovieId(userRatingBindingModel.getMovieId());
+
+        double average = 0.0;
+        if(count != 0)
+            average = sum / count;
+
+        Movie movie = this.findById(userRatingBindingModel.getMovieId());
+        movie.setMovieRating(Math.round(average,2));
+        movieRepository.saveAndFlush(movie);
+
+        return movie.getMovieRating();
     }
 
     @Override

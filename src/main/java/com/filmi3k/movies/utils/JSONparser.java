@@ -3,7 +3,8 @@ package com.filmi3k.movies.utils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import org.springframework.stereotype.Component;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
@@ -11,15 +12,17 @@ import java.io.IOException;
 
 public class JSONparser {
     private static final ObjectMapper objectMapper = new ObjectMapper();
+    private static final Logger log = LoggerFactory.getLogger(JSONparser.class);
 
     public static String toJson(Object object)
     {
         try
         {
+            log.info("succ");
             return objectMapper.writer().writeValueAsString(object);
         } catch (JsonProcessingException e)
         {
-            //log.error("Jackson writer didn't work properly.", e);
+            log.error("Jackson writer didn't work properly.", e);
         }
         return "";
     }
@@ -44,7 +47,7 @@ public class JSONparser {
             return objectMapper.readValue(json, objectClass);
         } catch (IOException e)
         {
-            //log.error("Not a valid Json.", e);
+            log.error("Not a valid Json.", e);
             return null;
         }
     }

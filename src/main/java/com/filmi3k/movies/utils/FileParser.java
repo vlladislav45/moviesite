@@ -27,21 +27,12 @@ public class FileParser {
     }
 
     public void parseBannedIPAddresses(List<String> bannedIPs) throws FileNotFoundException {
-        Scanner scanner = null;
-        try {
-            scanner = new Scanner(file);
-
+        try (Scanner scanner = new Scanner(file)) {
             while(scanner.hasNextLine()) {
                 bannedIPs.add(scanner.nextLine());
             }
-        }  finally {
-            if (scanner != null) {
-                try {
-                    scanner.close();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
