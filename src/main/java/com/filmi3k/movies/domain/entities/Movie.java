@@ -1,6 +1,9 @@
 package com.filmi3k.movies.domain.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
@@ -9,6 +12,8 @@ import java.util.Set;
 
 @Entity
 @Table(name = "movie")
+@Getter
+@Setter
 public class Movie {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -55,88 +60,11 @@ public class Movie {
     @OneToOne(mappedBy = "movie", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     private Poster poster;
 
+    @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    private Set<UsersRating> usersRatings = new HashSet<>();
+
     public Movie() {
         movieGenres = new HashSet<>();
         actors = new HashSet<>();
-    }
-
-    public int getMovieId() {
-        return movieId;
-    }
-
-    public void setMovieId(int movieId) {
-        this.movieId = movieId;
-    }
-
-    public String getMovieName() {
-        return movieName;
-    }
-
-    public void setMovieName(String movieName) {
-        this.movieName = movieName;
-    }
-
-    public Set<MovieGenre> getMovieGenres() {
-        return movieGenres;
-    }
-
-    public void setMovieGenres(Set<MovieGenre> movieGenres) {
-        this.movieGenres = movieGenres;
-    }
-
-    public int getMovieYear() {
-        return movieYear;
-    }
-
-    public void setMovieYear(int movieYear) {
-        this.movieYear = movieYear;
-    }
-
-    public Director getMovieDirector() {
-        return movieDirector;
-    }
-
-    public void setMovieDirector(Director movieDirector) {
-        this.movieDirector = movieDirector;
-    }
-
-    public int getMovieViews() {
-        return movieViews;
-    }
-
-    public void setMovieViews(int movieViews) {
-        this.movieViews = movieViews;
-    }
-
-    public double getMovieRating() {
-        return movieRating;
-    }
-
-    public void setMovieRating(double movieRating) {
-        this.movieRating = movieRating;
-    }
-
-    public String getMovieSummary() {
-        return movieSummary;
-    }
-
-    public void setMovieSummary(String movieSummary) {
-        this.movieSummary = movieSummary;
-    }
-
-    public Set<Actor> getActors() {
-        return actors;
-    }
-
-    public void setActors(Set<Actor> actors) {
-        this.actors = actors;
-    }
-
-    public Poster getPoster() {
-        return poster;
-    }
-
-    public void setPoster(Poster poster) {
-        this.poster = poster;
     }
 }

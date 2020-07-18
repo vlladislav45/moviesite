@@ -19,7 +19,7 @@ abstract class BaseEntity
         if (this == o) return true;
         if (!(o instanceof BaseEntity)) return false;
         BaseEntity that = (BaseEntity) o;
-        return Objects.equals(o, that.dateTimeCreated);
+        return Objects.equals(dateTimeCreated, that.dateTimeCreated);
     }
 
     @Override
