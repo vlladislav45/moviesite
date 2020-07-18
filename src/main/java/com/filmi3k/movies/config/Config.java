@@ -28,5 +28,9 @@ public class Config {
     public static final String BASE_THEME = "BASE_THEME";
     public static final String DARK_THEME = "DARK_THEME";
 
+    //Min & max vote for each user
+    public static final double MIN_VOTE = 0.0;
+    public static final double MAX_VOTE = 5.0;
+
     public Config() { }
 }

@@ -1,6 +1,9 @@
 package com.filmi3k.movies.services.base;
 
+import com.filmi3k.movies.domain.entities.Movie;
 import com.filmi3k.movies.domain.entities.User;
+import com.filmi3k.movies.domain.entities.UsersRating;
+import com.filmi3k.movies.models.binding.UserRatingBindingModel;
 import com.filmi3k.movies.models.binding.UserRegisterBindingModel;
 import com.filmi3k.movies.utils.FileParser;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -14,7 +17,9 @@ public interface UserService extends UserDetailsService {
 
     Set<User> getAllUsers();
 
-    User getUserByUsername(String username);
+    boolean getUserByUsername(String username);
+
+    boolean getUserByEmail(String email);
 
     User getById(int id);
 
@@ -28,4 +33,7 @@ public interface UserService extends UserDetailsService {
 
     void banUsersByIP(FileParser fileParser);
 
+    UsersRating checkRating(User user, Movie movie);
+
+    void addUserRating(User user, Movie movie, double userRating, String comment);
 }

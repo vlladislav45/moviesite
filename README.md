@@ -1,26 +1,18 @@
 ## moviesite 
 
-1. UserInfo entity - uploaded movies, watches, ratings 
-2. UserProperty entity - selected theme, saved devices, user preferences 
+#TODO:
+  * Logger
+  * Да може да се променя филтъра по година, актьор, режисьор
+  * Бонус: Като отворя страница с филм, да ми излизат отдолу:
+    - Подобни филми ( същия жанр)
+    - Филми от същия режисьор
+    - Филми със същите актьори
+    - Бонус:  Хора, харесали този филм, харесват също
 
 ## Server-side technology
-* Spring Framework
+* Spring framework
 * Spring boot
 * Spring security
-* MySQL database
-* The connection between a database and application is made it through JPA and Hibernate
+* JPA and Hibernate
 * Lombok for Getters & Setters 
-* JUnit for repositories and services
-
-## Old Client-side technology
-* Thymeleaf
-* HTML5 
-* CSS3
-* JavaScript
-
-## Moved Client-side technology to
-* EcmaScript 2015
-* React.js
-* Redux
-* Webpack
-* Babel
+* JUnit and integrated tests

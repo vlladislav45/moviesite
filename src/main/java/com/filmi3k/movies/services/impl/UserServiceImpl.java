@@ -1,9 +1,7 @@
 package com.filmi3k.movies.services.impl;
 
-import com.filmi3k.movies.domain.entities.User;
-import com.filmi3k.movies.domain.entities.UserInfo;
-import com.filmi3k.movies.domain.entities.UserPreferences;
-import com.filmi3k.movies.domain.entities.UserRole;
+import com.filmi3k.movies.domain.entities.*;
+import com.filmi3k.movies.models.binding.UserRatingBindingModel;
 import com.filmi3k.movies.models.binding.UserRegisterBindingModel;
 import com.filmi3k.movies.repository.api.*;
 import com.filmi3k.movies.services.base.UserService;
@@ -23,20 +21,20 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
-    private final GenderRepository genderRepository;
     private final RoleRepository roleRepository;
     private final UserPreferencesRepository userPreferencesRepository;
     private final UserInfoRepository userInfoRepository;
+    private final UsersRatingRepository usersRatingRepository;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, ModelMapper map, BCryptPasswordEncoder bCryptPasswordEncoder, GenderRepository genderRepository, RoleRepository roleRepository, UserPreferencesRepository userPreferencesRepository, UserInfoRepository userInfoRepository) {
+    public UserServiceImpl(UserRepository userRepository, ModelMapper map, BCryptPasswordEncoder bCryptPasswordEncoder, RoleRepository roleRepository, UserPreferencesRepository userPreferencesRepository, UserInfoRepository userInfoRepository, UsersRatingRepository usersRatingRepository) {
         this.userRepository = userRepository;
         this.modelMapper = map;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
-        this.genderRepository = genderRepository;
         this.roleRepository = roleRepository;
         this.userPreferencesRepository = userPreferencesRepository;
         this.userInfoRepository = userInfoRepository;
+        this.usersRatingRepository = usersRatingRepository;
     }
 
     @Override
@@ -63,11 +61,11 @@ public class UserServiceImpl implements UserService {
             roles.add(roleRepository.getUserRoleByAuthority("USER"));
             userEntity.setAuthorities(roles);
         }
+
         this.userRepository.saveAndFlush(userEntity);
 
         this.userInfoRepository.saveAndFlush(new UserInfo(userEntity)); //Create the relationship between User and User Info
         this.userPreferencesRepository.saveAndFlush(new UserPreferences(userEntity)); // Create the relationship between User and User Preferences
-
 
         return true;
     }
@@ -83,9 +81,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getUserByUsername(String username) {
+    public boolean getUserByUsername(String username) {
         User user = userRepository.getUserByUsername(username);
-        return user;
+        return user != null;
+    }
+
+    @Override
+    public boolean getUserByEmail(String email) {
+        User user = userRepository.getUserByEmail(email);
+        return user != null;
     }
 
     @Override
@@ -150,5 +154,17 @@ public class UserServiceImpl implements UserService {
                 }
             }
         }
+    }
+
+    @Override
+    public UsersRating checkRating(User user, Movie movie) {
+        if(usersRatingRepository.findUsersRatingByUserAndMovie(user, movie) != null)
+            return usersRatingRepository.findUsersRatingByUserAndMovie(user, movie);
+        return null;
+    }
+
+    @Override
+    public void addUserRating(User user, Movie movie, double userRating, String comment) {
+        usersRatingRepository.saveAndFlush(new UsersRating(user, movie, userRating, comment));
     }
 }

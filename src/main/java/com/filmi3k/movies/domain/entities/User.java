@@ -46,9 +46,8 @@ public class User extends BaseEntity implements UserDetails {
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private UserInfo userInfo;
 
-    //MappedBy Variable userReview by type User in Review class
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-    private List<Comment> comments = new ArrayList<>();
+    @OneToMany(mappedBy = "user",  cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    private Set<UsersRating> usersRatings = new HashSet<>();
 
     private boolean isAccountNonExpired;
 
@@ -57,6 +56,12 @@ public class User extends BaseEntity implements UserDetails {
     private boolean isCredentialsNonExpired;
 
     private boolean isEnabled;
+
+    public User(String email, String username, String password) {
+        this.email = email;
+        this.username = username;
+        this.password = password;
+    }
 
     public int getUserId() {
         return userId;
@@ -159,13 +164,11 @@ public class User extends BaseEntity implements UserDetails {
 
     public void setUserInfo(UserInfo userInfo) { this.userInfo = userInfo; }
 
-    public List<Comment> getComments() { return comments; }
+    public Set<UsersRating> getUsersRatings() {
+        return usersRatings;
+    }
 
-    public void setComments(List<Comment> comments) { this.comments = comments; }
-
-    public User(String email, String username, String password) {
-        this.email = email;
-        this.username = username;
-        this.password = password;
+    public void setUsersRatings(Set<UsersRating> usersRatings) {
+        this.usersRatings = usersRatings;
     }
 }

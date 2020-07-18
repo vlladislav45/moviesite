@@ -11,6 +11,8 @@ import java.util.Set;
 public interface UserRepository extends JpaRepository<User, Integer> {
     User getUserByUsername(String username);
 
+    User getUserByEmail(String email);
+
     @Query(value = "SELECT is_enabled FROM user WHERE user_id=?",
            nativeQuery=true)
     boolean isEnabledUser(int id);
