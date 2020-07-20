@@ -45,12 +45,14 @@ public class MovieController {
     }
 
     @PostMapping("/movies/count")
-    public ResponseEntity<Long> countFilteredMovies(@RequestBody MovieFilters movieFilters) {
+    public ResponseEntity<Map<String,Object>> countFilteredMovies(@RequestBody MovieFilters movieFilters) {
+        Map<String,Object> response = new HashMap<>();
         long count = movieService.count(Specification.where(MovieSpecification.withNameLike(movieFilters.getSearch())
                 .and(MovieSpecification.withGenres(movieFilters.getGenres()))));
 
+        response.put("count", count);
         return ResponseEntity.ok()
-                .body(count);
+                .body(response);
     }
 
     @PostMapping("/movies")
@@ -107,7 +109,8 @@ public class MovieController {
     }
 
     @PostMapping("movies/single/rating")
-    public ResponseEntity<Double> voteSingleMovie(@RequestBody UserRatingBindingModel userRatingBindingModel) {
+    public ResponseEntity<Map<String,Object>> voteSingleMovie(@RequestBody UserRatingBindingModel userRatingBindingModel) {
+        Map<String,Object> response = new HashMap<>();
         /**
          * check if the user already exists at the system
          * and protection against vote-rigging by the front end
@@ -121,13 +124,21 @@ public class MovieController {
 
             if (userService.checkRating(user, movie) == null) // check if the user has not yet voted for the movie
                 userService.addUserRating(user, movie, userRatingBindingModel.getMovieRating(), userRatingBindingModel.getComment());
+            else {
+                response.put("error", "User has already rated");
+                return ResponseEntity.ok().body(response);
+            }
+        }else {
+            response.put("error", "Could not rate movie");
+            return ResponseEntity.ok().body(response);
         }
 
         // average rating of single movie
         double average = movieService.updateRating(userRatingBindingModel);
 
+        response.put("newRating", average);
         return ResponseEntity.ok()
-                .body(average);
+                .body(response);
     }
 
 }
