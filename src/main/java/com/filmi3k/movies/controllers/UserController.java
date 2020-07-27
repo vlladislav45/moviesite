@@ -2,13 +2,19 @@ package com.filmi3k.movies.controllers;
 
 import com.filmi3k.movies.domain.entities.Movie;
 import com.filmi3k.movies.domain.entities.User;
+import com.filmi3k.movies.models.binding.AuthenticationRequestBindingModel;
+import com.filmi3k.movies.models.binding.AuthenticationResponseBindingModel;
 import com.filmi3k.movies.models.binding.UserRegisterBindingModel;
 import com.filmi3k.movies.models.view.UserRatingViewModel;
 import com.filmi3k.movies.services.base.MovieService;
 import com.filmi3k.movies.services.base.UserService;
 import com.filmi3k.movies.utils.JSONparser;
+import com.filmi3k.movies.utils.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -18,6 +24,10 @@ import java.util.Map;
 public class UserController {
     private final UserService userService;
     private final MovieService movieService;
+    @Autowired
+    private AuthenticationManager authenticationManager;
+    @Autowired
+    private JwtUtil jwtTokenUtil;
 
     @Autowired
     public UserController(UserService userService, MovieService movieService) {
@@ -40,6 +50,20 @@ public class UserController {
         }
         response.put("success", "Your successfully register an account");
         return ResponseEntity.ok().body(response);
+    }
+
+    @PostMapping("/authentication")
+    public ResponseEntity<?> authenticationToken(@RequestBody AuthenticationRequestBindingModel authenticationRequest) {
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(authenticationRequest.getUsername(), authenticationRequest.getPassword())
+        );
+
+        final UserDetails userDetails = userService
+                .loadUserByUsername(authenticationRequest.getUsername());
+
+        final String jwt = jwtTokenUtil.generateToken(userDetails);
+
+        return ResponseEntity.ok().body(new AuthenticationResponseBindingModel(jwt));
     }
 
     @GetMapping("/register/userAvailable/{username}")
