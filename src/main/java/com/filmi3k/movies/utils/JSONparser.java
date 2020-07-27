@@ -18,6 +18,7 @@ public class JSONparser {
     {
         try
         {
+            log.info("succ");
             return objectMapper.writer().writeValueAsString(object);
         } catch (JsonProcessingException e)
         {
