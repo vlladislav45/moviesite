@@ -47,8 +47,8 @@ public class MovieController {
     @PostMapping("/movies/count")
     public ResponseEntity<Map<String,Object>> countFilteredMovies(@RequestBody MovieFilters movieFilters) {
         Map<String,Object> response = new HashMap<>();
-        long count = movieService.count(Specification.where(MovieSpecification.withNameLike(movieFilters.getSearch())
-                .and(MovieSpecification.withGenres(movieFilters.getGenres()))));
+        long count = movieService.count(Specification.where(MovieSpecification.countWithGenres(movieFilters.getGenres())
+                .and(MovieSpecification.withFilter(movieFilters))));
 
         response.put("count", count);
         return ResponseEntity.ok()
@@ -58,7 +58,7 @@ public class MovieController {
     @PostMapping("/movies")
     public ResponseEntity<String> filteredMovies(@RequestBody MovieFilters movieFilters, @RequestParam int page, @RequestParam int size) {
         Page<Movie> filteredMovies = movieService.findAll(Specification
-                        .where(MovieSpecification.withNameLike(movieFilters.getSearch())
+                        .where(MovieSpecification.withFilter(movieFilters)
                                 .and(MovieSpecification.withGenres(movieFilters.getGenres()))
                         ),
                 PageRequest.of(page, size));
