@@ -6,7 +6,7 @@ INSERT INTO user_role (authority) VALUES ('MODERATOR');
 INSERT INTO user_role (authority) VALUES ('ADMIN');
 
 INSERT INTO movie_genre (movie_genre_name) VALUES ('Horror');
-INSERT INTO movie_genre (movie_genre_name) VALUES ('Scientist');
+INSERT INTO movie_genre (movie_genre_name) VALUES ('Science');
 INSERT INTO movie_genre (movie_genre_name) VALUES ('Animation');
 INSERT INTO movie_genre (movie_genre_name) VALUES ('Adventure');
 INSERT INTO movie_genre (movie_genre_name) VALUES ('Thriller');
