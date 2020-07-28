@@ -3,15 +3,22 @@ package com.filmi3k.movies.config;
 import com.filmi3k.movies.services.base.UserService;
 import com.filmi3k.movies.utils.JSONparser;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import javax.servlet.Filter;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -22,12 +29,21 @@ import java.util.Map;
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
-    private final UserService userService;
+    @Autowired
+    private UserService userService;
 
     @Autowired
-    public WebSecurityConfig(UserService userService) {
-        this.userService = userService;
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
+
+    @Autowired
+    private Filter jwtRequestFilter;
+
+    @Override
+    @Bean
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
     }
+
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -37,31 +53,33 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .csrf()
                 .disable()
                 .authorizeRequests()
-                .antMatchers ("/login**", "/register/**", "/register_user**", "/user/**", "/", "/stream/mp4/Kenpachi").permitAll()
+                .antMatchers ("/login", "/register/**", "/register_user**", "/user/**", "/", "/stream/mp4/Kenpachi").permitAll()
                 .antMatchers("/styles/**", "/posters/**", "/movies/**", "anime/**", "/index").permitAll()
                 .antMatchers("/admin/**").hasAuthority("ADMIN")
                 .anyRequest().authenticated()
             .and()
-                .formLogin()
-                .loginPage("/login")
-                .loginProcessingUrl("/login")
-                .usernameParameter("username")
-                .passwordParameter("password")
-                //.defaultSuccessUrl("/index")
-                .successHandler(getSuccessHandler())
-                .failureHandler(getFailureHandler())
-            .and()
-                .logout()
-                .deleteCookies("JSESSIONID")
-                .permitAll()
-            .and()
-                .rememberMe()
-                .key("remember")
-                .userDetailsService(this.userService)
-                .tokenValiditySeconds(20)
+                .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+//            .and()
+//                .formLogin()
+//                .loginPage("/login")
+//                .loginProcessingUrl("/login")
+//                .usernameParameter("username")
+//                .passwordParameter("password")
+//                .successHandler(getSuccessHandler())
+//                .failureHandler(getFailureHandler())
             .and()
                 .exceptionHandling()
                 .accessDeniedPage("/unauthorized");
+
+        http
+                .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
+    }
+
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.userDetailsService(this.userService)
+            .passwordEncoder(this.bCryptPasswordEncoder);
     }
 
     private AuthenticationFailureHandler getFailureHandler() {

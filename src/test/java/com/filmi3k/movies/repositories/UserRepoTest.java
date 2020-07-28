@@ -61,8 +61,8 @@ public class UserRepoTest {
         User actual = userRepository.getUserByUsername("vladislavl3");
         Assert.assertEquals("User is not exist", user, actual);
 
-        this.userInfoRepository.saveAndFlush(new UserInfo(user)); //Create the relationship between User and User Info
-        this.userPreferencesRepository.saveAndFlush(new UserPreferences(user)); // Create the relationship between User and User Preferences
+        //this.userInfoRepository.saveAndFlush(new UserInfo(user)); //Create the relationship between User and User Info
+        //this.userPreferencesRepository.saveAndFlush(new UserPreferences(user)); // Create the relationship between User and User Preferences
     }
 
     @Test

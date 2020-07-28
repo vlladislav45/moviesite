@@ -18,8 +18,10 @@ public class MovieSpecification {
 //                            GROUP BY movie.movie_id
 //                            HAVING COUNT(movies_genres.movie_genre_id) = 2
                     ) as R; */
-            query.distinct(true);
             Predicate predicate = builder.conjunction();
+            if (genres.isEmpty())
+                return predicate;
+            query.distinct(true);
 
             Subquery<Long> subQuery = query.subquery(Long.class);
             Root<Movie> subRoot = subQuery.from(Movie.class);

@@ -2,8 +2,9 @@ package com.filmi3k.movies.services.base;
 
 import com.filmi3k.movies.domain.entities.Movie;
 import com.filmi3k.movies.domain.entities.User;
+import com.filmi3k.movies.domain.entities.UserInfo;
 import com.filmi3k.movies.domain.entities.UsersRating;
-import com.filmi3k.movies.models.binding.UserRatingBindingModel;
+import com.filmi3k.movies.models.binding.UserInfoBindingModel;
 import com.filmi3k.movies.models.binding.UserRegisterBindingModel;
 import com.filmi3k.movies.utils.FileParser;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -13,13 +14,19 @@ import java.util.Set;
 public interface UserService extends UserDetailsService {
     boolean add(UserRegisterBindingModel u);
 
+    void addProfilePicture(String data, String username);
+
+    void changeUserInfo(UserInfoBindingModel userInfoModel);
+
     void delete(User u);
 
     Set<User> getAllUsers();
 
-    boolean getUserByUsername(String username);
+    boolean checkUsernameAvailable(String username);
 
-    boolean getUserByEmail(String email);
+    User getByUsername(String username);
+
+    boolean isEmailAvailable(String email);
 
     User getById(int id);
 
