@@ -1,7 +1,7 @@
 package com.filmi3k.movies.services.impl;
 
 import com.filmi3k.movies.domain.entities.*;
-import com.filmi3k.movies.models.binding.UserRatingBindingModel;
+import com.filmi3k.movies.models.binding.UserInfoBindingModel;
 import com.filmi3k.movies.models.binding.UserRegisterBindingModel;
 import com.filmi3k.movies.repository.api.*;
 import com.filmi3k.movies.services.base.UserService;
@@ -22,19 +22,24 @@ public class UserServiceImpl implements UserService {
     private final ModelMapper modelMapper;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final RoleRepository roleRepository;
+    private final UserImageRepository userImageRepository;
     private final UserPreferencesRepository userPreferencesRepository;
     private final UserInfoRepository userInfoRepository;
     private final UsersRatingRepository usersRatingRepository;
+    private final GenderRepository genderRepository;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, ModelMapper map, BCryptPasswordEncoder bCryptPasswordEncoder, RoleRepository roleRepository, UserPreferencesRepository userPreferencesRepository, UserInfoRepository userInfoRepository, UsersRatingRepository usersRatingRepository) {
+    public UserServiceImpl(UserRepository userRepository, ModelMapper map, BCryptPasswordEncoder bCryptPasswordEncoder, RoleRepository roleRepository, UserImageRepository userImageRepository,
+                           UserPreferencesRepository userPreferencesRepository, UserInfoRepository userInfoRepository, UsersRatingRepository usersRatingRepository, GenderRepository genderRepository) {
         this.userRepository = userRepository;
         this.modelMapper = map;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.roleRepository = roleRepository;
+        this.userImageRepository = userImageRepository;
         this.userPreferencesRepository = userPreferencesRepository;
         this.userInfoRepository = userInfoRepository;
         this.usersRatingRepository = usersRatingRepository;
+        this.genderRepository = genderRepository;
     }
 
     @Override
@@ -71,6 +76,29 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public void addProfilePicture(String data, String username) {
+        UserInfo userInfo = userRepository.getUserByUsername(username).getUserInfo();
+        this.userImageRepository.saveAndFlush(new UserImage(data, userInfo));
+    }
+
+    @Override
+    public void changeUserInfo(UserInfoBindingModel userInfoModel) {
+        UserInfo userInfo = this.getById(userInfoModel.getUserId()).getUserInfo();
+
+        if(userInfo.getFirstName().isEmpty() && !userInfoModel.getFirstName().isEmpty()) {
+            userInfo.setFirstName(userInfoModel.getFirstName());
+        }
+        if(userInfoModel.getLastName() != null) {
+            userInfo.setLastName(userInfoModel.getLastName());
+        }
+        if(userInfoModel.getGender().equals("male") || userInfoModel.getGender().equals("female")
+                && genderRepository.findByGenderName(userInfoModel.getGender()) != null) {
+            userInfo.setGender(genderRepository.findByGenderName(userInfoModel.getGender()));
+        }
+        userInfoRepository.saveAndFlush(userInfo);
+    }
+
+    @Override
     public void delete(User u) {
         userRepository.delete(u);
     }
@@ -81,13 +109,18 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean getUserByUsername(String username) {
+    public boolean checkUsernameAvailable(String username) {
         User user = userRepository.getUserByUsername(username);
         return user != null;
     }
 
     @Override
-    public boolean getUserByEmail(String email) {
+    public User getByUsername(String username) {
+        return userRepository.getUserByUsername(username);
+    }
+
+    @Override
+    public boolean isEmailAvailable(String email) {
         User user = userRepository.getUserByEmail(email);
         return user != null;
     }

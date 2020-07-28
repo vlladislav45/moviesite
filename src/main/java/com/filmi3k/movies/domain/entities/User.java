@@ -1,5 +1,6 @@
 package com.filmi3k.movies.domain.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.NoArgsConstructor;
 
 import org.springframework.security.core.userdetails.UserDetails;
@@ -23,12 +24,15 @@ public class User extends BaseEntity implements UserDetails {
     @Column(name = "username", length = 20, nullable = false, unique = true)
     private String username;
 
+    @JsonIgnore
     @Column(name = "password", nullable = false)
     private String password;
 
+    @JsonIgnore
     @Column(name = "created_time", nullable = false)
     private LocalDateTime createdTime;
 
+    @JsonIgnore
     @Column(name = "ip_address", nullable = true)
     private String ipAddress;
 
@@ -49,10 +53,13 @@ public class User extends BaseEntity implements UserDetails {
     @OneToMany(mappedBy = "user",  cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private Set<UsersRating> usersRatings = new HashSet<>();
 
+    @JsonIgnore
     private boolean isAccountNonExpired;
 
+    @JsonIgnore
     private boolean isAccountNonLocked;
 
+    @JsonIgnore
     private boolean isCredentialsNonExpired;
 
     private boolean isEnabled;
