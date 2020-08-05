@@ -85,16 +85,13 @@ public class UserServiceImpl implements UserService {
     public void changeUserInfo(UserInfoBindingModel userInfoModel) {
         UserInfo userInfo = this.getById(userInfoModel.getUserId()).getUserInfo();
 
-        if(userInfo.getFirstName().isEmpty() && !userInfoModel.getFirstName().isEmpty()) {
+        if(!userInfoModel.getFirstName().isEmpty())
             userInfo.setFirstName(userInfoModel.getFirstName());
-        }
-        if(userInfoModel.getLastName() != null) {
+        if(!userInfoModel.getLastName().isEmpty())
             userInfo.setLastName(userInfoModel.getLastName());
-        }
-        if(userInfoModel.getGender().equals("male") || userInfoModel.getGender().equals("female")
-                && genderRepository.findByGenderName(userInfoModel.getGender()) != null) {
+        if(!userInfoModel.getGender().isEmpty() && userInfoModel.getGender().equals("male")
+                || userInfoModel.getGender().equals("female"))
             userInfo.setGender(genderRepository.findByGenderName(userInfoModel.getGender()));
-        }
         userInfoRepository.saveAndFlush(userInfo);
     }
 
@@ -127,8 +124,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getById(int id) {
-        Optional<User> user = userRepository.findById(id);
-        return user.get();
+        Optional<User> optionalUser = userRepository.findById(id);
+        return optionalUser.orElse(null);
     }
 
     @Override
