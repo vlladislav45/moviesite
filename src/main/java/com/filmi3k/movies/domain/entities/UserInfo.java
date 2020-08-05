@@ -30,7 +30,7 @@ public class UserInfo {
     @OneToMany(mappedBy = "userInfo", cascade = CascadeType.ALL, fetch =  FetchType.LAZY, orphanRemoval = true)
     private List<UserImage> userImages = new ArrayList<>();
 
-    @ManyToOne(targetEntity = Gender.class, fetch = FetchType.LAZY)
+    @ManyToOne(targetEntity = Gender.class, fetch = FetchType.EAGER)
     @JoinColumn(name = "gender", nullable = true)
     private Gender gender;
 

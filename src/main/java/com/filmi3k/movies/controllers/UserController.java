@@ -60,6 +60,10 @@ public class UserController {
                 response.put("error", "This user is already registered");
                 return ResponseEntity.ok().body(response);
             }
+            if(userRegisterBindingModel.getPassword().length() < 8) {
+                response.put("error", "The password have been more than 8 symbols");
+                return ResponseEntity.ok().body(response);
+            }
             this.userService.add(userRegisterBindingModel);
         }
         response.put("success", "Your successfully register an account");
