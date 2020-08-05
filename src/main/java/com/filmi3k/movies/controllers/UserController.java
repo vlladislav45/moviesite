@@ -144,6 +144,18 @@ public class UserController {
         return ResponseEntity.ok().body(Map.of("success", "User info upload sucessfully"));
     }
 
+    @PostMapping("user/userInfo/bookmark")
+    public ResponseEntity<?> setBookMark(@RequestParam int userId, @RequestParam int movieId) {
+        User user = userService.getById(userId);
+        Movie movie = movieService.findById(movieId);
+        if(!userService.isBookmarkFound(user, movie)) {
+            this.userService.addBookmark(user, movie);
+            return ResponseEntity.ok().body(Map.of("success", "Bookmark is saved successfully"));
+        }
+
+        return ResponseEntity.ok().body(Map.of("error", "Bookmark is already saved"));
+    }
+
     @GetMapping("/user/isRated")
     public ResponseEntity<Map<String,Object>> isRated(@RequestParam int userId, @RequestParam int movieId) {
         Map<String,Object> response = new HashMap<>();

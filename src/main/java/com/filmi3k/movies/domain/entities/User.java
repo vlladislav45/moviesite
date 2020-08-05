@@ -33,7 +33,7 @@ public class User extends BaseEntity implements UserDetails {
     private LocalDateTime createdTime;
 
     @JsonIgnore
-    @Column(name = "ip_address", nullable = true)
+    @Column(name = "ip_address")
     private String ipAddress;
 
     @ManyToMany(targetEntity = UserRole.class, fetch = FetchType.EAGER)
@@ -52,6 +52,9 @@ public class User extends BaseEntity implements UserDetails {
 
     @OneToMany(mappedBy = "user",  cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private Set<UsersRating> usersRatings = new HashSet<>();
+
+    @OneToMany(mappedBy = "user",  cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    private Set<Bookmark> bookMarks = new HashSet<>();
 
     @JsonIgnore
     private boolean isAccountNonExpired;
@@ -177,5 +180,13 @@ public class User extends BaseEntity implements UserDetails {
 
     public void setUsersRatings(Set<UsersRating> usersRatings) {
         this.usersRatings = usersRatings;
+    }
+
+    public Set<Bookmark> getBookMarks() {
+        return bookMarks;
+    }
+
+    public void setBookMarks(Set<Bookmark> bookMarks) {
+        this.bookMarks = bookMarks;
     }
 }

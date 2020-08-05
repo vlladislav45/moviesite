@@ -63,6 +63,9 @@ public class Movie {
     @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private Set<UsersRating> usersRatings = new HashSet<>();
 
+    @OneToMany(mappedBy = "movie",  cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    private Set<Bookmark> bookMarks = new HashSet<>();
+
     public Movie() {
         movieGenres = new HashSet<>();
         actors = new HashSet<>();
