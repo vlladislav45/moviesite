@@ -11,6 +11,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
+import static com.filmi3k.movies.config.Config.TOKEN;
+
 @Component
 public class JwtUtil {
     private final String SECRET_KEY = "secret";
@@ -32,7 +34,7 @@ public class JwtUtil {
         return Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token).getBody();
     }
 
-    private Boolean isTokenExpired(String token) {
+    public Boolean isTokenExpired(String token) {
         return extractExpiration(token).before(new Date());
     }
 
@@ -43,7 +45,7 @@ public class JwtUtil {
 
     private String createToken(Map<String,Object> claims, String subject) {
         return Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(new Date(System.currentTimeMillis()))
-                    .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24)) // last number is an hour
+                    .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 + TOKEN)) // 1000 * 60 * 60
                     .signWith(SignatureAlgorithm.HS256, SECRET_KEY).compact();
     }
 

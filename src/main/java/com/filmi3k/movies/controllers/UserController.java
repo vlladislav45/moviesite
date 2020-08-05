@@ -16,7 +16,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -66,9 +68,13 @@ public class UserController {
 
     @PostMapping("/login")
     public ResponseEntity<?> authenticationToken(@RequestBody AuthenticationRequestBindingModel authenticationRequest) {
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(authenticationRequest.getUsername(), authenticationRequest.getPassword())
-        );
+        try {
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(authenticationRequest.getUsername(), authenticationRequest.getPassword())
+            );
+        }catch (BadCredentialsException badCredentialsException) {
+            return ResponseEntity.ok().body(Map.of("error", "Bad credentials"));
+        }
 
         final UserDetails userDetails = userService
                 .loadUserByUsername(authenticationRequest.getUsername());
@@ -81,10 +87,9 @@ public class UserController {
     @PostMapping("/user_me")
     public ResponseEntity<?> getUser(@RequestBody AuthenticationResponseBindingModel authenticationResponse) {
         String username = new JwtUtil().extractUsername(authenticationResponse.getJwt());
-        System.out.println(username);
         User user = this.userService.getByUsername(username);
-        System.out.println(user);
-        return ResponseEntity.ok().body(new HashMap<String, User>(){{ put("user", user); }});
+
+        return ResponseEntity.ok().body(Map.of("user", user));
     }
 
     @GetMapping("/register/userAvailable/{username}")

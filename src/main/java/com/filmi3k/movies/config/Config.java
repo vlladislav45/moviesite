@@ -32,5 +32,9 @@ public class Config {
     public static final double MIN_VOTE = 0.0;
     public static final double MAX_VOTE = 5.0;
 
+    //Token expired
+    //Default 24 hours
+    public static final long TOKEN = 24;
+
     public Config() { }
 }
