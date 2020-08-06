@@ -49,7 +49,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             try {
                 boolean isExpired = jwtTokenUtil.isTokenExpired(jwt);
             } catch (ExpiredJwtException expired) {
-                httpServletResponse.setStatus(HttpStatus.FORBIDDEN.value());
+                httpServletResponse.setStatus(HttpStatus.UNAUTHORIZED.value()); // error 401
                 httpServletResponse.setContentType(MediaType.APPLICATION_JSON_VALUE);
                 mapper.writeValue(httpServletResponse.getWriter(), Map.of("error", "Token is expired"));
                 return;
@@ -63,6 +63,14 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             username = jwtTokenUtil.extractUsername(jwt);
             if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 UserDetails userDetails = this.userService.loadUserByUsername(username);
+
+                //Check if the user is not found in the database but token is still there
+                //Against front-end manipulating
+                if(userDetails == null) {
+                    httpServletResponse.setStatus(HttpStatus.UNAUTHORIZED.value()); // error 401
+                    httpServletResponse.setContentType(MediaType.APPLICATION_JSON_VALUE);
+                    mapper.writeValue(httpServletResponse.getWriter(), Map.of("error", "Token is not expired, but the user is not found"));
+                }
 
                 if (jwtTokenUtil.validateToken(jwt, userDetails)) {
                     UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(userDetails,

@@ -60,9 +60,11 @@ public class Movie {
     @OneToOne(mappedBy = "movie", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     private Poster poster;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private Set<UsersRating> usersRatings = new HashSet<>();
 
+    @JsonIgnore
     @OneToMany(mappedBy = "movie",  cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private Set<Bookmark> bookMarks = new HashSet<>();
 

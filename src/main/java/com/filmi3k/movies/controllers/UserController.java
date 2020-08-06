@@ -7,6 +7,7 @@ import com.filmi3k.movies.models.binding.AuthenticationResponseBindingModel;
 import com.filmi3k.movies.models.binding.UserInfoBindingModel;
 import com.filmi3k.movies.models.binding.UserRegisterBindingModel;
 import com.filmi3k.movies.models.view.UserRatingViewModel;
+import com.filmi3k.movies.models.view.UserViewModel;
 import com.filmi3k.movies.services.base.MovieService;
 import com.filmi3k.movies.services.base.StorageService;
 import com.filmi3k.movies.services.base.UserService;
@@ -93,7 +94,9 @@ public class UserController {
         String username = new JwtUtil().extractUsername(authenticationResponse.getJwt());
         User user = this.userService.getByUsername(username);
 
-        return ResponseEntity.ok().body(Map.of("user", user));
+        UserViewModel userViewModel = UserViewModel.toViewModel(user);
+
+        return ResponseEntity.ok().body(Map.of("user", userViewModel));
     }
 
     @GetMapping("/register/userAvailable/{username}")
