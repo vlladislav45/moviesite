@@ -1,5 +1,6 @@
 package com.filmi3k.movies.domain.entities;
 
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
@@ -7,6 +8,7 @@ import javax.persistence.*;
 @Entity
 @Table(name = "director")
 @NoArgsConstructor
+@Data
 public class Director {
 
     @Id
@@ -18,20 +20,4 @@ public class Director {
     private String directorName;
 
     public Director(String directorName) { this.directorName = directorName; }
-
-    public int getId() {
-        return directorId;
-    }
-
-    public void setId(int id) {
-        this.directorId = id;
-    }
-
-    public String getDirectorName() {
-        return directorName;
-    }
-
-    public void setDirectorName(String directorName) {
-        this.directorName = directorName;
-    }
 }

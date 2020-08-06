@@ -12,6 +12,8 @@ import java.util.List;
 @Setter
 public class MovieFilters {
     private List<String> genres = new ArrayList<>();
-    private String search = "";
+    private String searchMovie = "";
     private int year = 0;
+    private String actor = "";
+    private String director = "";
 }
