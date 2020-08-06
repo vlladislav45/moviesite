@@ -7,6 +7,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.sql.Date;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 @Entity
@@ -25,7 +26,7 @@ public class UserImage extends BaseEntity {
 
     @JsonIgnore
     @Column(name = "image_created", nullable = false)
-    private LocalDateTime imageCreated;
+    private Timestamp imageCreated;
 
     @JsonIgnore
     @ManyToOne(targetEntity = UserInfo.class)
@@ -33,7 +34,7 @@ public class UserImage extends BaseEntity {
     private UserInfo userInfo;
 
     public UserImage(String imageName, UserInfo userInfo) {
-        this.imageCreated = getDateTimeCreated();
+        this.imageCreated = Timestamp.valueOf(getDateTimeCreated());
         this.imageName = imageName;
         this.userInfo = userInfo;
     }

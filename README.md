@@ -1,10 +1,13 @@
 ## moviesite back-end
 
 ## Comment 
-* I'm trying to immigrate JDK to 14.0.2, 
+* JDK is updated to 14.0.2, 
 that's why if there is a problem, I must be notified
 
 #TODO:
+  * Donate system for an ads
+  * Избрана тема от базата
+  * Анг/бг менюта
   * Да може да се променя филтъра по година, актьор, режисьор
   * Бонус: Като отворя страница с филм, да ми излизат отдолу:
     - Подобни филми ( същия жанр)

@@ -1,19 +1,22 @@
 package com.filmi3k.movies.domain.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
+import java.sql.Time;
+import java.sql.Timestamp;
+import java.time.LocalTime;
 import java.util.HashSet;
 import java.util.Set;
 
 @Entity
 @Table(name = "movie")
-@Getter
-@Setter
+@Data
 public class Movie {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -67,6 +70,9 @@ public class Movie {
     @JsonIgnore
     @OneToMany(mappedBy = "movie",  cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private Set<Bookmark> bookMarks = new HashSet<>();
+
+    @Column(name = "movie_duration")
+    private Time movieDuration;
 
     public Movie() {
         movieGenres = new HashSet<>();

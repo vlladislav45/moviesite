@@ -4,6 +4,7 @@ import com.filmi3k.movies.domain.entities.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -18,7 +19,7 @@ public class UserViewModel {
     private UserInfo userInfo;
     private UsersRating usersRating;
     private List<String> bookmarks = new ArrayList<>();
-    private LocalDateTime createdTime;
+    private Timestamp createdTime;
     private boolean isEnabled;
 
     public static UserViewModel toViewModel(User user) {
@@ -32,7 +33,7 @@ public class UserViewModel {
         List<Movie> movies = user.getBookMarks().stream().map(Bookmark::getMovie).collect(Collectors.toList());
         userViewModel.bookmarks = movies.stream().map(Movie::getMovieName).collect(Collectors.toList());
 
-        userViewModel.setCreatedTime(user.getCreatedTime());
+        userViewModel.setCreatedTime(Timestamp.valueOf(user.getDateTimeCreated()));
         userViewModel.setEnabled(user.isEnabled());
 
         return userViewModel;

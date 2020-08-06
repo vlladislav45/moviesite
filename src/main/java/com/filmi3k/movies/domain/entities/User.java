@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -30,7 +31,7 @@ public class User extends BaseEntity implements UserDetails {
 
     @JsonIgnore
     @Column(name = "created_time", nullable = false)
-    private LocalDateTime createdTime;
+    private Timestamp createdTime;
 
     @JsonIgnore
     @Column(name = "ip_address")
@@ -107,11 +108,11 @@ public class User extends BaseEntity implements UserDetails {
         this.username = username;
     }
 
-    public LocalDateTime getCreatedTime() {
+    public Timestamp getCreatedTime() {
         return createdTime;
     }
 
-    public void setCreatedTime(LocalDateTime createdTime) {
+    public void setCreatedTime(Timestamp createdTime) {
         this.createdTime = createdTime;
     }
 
