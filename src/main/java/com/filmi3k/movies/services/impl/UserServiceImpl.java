@@ -108,6 +108,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public void deleteBookmark(User user, Movie movie) {
+        Bookmark bookmark = bookmarkRepository.getBookmarkByUserAndMovie(user, movie);
+        bookmarkRepository.delete(bookmark);
+    }
+
+    @Override
     public void delete(User u) {
         userRepository.delete(u);
     }

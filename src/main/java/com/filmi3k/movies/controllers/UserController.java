@@ -2,10 +2,7 @@ package com.filmi3k.movies.controllers;
 
 import com.filmi3k.movies.domain.entities.Movie;
 import com.filmi3k.movies.domain.entities.User;
-import com.filmi3k.movies.models.binding.AuthenticationRequestBindingModel;
-import com.filmi3k.movies.models.binding.AuthenticationResponseBindingModel;
-import com.filmi3k.movies.models.binding.UserInfoBindingModel;
-import com.filmi3k.movies.models.binding.UserRegisterBindingModel;
+import com.filmi3k.movies.models.binding.*;
 import com.filmi3k.movies.models.view.UserRatingViewModel;
 import com.filmi3k.movies.models.view.UserViewModel;
 import com.filmi3k.movies.services.base.MovieService;
@@ -148,15 +145,15 @@ public class UserController {
     }
 
     @PostMapping("user/userInfo/bookmark")
-    public ResponseEntity<?> setBookMark(@RequestParam int userId, @RequestParam int movieId) {
-        User user = userService.getById(userId);
-        Movie movie = movieService.findById(movieId);
+    public ResponseEntity<?> setBookMark(@RequestBody BookmarkBindingModel bookmarkModel) {
+        User user = userService.getById(bookmarkModel.getUserId());
+        Movie movie = movieService.findById(bookmarkModel.getMovieId());
         if(!userService.isBookmarkFound(user, movie)) {
             this.userService.addBookmark(user, movie);
             return ResponseEntity.ok().body(Map.of("success", "Bookmark is saved successfully"));
         }
-
-        return ResponseEntity.ok().body(Map.of("error", "Bookmark is already saved"));
+        this.userService.deleteBookmark(user, movie);
+        return ResponseEntity.ok().body(Map.of("success", "Bookmark is deleted successfully"));
     }
 
     @GetMapping("/user/isRated")
