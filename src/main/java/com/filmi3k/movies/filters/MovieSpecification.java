@@ -60,10 +60,17 @@ public class MovieSpecification {
         return (root, query, builder) -> {
             if(movieFilters.getYear() != 0)
                 return builder.equal(root.get("movieYear"), movieFilters.getYear());
-            else if(!movieFilters.getSearch().isEmpty() && movieFilters.getSearch() != null)
-                return builder.like(root.get("movieName"), "%" + movieFilters.getSearch() + "%");
+            else if(!movieFilters.getSearchMovie().isEmpty())
+                return builder.like(root.get("movieName"), "%" + movieFilters.getSearchMovie() + "%");
+            else if(!movieFilters.getActor().isEmpty()) {
+                query.groupBy(root.get("movieId"));
+                return builder.like(root.join("actors").get("actorName"), "%" + movieFilters.getActor() + "%");
+            }
+            else if(!movieFilters.getDirector().isEmpty()) {
+                query.groupBy(root.get("movieId"));
+                return builder.like(root.join("movieDirector").get("directorName"), "%" + movieFilters.getDirector() + "%");
+            }
             return null;
         };
-
     }
 }
