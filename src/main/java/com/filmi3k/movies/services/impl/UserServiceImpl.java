@@ -14,6 +14,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.FileNotFoundException;
+import java.sql.Timestamp;
 import java.util.*;
 
 @Service
@@ -48,7 +49,7 @@ public class UserServiceImpl implements UserService {
     public boolean add(UserRegisterBindingModel userRegisterBindingModel) {
         User userEntity = this.modelMapper.map(userRegisterBindingModel, User.class);
         userEntity.setIpAddress("127.0.0.1");
-        userEntity.setCreatedTime(userEntity.getDateTimeCreated());
+        userEntity.setCreatedTime(Timestamp.valueOf(userEntity.getDateTimeCreated()));
 
         userEntity.setPassword(this.bCryptPasswordEncoder.encode(userEntity.getPassword()));
 

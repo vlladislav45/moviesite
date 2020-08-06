@@ -16,6 +16,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import javax.transaction.Transactional;
+import java.sql.Timestamp;
 import java.util.*;
 
 @SpringBootTest(classes = MoviesApplication.class)
@@ -41,7 +42,7 @@ public class UserRepoTest {
         User user = new User("vladislavl3@abv.bg", "vladislavl3", "123456");
         user.setIpAddress("127.0.0.1");
 
-        user.setCreatedTime(user.getDateTimeCreated());
+        user.setCreatedTime(Timestamp.valueOf(user.getDateTimeCreated()));
 
         user.setPassword(this.bCryptPasswordEncoder.encode(user.getPassword()));
 
