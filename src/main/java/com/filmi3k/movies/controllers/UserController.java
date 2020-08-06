@@ -2,11 +2,9 @@ package com.filmi3k.movies.controllers;
 
 import com.filmi3k.movies.domain.entities.Movie;
 import com.filmi3k.movies.domain.entities.User;
-import com.filmi3k.movies.models.binding.AuthenticationRequestBindingModel;
-import com.filmi3k.movies.models.binding.AuthenticationResponseBindingModel;
-import com.filmi3k.movies.models.binding.UserInfoBindingModel;
-import com.filmi3k.movies.models.binding.UserRegisterBindingModel;
+import com.filmi3k.movies.models.binding.*;
 import com.filmi3k.movies.models.view.UserRatingViewModel;
+import com.filmi3k.movies.models.view.UserViewModel;
 import com.filmi3k.movies.services.base.MovieService;
 import com.filmi3k.movies.services.base.StorageService;
 import com.filmi3k.movies.services.base.UserService;
@@ -93,7 +91,9 @@ public class UserController {
         String username = new JwtUtil().extractUsername(authenticationResponse.getJwt());
         User user = this.userService.getByUsername(username);
 
-        return ResponseEntity.ok().body(Map.of("user", user));
+        UserViewModel userViewModel = UserViewModel.toViewModel(user);
+
+        return ResponseEntity.ok().body(Map.of("user", userViewModel));
     }
 
     @GetMapping("/register/userAvailable/{username}")
@@ -142,6 +142,18 @@ public class UserController {
         this.userService.changeUserInfo(userInfoModel);
 
         return ResponseEntity.ok().body(Map.of("success", "User info upload sucessfully"));
+    }
+
+    @PostMapping("user/userInfo/bookmark")
+    public ResponseEntity<?> setBookMark(@RequestBody BookmarkBindingModel bookmarkModel) {
+        User user = userService.getById(bookmarkModel.getUserId());
+        Movie movie = movieService.findById(bookmarkModel.getMovieId());
+        if(!userService.isBookmarkFound(user, movie)) {
+            this.userService.addBookmark(user, movie);
+            return ResponseEntity.ok().body(Map.of("success", "Bookmark is saved successfully"));
+        }
+        this.userService.deleteBookmark(user, movie);
+        return ResponseEntity.ok().body(Map.of("success", "Bookmark is deleted successfully"));
     }
 
     @GetMapping("/user/isRated")

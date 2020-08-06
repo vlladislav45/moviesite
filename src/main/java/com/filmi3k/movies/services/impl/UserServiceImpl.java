@@ -27,10 +27,11 @@ public class UserServiceImpl implements UserService {
     private final UserInfoRepository userInfoRepository;
     private final UsersRatingRepository usersRatingRepository;
     private final GenderRepository genderRepository;
+    private final BookmarkRepository bookmarkRepository;
 
     @Autowired
     public UserServiceImpl(UserRepository userRepository, ModelMapper map, BCryptPasswordEncoder bCryptPasswordEncoder, RoleRepository roleRepository, UserImageRepository userImageRepository,
-                           UserPreferencesRepository userPreferencesRepository, UserInfoRepository userInfoRepository, UsersRatingRepository usersRatingRepository, GenderRepository genderRepository) {
+                           UserPreferencesRepository userPreferencesRepository, UserInfoRepository userInfoRepository, UsersRatingRepository usersRatingRepository, GenderRepository genderRepository, BookmarkRepository bookmarkRepository) {
         this.userRepository = userRepository;
         this.modelMapper = map;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
@@ -40,6 +41,7 @@ public class UserServiceImpl implements UserService {
         this.userInfoRepository = userInfoRepository;
         this.usersRatingRepository = usersRatingRepository;
         this.genderRepository = genderRepository;
+        this.bookmarkRepository = bookmarkRepository;
     }
 
     @Override
@@ -96,6 +98,22 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public boolean isBookmarkFound(User user, Movie movie) {
+        return bookmarkRepository.getBookmarkByUserAndMovie(user, movie) != null;
+    }
+
+    @Override
+    public void addBookmark(User user, Movie movie) {
+        bookmarkRepository.saveAndFlush(new Bookmark(user,movie));
+    }
+
+    @Override
+    public void deleteBookmark(User user, Movie movie) {
+        Bookmark bookmark = bookmarkRepository.getBookmarkByUserAndMovie(user, movie);
+        bookmarkRepository.delete(bookmark);
+    }
+
+    @Override
     public void delete(User u) {
         userRepository.delete(u);
     }
@@ -131,11 +149,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
         User foundUser = this.userRepository.getUserByUsername(s);
-        if(foundUser != null) {
-            return foundUser;
-        }else {
-            throw new UsernameNotFoundException("Username not found");
-        }
+        return foundUser;
     }
 
 

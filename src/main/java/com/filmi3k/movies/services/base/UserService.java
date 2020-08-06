@@ -18,6 +18,12 @@ public interface UserService extends UserDetailsService {
 
     void changeUserInfo(UserInfoBindingModel userInfoModel);
 
+    boolean isBookmarkFound(User user, Movie movie);
+
+    void addBookmark(User user, Movie movie);
+
+    void deleteBookmark(User user, Movie movie);
+
     void delete(User u);
 
     Set<User> getAllUsers();
