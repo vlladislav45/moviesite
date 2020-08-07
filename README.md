@@ -7,7 +7,6 @@ that's why if there is a problem, I must be notified
 #TODO:
   * Donate system for an ads
   * Анг/бг менюта
-  * Променя на паролата
   * Изтриване на акаунт
   * Recent activity (bookmarks, device log, upload movie
   , make a review, selected theme)
