@@ -16,9 +16,9 @@ public interface MovieService {
 
     Movie findById(int id);
 
-    Set<Movie> findAll();
-
     Page<Movie> findAll(@Nullable Specification<Movie> specification, Pageable pageable);
+
+    List<Movie> findAll(@Nullable Specification<Movie> specification);
 
     long count(@Nullable Specification<Movie> specification);
 

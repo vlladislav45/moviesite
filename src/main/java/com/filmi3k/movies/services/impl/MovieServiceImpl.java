@@ -38,13 +38,13 @@ public class MovieServiceImpl implements MovieService {
     }
 
     @Override
-    public Set<Movie> findAll() {
-        return new HashSet<>(movieRepository.findAll());
+    public Page<Movie> findAll(Specification<Movie> specification, Pageable pageable) {
+        return movieRepository.findAll(specification,pageable);
     }
 
     @Override
-    public Page<Movie> findAll(Specification<Movie> specification, Pageable pageable) {
-        return movieRepository.findAll(specification,pageable);
+    public List<Movie> findAll(Specification<Movie> specification) {
+        return movieRepository.findAll(specification);
     }
 
     @Override

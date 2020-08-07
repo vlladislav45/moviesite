@@ -4,17 +4,19 @@
 * JDK is updated to 14.0.2, 
 that's why if there is a problem, I must be notified
 
-#TODO:
-  * Donate system for an ads
+#TODO
+  * Donate system for ad remove/buy ads
+  * Да се преправят постърите
+  * Снимките на потребителите да са с връзка 1:1
   * Анг/бг менюта
-  * Изтриване на акаунт
+  * Converter to mp4 movies
   * Recent activity (bookmarks, device log, upload movie
   , make a review, selected theme)
-  * Бонус: Като отворя страница с филм, да ми излизат отдолу:
-    - Подобни филми ( същия жанр)
-    - Филми от същия режисьор
-    - Филми със същите актьори
-    - Бонус:  Хора, харесали този филм, харесват също
+  
+#TODO FRONT-END
+  * Да се поправят снимките на филмите
+  * Да се изтрива токена, когато изтече или logout-не
+  * Да взима IP адреса на клиента
 
 ## Server-side technology
 * Spring Framework

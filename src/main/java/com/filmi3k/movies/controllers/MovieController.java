@@ -91,6 +91,24 @@ public class MovieController {
                 .body(MovieViewModel.toViewModel(movieService.findById(id)));
     }
 
+    @GetMapping("/movies/single")
+    public ResponseEntity<?> getSimilarMovies(@RequestParam int id, @RequestParam int page, @RequestParam int size) {
+        MovieViewModel movieViewModel = MovieViewModel.toViewModel(movieService.findById(id));
+
+        //Similar movies by genres
+        Page<Movie> similarMovies = movieService.findAll(Specification.where(
+                MovieSpecification.withGenres(movieViewModel.getMovieGenres())
+        ),PageRequest.of(page, size));
+
+        List<MoviePosterViewModel> moviesViewModels = similarMovies.stream().map(MoviePosterViewModel::toViewModel).collect(Collectors.toList());
+        String resp = "[";
+        String moviesJson = moviesViewModels.stream().map(JSONparser::toJson).collect(Collectors.joining(","));
+        resp += moviesJson + "]";
+
+        return ResponseEntity.ok()
+                .body(resp);
+    }
+
     @GetMapping("/movies/single/hdPoster/{posterName}")
     public ResponseEntity<byte[]> getHdPoster(@PathVariable String posterName) throws IOException {
         URL url = getClass().getResource(BASE_DIR + "/posters/" + posterName);
