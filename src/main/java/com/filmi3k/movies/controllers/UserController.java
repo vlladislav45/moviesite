@@ -28,7 +28,7 @@ import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.filmi3k.movies.config.Config.BASE_DIR;
+import static com.filmi3k.movies.config.Config.*;
 
 @RestController
 public class UserController {
@@ -171,5 +171,22 @@ public class UserController {
         }
         response.put("error", "null");
         return ResponseEntity.ok().body(response);
+    }
+
+    @GetMapping("user/userPreferences/selectedTheme")
+    public ResponseEntity<?> selectedTheme(@RequestParam int userId) {
+        String selectedTheme = userService.getSelectedTheme(userId);
+        return ResponseEntity.ok().body(Map.of("success", selectedTheme));
+    }
+
+    @PostMapping("/user/userPreferences/theme")
+    public ResponseEntity<?> selectTheme(@RequestBody UserSelectedThemeBindingModel userSelectedThemeModel) {
+        int userId = userSelectedThemeModel.getUserId();
+        String theme = userSelectedThemeModel.getSelectedTheme();
+        if(theme.equals(BASE_THEME) || theme.equals(DARK_THEME)) {
+            userService.changeUserTheme(userId, theme);
+            return ResponseEntity.ok().body(Map.of("success", theme));
+        }
+        return ResponseEntity.ok().body(Map.of("error", "Wrong theme"));
     }
 }

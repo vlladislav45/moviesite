@@ -29,5 +29,12 @@ public class UserPreferences {
     @JoinColumn(name = "user_id", nullable = false, unique = true, updatable = false)
     private User user;
 
-    public UserPreferences(User user) { this.user = user; }
+    public UserPreferences(User user) {
+        this.user = user;
+    }
+
+    public UserPreferences(User user, String selectedTheme) {
+        this.user = user;
+        this.selectedTheme = selectedTheme;
+    }
 }

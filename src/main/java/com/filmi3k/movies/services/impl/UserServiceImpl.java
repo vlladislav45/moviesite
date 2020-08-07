@@ -212,4 +212,19 @@ public class UserServiceImpl implements UserService {
     public void addUserRating(User user, Movie movie, double userRating, String comment) {
         usersRatingRepository.saveAndFlush(new UsersRating(user, movie, userRating, comment));
     }
+
+    @Override
+    public void changeUserTheme(int userId, String theme) {
+        User user = this.getById(userId);
+        UserPreferences userPreferences = userPreferencesRepository.getUserPreferencesByUser(user);
+        if(user != null && userPreferences != null) {
+            userPreferences.setSelectedTheme(theme);
+            userPreferencesRepository.saveAndFlush(userPreferences);
+        }
+    }
+
+    @Override
+    public String getSelectedTheme(int userId) {
+        return userPreferencesRepository.getSelectedThemeByUserId(userId);
+    }
 }
