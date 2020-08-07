@@ -142,6 +142,26 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public User getByEmail(String email) {
+        return userRepository.getUserByEmail(email);
+    }
+
+    @Override
+    public boolean checkIfValidOldPassword(User user, String password) {
+        User u = userRepository.getUserByUsername(user.getUsername());
+        return u != null && bCryptPasswordEncoder.matches(password, user.getPassword());
+    }
+
+    @Override
+    public void changeUserPassword(User user, String newPassword) {
+        //Do not check if the user exist
+        //That's already done in checkIfValidOldPassword
+        User u = userRepository.getUserByUsername(user.getUsername());
+        u.setPassword(bCryptPasswordEncoder.encode(newPassword));
+        userRepository.saveAndFlush(u);
+    }
+
+    @Override
     public User getById(int id) {
         Optional<User> optionalUser = userRepository.findById(id);
         return optionalUser.orElse(null);
