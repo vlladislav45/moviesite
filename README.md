@@ -6,7 +6,6 @@ that's why if there is a problem, I must be notified
 
 #TODO:
   * Donate system for an ads
-  * Избрана тема от базата
   * Анг/бг менюта
   * Променя на паролата
   * Изтриване на акаунт
