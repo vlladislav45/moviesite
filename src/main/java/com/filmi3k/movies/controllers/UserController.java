@@ -181,12 +181,40 @@ public class UserController {
 
     @PostMapping("/user/userPreferences/theme")
     public ResponseEntity<?> selectTheme(@RequestBody UserSelectedThemeBindingModel userSelectedThemeModel) {
-        int userId = userSelectedThemeModel.getUserId();
+        //Get user by token username
+        User user = userService.getByUsername(
+                SecurityContextHolder.getContext().getAuthentication().getName());
+
+        int userId = user.getUserId();
         String theme = userSelectedThemeModel.getSelectedTheme();
         if(theme.equals(BASE_THEME) || theme.equals(DARK_THEME)) {
             userService.changeUserTheme(userId, theme);
             return ResponseEntity.ok().body(Map.of("success", theme));
         }
         return ResponseEntity.ok().body(Map.of("error", "Wrong theme"));
+    }
+
+    @PostMapping("/user/security/updatePassword")
+    public ResponseEntity<?> changeUserPassword(@RequestBody UserChangePasswordBindingModel userChangePasswordModel) {
+        //Get user by token username
+        User user = userService.getByUsername(
+                SecurityContextHolder.getContext().getAuthentication().getName());
+
+        if (!userService.checkIfValidOldPassword(user, userChangePasswordModel.getOldPassword()))
+            return ResponseEntity.badRequest().body(Map.of("error", "Invalid old password"));
+        if(userChangePasswordModel.getNewPassword().length() < 8) // check if new password is less than 8 symbols
+            return ResponseEntity.ok().body(Map.of("error", "The password have been more than 8 symbols"));
+        userService.changeUserPassword(user, userChangePasswordModel.getNewPassword());
+        return ResponseEntity.ok().body(Map.of("success", "Update password successfully"));
+    }
+
+    @PostMapping("/user/security/deleteAccount")
+    public ResponseEntity<?> deleteAccount() {
+        //Get user by token username
+        User user = userService.getByUsername(
+                SecurityContextHolder.getContext().getAuthentication().getName());
+
+        userService.delete(user);
+        return ResponseEntity.ok().body(Map.of("success", "Account is deleted successfully"));
     }
 }

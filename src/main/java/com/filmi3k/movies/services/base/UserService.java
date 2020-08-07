@@ -31,6 +31,12 @@ public interface UserService extends UserDetailsService {
 
     boolean isEmailAvailable(String email);
 
+    User getByEmail(String email);
+
+    boolean checkIfValidOldPassword(User user, String password);
+
+    void changeUserPassword(User user, String newPassword);
+
     User getById(int id);
 
     User ban(User user, FileParser fileParser);

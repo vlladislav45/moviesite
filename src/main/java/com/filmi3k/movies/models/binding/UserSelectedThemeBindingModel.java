@@ -6,6 +6,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 public class UserSelectedThemeBindingModel {
-    private int userId;
     private String selectedTheme;
 }
