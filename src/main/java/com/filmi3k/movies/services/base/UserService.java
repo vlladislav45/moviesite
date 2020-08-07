@@ -1,9 +1,6 @@
 package com.filmi3k.movies.services.base;
 
-import com.filmi3k.movies.domain.entities.Movie;
-import com.filmi3k.movies.domain.entities.User;
-import com.filmi3k.movies.domain.entities.UserInfo;
-import com.filmi3k.movies.domain.entities.UsersRating;
+import com.filmi3k.movies.domain.entities.*;
 import com.filmi3k.movies.models.binding.UserInfoBindingModel;
 import com.filmi3k.movies.models.binding.UserRegisterBindingModel;
 import com.filmi3k.movies.utils.FileParser;
@@ -49,4 +46,8 @@ public interface UserService extends UserDetailsService {
     UsersRating checkRating(User user, Movie movie);
 
     void addUserRating(User user, Movie movie, double userRating, String comment);
+
+    void changeUserTheme(int userId, String theme);
+
+    String getSelectedTheme(int userId);
 }
