@@ -1,4 +1,4 @@
-package com.filmi3k.movies.models.binding;
+package com.filmi3k.movies.domain.models.binding;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

@@ -1,7 +1,6 @@
-package com.filmi3k.movies.models.binding;
+package com.filmi3k.movies.domain.models.binding;
 
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
 public class UserInfoBindingModel {

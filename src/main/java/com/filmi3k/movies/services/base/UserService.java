@@ -1,8 +1,8 @@
 package com.filmi3k.movies.services.base;
 
 import com.filmi3k.movies.domain.entities.*;
-import com.filmi3k.movies.models.binding.UserInfoBindingModel;
-import com.filmi3k.movies.models.binding.UserRegisterBindingModel;
+import com.filmi3k.movies.domain.models.binding.UserInfoBindingModel;
+import com.filmi3k.movies.domain.models.binding.UserRegisterBindingModel;
 import com.filmi3k.movies.utils.FileParser;
 import org.springframework.security.core.userdetails.UserDetailsService;
 

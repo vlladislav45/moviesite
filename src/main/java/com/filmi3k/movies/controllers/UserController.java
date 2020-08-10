@@ -2,9 +2,10 @@ package com.filmi3k.movies.controllers;
 
 import com.filmi3k.movies.domain.entities.Movie;
 import com.filmi3k.movies.domain.entities.User;
-import com.filmi3k.movies.models.binding.*;
-import com.filmi3k.movies.models.view.UserRatingViewModel;
-import com.filmi3k.movies.models.view.UserViewModel;
+import com.filmi3k.movies.domain.models.binding.*;
+import com.filmi3k.movies.domain.models.view.MovieRatingViewModel;
+import com.filmi3k.movies.domain.models.view.UserRatingViewModel;
+import com.filmi3k.movies.domain.models.view.UserViewModel;
 import com.filmi3k.movies.services.base.MovieService;
 import com.filmi3k.movies.services.base.StorageService;
 import com.filmi3k.movies.services.base.UserService;
@@ -27,6 +28,8 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static com.filmi3k.movies.config.Config.*;
 
@@ -164,13 +167,25 @@ public class UserController {
             Movie movie = movieService.findById(movieId);
 
             if (userService.checkRating(user, movie) != null) { // check if the user has voted for the movie
-                response.put("userRating",JSONparser.toJson(UserRatingViewModel.toViewModel(userService.checkRating(user, movie)).getMovieRating()));
-                response.put("comment",UserRatingViewModel.toViewModel(userService.checkRating(user, movie)).getComment());
+                response.put("userRating",JSONparser.toJson(MovieRatingViewModel.toViewModel(userService.checkRating(user, movie)).getMovieRating()));
+                response.put("comment", MovieRatingViewModel.toViewModel(userService.checkRating(user, movie)).getComment());
                 return ResponseEntity.ok().body(response);
             }
         }
         response.put("error", "null");
         return ResponseEntity.ok().body(response);
+    }
+
+    @GetMapping("/user/userInfo/reviewsByAuthor")
+    public ResponseEntity<?> getReviewsByMovie(@RequestParam int userId) {
+        User user = userService.getById(userId);
+        Set<UserRatingViewModel> userRatingViewModels = user.getUsersRatings().stream().map(UserRatingViewModel::toViewModel).collect(Collectors.toSet());
+
+        String resp = "[";
+        String moviesJson = userRatingViewModels.stream().map(JSONparser::toJson).collect(Collectors.joining(","));
+        resp += moviesJson + "]";
+
+        return ResponseEntity.ok(resp);
     }
 
     @PostMapping("/user/userPreferences/theme")

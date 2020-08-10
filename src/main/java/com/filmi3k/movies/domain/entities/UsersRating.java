@@ -19,6 +19,7 @@ import javax.persistence.*;
 @Setter
 @Getter
 public class UsersRating {
+    @JsonIgnore
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JoinColumn(name = "id", nullable = false, unique = true, updatable = false)

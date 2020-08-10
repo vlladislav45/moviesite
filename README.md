@@ -7,14 +7,9 @@ that's why if there is a problem, I must be notified
 #TODO:
   * Donate system for an ads
   * Анг/бг менюта
-  * Изтриване на акаунт
   * Recent activity (bookmarks, device log, upload movie
   , make a review, selected theme)
-  * Бонус: Като отворя страница с филм, да ми излизат отдолу:
-    - Подобни филми ( същия жанр)
-    - Филми от същия режисьор
-    - Филми със същите актьори
-    - Бонус:  Хора, харесали този филм, харесват също
+  * 
 
 ## Server-side technology
 * Spring Framework
