@@ -43,7 +43,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .disable()
                 .authorizeRequests()
                 .antMatchers ("/index", "/", "/login", "/register_user**", "/stream/mp4/Kenpachi").permitAll()
-                .antMatchers("/posters**", "/movies**", "anime**").permitAll()
+                .antMatchers("/posters**", "/movies/**", "anime**").permitAll()
                 .antMatchers("/admin**").hasAuthority("ADMIN")
                 .anyRequest().authenticated()
             .and()

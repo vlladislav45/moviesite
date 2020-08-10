@@ -12,6 +12,7 @@ import java.sql.Time;
 import java.sql.Timestamp;
 import java.time.LocalTime;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -47,7 +48,7 @@ public class Movie {
     @Column(name = "movie_rating", nullable = false)
     private double movieRating;
 
-    @Column(name = "movie_summary", nullable = false)
+    @Column(name = "movie_summary", nullable = true)
     @Type(type = "text")
     private String movieSummary;
 
@@ -72,10 +73,25 @@ public class Movie {
     private Set<Bookmark> bookMarks = new HashSet<>();
 
     @Column(name = "movie_duration")
-    private Time movieDuration;
+    private Long movieDuration;
 
     public Movie() {
         movieGenres = new HashSet<>();
         actors = new HashSet<>();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Movie movie = (Movie) o;
+        return movieId == movie.movieId &&
+                movieYear == movie.movieYear &&
+                movieName.equals(movie.movieName);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(movieId, movieName, movieYear);
     }
 }

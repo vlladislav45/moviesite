@@ -1,4 +1,4 @@
-package com.filmi3k.movies.filters;
+package com.filmi3k.movies.interceptors;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.filmi3k.movies.services.base.UserService;

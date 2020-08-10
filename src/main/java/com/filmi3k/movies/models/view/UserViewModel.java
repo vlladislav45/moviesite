@@ -12,13 +12,14 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @Data
 public class UserViewModel {
+    private int userId;
     private String username;
     private String email;
     private List<UserRole> authorities = new ArrayList<>();
     private UserPreferences userPreferences;
     private UserInfo userInfo;
     private UsersRating usersRating;
-    private List<String> bookmarks = new ArrayList<>();
+    private List<BookmarkViewModel> bookmarks = new ArrayList<>();
     private Timestamp createdTime;
     private boolean isEnabled;
 
@@ -29,9 +30,10 @@ public class UserViewModel {
         userViewModel.setAuthorities(user.getAuthorities());
         userViewModel.setUserPreferences(user.getUserPreferences());
         userViewModel.setUserInfo(user.getUserInfo());
+        userViewModel.setUserId(user.getUserId());
 
         List<Movie> movies = user.getBookMarks().stream().map(Bookmark::getMovie).collect(Collectors.toList());
-        userViewModel.bookmarks = movies.stream().map(Movie::getMovieName).collect(Collectors.toList());
+        userViewModel.bookmarks = movies.stream().map(BookmarkViewModel::toViewModel).collect(Collectors.toList());
 
         userViewModel.setCreatedTime(Timestamp.valueOf(user.getDateTimeCreated()));
         userViewModel.setEnabled(user.isEnabled());

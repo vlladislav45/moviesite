@@ -3,6 +3,7 @@ package com.filmi3k.movies.domain.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.NoArgsConstructor;
 
+import org.hibernate.annotations.Immutable;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;

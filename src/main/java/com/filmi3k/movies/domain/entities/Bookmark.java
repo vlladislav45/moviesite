@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 @Entity
 @Table(name = "bookmark")
@@ -18,7 +19,7 @@ public class Bookmark {
     private int id;
 
     @JsonIgnore
-    @ManyToOne(targetEntity = User.class, fetch = FetchType.EAGER)
+    @ManyToOne(targetEntity = User.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
@@ -30,5 +31,19 @@ public class Bookmark {
     public Bookmark(User user, Movie movie) {
         this.user = user;
         this.movie = movie;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Bookmark bookmark = (Bookmark) o;
+        return id == bookmark.id &&
+                movie.equals(bookmark.movie);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, movie);
     }
 }

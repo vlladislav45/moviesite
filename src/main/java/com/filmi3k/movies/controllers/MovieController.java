@@ -6,8 +6,8 @@ import com.filmi3k.movies.domain.entities.User;
 import com.filmi3k.movies.filters.MovieFilters;
 import com.filmi3k.movies.filters.MovieSpecification;
 import com.filmi3k.movies.models.binding.UserRatingBindingModel;
-import com.filmi3k.movies.models.view.MoviePosterViewModel;
 import com.filmi3k.movies.models.view.MovieViewModel;
+import com.filmi3k.movies.models.view.SingleMovieViewModel;
 import com.filmi3k.movies.repository.api.MovieRepository;
 import com.filmi3k.movies.services.base.MovieGenreService;
 import com.filmi3k.movies.services.base.MovieService;
@@ -63,7 +63,7 @@ public class MovieController {
                         ),
                 PageRequest.of(page, size));
 
-        List<MoviePosterViewModel> moviesViewModels = filteredMovies.stream().map(MoviePosterViewModel::toViewModel).collect(Collectors.toList());
+        List<MovieViewModel> moviesViewModels = filteredMovies.stream().map(MovieViewModel::toViewModel).collect(Collectors.toList());
         String resp = "[";
         String moviesJson = moviesViewModels.stream().map(JSONparser::toJson).collect(Collectors.joining(","));
         resp += moviesJson + "]";
@@ -86,9 +86,9 @@ public class MovieController {
     }
 
     @GetMapping("/movies/single/{id}")
-    public ResponseEntity<MovieViewModel> getMovieInformation(@PathVariable int id) {
+    public ResponseEntity<SingleMovieViewModel> getMovieInformation(@PathVariable int id) {
         return ResponseEntity.ok()
-                .body(MovieViewModel.toViewModel(movieService.findById(id)));
+                .body(SingleMovieViewModel.toViewModel(movieService.findById(id)));
     }
 
     @GetMapping("/movies/single/hdPoster/{posterName}")
