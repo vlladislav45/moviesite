@@ -45,8 +45,8 @@ public class MovieController {
     }
 
     @PostMapping("/movies/count")
-    public ResponseEntity<Map<String,Object>> countFilteredMovies(@RequestBody MovieFilters movieFilters) {
-        Map<String,Object> response = new HashMap<>();
+    public ResponseEntity<Map<String, Object>> countFilteredMovies(@RequestBody MovieFilters movieFilters) {
+        Map<String, Object> response = new HashMap<>();
         long count = movieService.count(Specification.where(MovieSpecification.countWithGenres(movieFilters.getGenres())
                 .and(MovieSpecification.withFilter(movieFilters))));
 
@@ -63,11 +63,8 @@ public class MovieController {
                         ),
                 PageRequest.of(page, size));
 
-        List<MovieViewModel> moviesViewModels = filteredMovies.stream().map(MovieViewModel::toViewModel).collect(Collectors.toList());
-        String resp = "[";
-        String moviesJson = moviesViewModels.stream().map(JSONparser::toJson).collect(Collectors.joining(","));
-        resp += moviesJson + "]";
 
+        String resp = generateResponseFromMovie(filteredMovies);
         return ResponseEntity.ok()
                 .body(resp);
     }
@@ -109,18 +106,18 @@ public class MovieController {
     }
 
     @PostMapping("movies/single/rating")
-    public ResponseEntity<Map<String,Object>> voteSingleMovie(@RequestBody UserRatingBindingModel userRatingBindingModel) {
-        Map<String,Object> response = new HashMap<>();
+    public ResponseEntity<Map<String, Object>> voteSingleMovie(@RequestBody UserRatingBindingModel userRatingBindingModel) {
+        Map<String, Object> response = new HashMap<>();
         /**
          * check if the user already exists at the system
          * and protection against vote-rigging by the front end
-          */
+         */
         if (userService.getById(userRatingBindingModel.getUserId()) != null && movieService.findById(userRatingBindingModel.getMovieId()) != null
-        && userRatingBindingModel.getMovieRating() >= MIN_VOTE && userRatingBindingModel.getMovieRating() <= MAX_VOTE) {
+                && userRatingBindingModel.getMovieRating() >= MIN_VOTE && userRatingBindingModel.getMovieRating() <= MAX_VOTE) {
             User user = userService.getById(userRatingBindingModel.getUserId());
             Movie movie = movieService.findById(userRatingBindingModel.getMovieId());
 
-            if(userRatingBindingModel.getComment() == null) userRatingBindingModel.setComment("");
+            if (userRatingBindingModel.getComment() == null) userRatingBindingModel.setComment("");
 
             if (userService.checkRating(user, movie) == null) // check if the user has not yet voted for the movie
                 userService.addUserRating(user, movie, userRatingBindingModel.getMovieRating(), userRatingBindingModel.getComment());
@@ -128,7 +125,7 @@ public class MovieController {
                 response.put("error", "User has already rated");
                 return ResponseEntity.ok().body(response);
             }
-        }else {
+        } else {
             response.put("error", "Could not rate movie");
             return ResponseEntity.ok().body(response);
         }
@@ -141,4 +138,29 @@ public class MovieController {
                 .body(response);
     }
 
+    @GetMapping("/movies/similar")
+    public ResponseEntity<?> getSimilarMovies(@RequestParam int id, @RequestParam int page, @RequestParam int size) {
+        Movie movie = movieService.findById(id);
+        List<String> genreNames = movie.getMovieGenres().stream().map(MovieGenre::getMovieGenreName).collect(Collectors.toList());
+        String genre = "";
+        if (!genreNames.isEmpty())
+            genre = genreNames.get(0);
+        //Similar movies by genres
+        Page<Movie> similarMovies = movieService.findAll(Specification.where(
+                MovieSpecification.withGenres(List.of(genre))
+        ), PageRequest.of(page, size));
+
+        String resp = generateResponseFromMovie(similarMovies);
+        return ResponseEntity.ok()
+                .body(resp);
+    }
+
+
+    private String generateResponseFromMovie(Page<Movie> movies) {
+        List<MovieViewModel> moviesViewModels = movies.stream().map(MovieViewModel::toViewModel).collect(Collectors.toList());
+        String resp = "[";
+        String moviesJson = moviesViewModels.stream().map(JSONparser::toJson).collect(Collectors.joining(","));
+        resp += moviesJson + "]";
+        return resp;
+    }
 }

@@ -173,12 +173,6 @@ public class UserController {
         return ResponseEntity.ok().body(response);
     }
 
-    @GetMapping("user/userPreferences/selectedTheme")
-    public ResponseEntity<?> selectedTheme(@RequestParam int userId) {
-        String selectedTheme = userService.getSelectedTheme(userId);
-        return ResponseEntity.ok().body(Map.of("success", selectedTheme));
-    }
-
     @PostMapping("/user/userPreferences/theme")
     public ResponseEntity<?> selectTheme(@RequestBody UserSelectedThemeBindingModel userSelectedThemeModel) {
         //Get user by token username
