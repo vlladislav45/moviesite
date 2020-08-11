@@ -9,9 +9,7 @@ import static com.filmi3k.movies.config.Config.*;
 
 public class FileParser {
     private static FileParser instance = null;
-
     private final URL url = getClass().getResource(WHITELIST);
-
     private final File file = new File(url.getFile());
 
 
@@ -36,12 +34,17 @@ public class FileParser {
         }
     }
 
-    public void addBannedIPAddress(String ipAddress) {
+    public void addBannedIPAddress(List<String> ipAddresses) {
         BufferedWriter writer = null;
         try {
             writer = new BufferedWriter(new FileWriter(file,true));
 
-            if(instance.checkIPIfNotExist(ipAddress)) writer.write("\n" + ipAddress);
+            /***
+             * It must be TESTED
+             */
+            for(int i = 0; i < ipAddresses.size(); i++) {
+                if (instance.checkIPIfNotExist(ipAddresses.get(i))) writer.write("\n" + ipAddresses.get(i));
+            }
 
         } catch (IOException e) {
             e.printStackTrace();

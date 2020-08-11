@@ -36,5 +36,8 @@ public class Config {
     //Default 24 hours
     public static final long TOKEN = 24;
 
+    //Default IP
+    public static final String UNKNOWN = "UNKNOWN";
+
     public Config() { }
 }

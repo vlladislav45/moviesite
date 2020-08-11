@@ -40,7 +40,6 @@ public class UserRepoTest {
     @Transactional
     void addUser() {
         User user = new User("vladislavl3@abv.bg", "vladislavl3", "123456");
-        user.setIpAddress("127.0.0.1");
 
         user.setCreatedTime(Timestamp.valueOf(user.getDateTimeCreated()));
 
@@ -62,8 +61,8 @@ public class UserRepoTest {
         User actual = userRepository.getUserByUsername("vladislavl3");
         Assert.assertEquals("User is not exist", user, actual);
 
-        //this.userInfoRepository.saveAndFlush(new UserInfo(user)); //Create the relationship between User and User Info
-        //this.userPreferencesRepository.saveAndFlush(new UserPreferences(user)); // Create the relationship between User and User Preferences
+        this.userInfoRepository.saveAndFlush(new UserInfo(user)); //Create the relationship between User and User Info
+        this.userPreferencesRepository.saveAndFlush(new UserPreferences(user)); // Create the relationship between User and User Preferences
     }
 
     @Test

@@ -1,11 +1,13 @@
 package com.filmi3k.movies.controllers;
 
+import com.filmi3k.movies.domain.entities.DeviceLog;
 import com.filmi3k.movies.domain.entities.Movie;
 import com.filmi3k.movies.domain.entities.User;
 import com.filmi3k.movies.domain.models.binding.*;
 import com.filmi3k.movies.domain.models.view.MovieRatingViewModel;
 import com.filmi3k.movies.domain.models.view.UserRatingViewModel;
 import com.filmi3k.movies.domain.models.view.UserViewModel;
+import com.filmi3k.movies.services.base.DeviceLogService;
 import com.filmi3k.movies.services.base.MovieService;
 import com.filmi3k.movies.services.base.StorageService;
 import com.filmi3k.movies.services.base.UserService;
@@ -19,9 +21,11 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -40,14 +44,16 @@ public class UserController {
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtTokenUtil;
     private final StorageService storageService;
+    private final DeviceLogService deviceLogService;
 
     @Autowired
-    public UserController(UserService userService, MovieService movieService, AuthenticationManager authenticationManager, JwtUtil jwtTokenUtil, StorageService storageService) {
+    public UserController(UserService userService, MovieService movieService, AuthenticationManager authenticationManager, JwtUtil jwtTokenUtil, StorageService storageService, DeviceLogService deviceLogService) {
         this.userService = userService;
         this.movieService = movieService;
         this.authenticationManager = authenticationManager;
         this.jwtTokenUtil = jwtTokenUtil;
         this.storageService = storageService;
+        this.deviceLogService = deviceLogService;
     }
 
     @PostMapping("/register_user")
@@ -85,6 +91,8 @@ public class UserController {
                 .loadUserByUsername(authenticationRequest.getUsername());
 
         final String jwt = jwtTokenUtil.generateToken(userDetails);
+        //Set Device log
+        deviceLogService.addNewDeviceLog(authenticationRequest, jwt);
 
         return ResponseEntity.ok().body(new AuthenticationResponseBindingModel(jwt));
     }
@@ -223,7 +231,28 @@ public class UserController {
         User user = userService.getByUsername(
                 SecurityContextHolder.getContext().getAuthentication().getName());
 
-        userService.delete(user);
-        return ResponseEntity.ok().body(Map.of("success", "Account is deleted successfully"));
+        if(user != null) {
+            userService.delete(user);
+            return ResponseEntity.ok().body(Map.of("success", "Account is deleted successfully"));
+        }
+        return ResponseEntity.ok().body(Map.of("error", "This user is invalid"));
+    }
+
+    @PostMapping("/user/security/deleteDeviceLog")
+    public ResponseEntity<?> deleteDeviceLog(@RequestBody IpAddressBindingModel ipAddressModel, HttpServletRequest httpServletRequest) {
+        //Get user by token username
+        User user = userService.getByUsername(
+                SecurityContextHolder.getContext().getAuthentication().getName());
+
+        /***
+         * Check if the user exist and there ip's are from him
+         */
+        if(user != null && deviceLogService.findBypAddress(ipAddressModel.getIpAddress()) != null) {
+            DeviceLog deviceLog = deviceLogService.findByUserAndIpAddress(user,ipAddressModel.getIpAddress());
+            
+            deviceLogService.delete(deviceLog);
+            return ResponseEntity.ok().body(Map.of("success", "Device log is deleted successfully"));
+        }
+        return ResponseEntity.ok().body(Map.of("error", "This device log cannot be deleted"));
     }
 }

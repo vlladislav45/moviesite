@@ -1,18 +1,18 @@
 package com.filmi3k.movies.domain.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.NoArgsConstructor;
+import lombok.Data;
 
-import org.hibernate.annotations.Immutable;
+import lombok.NoArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
 import java.util.*;
 
 @Entity
 @Table(name = "user")
+@Data
 @NoArgsConstructor
 public class User extends BaseEntity implements UserDetails {
     @Id
@@ -34,10 +34,6 @@ public class User extends BaseEntity implements UserDetails {
     @Column(name = "created_time", nullable = false)
     private Timestamp createdTime;
 
-    @JsonIgnore
-    @Column(name = "ip_address")
-    private String ipAddress;
-
     @ManyToMany(targetEntity = UserRole.class, fetch = FetchType.EAGER)
     @JoinTable(
             name = "users_roles",
@@ -58,6 +54,9 @@ public class User extends BaseEntity implements UserDetails {
     @OneToMany(mappedBy = "user",  cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private Set<Bookmark> bookMarks = new HashSet<>();
 
+    @OneToMany(mappedBy = "user",  cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    private List<DeviceLog> deviceLogs = new ArrayList<>();
+
     @JsonIgnore
     private boolean isAccountNonExpired;
 
@@ -75,29 +74,9 @@ public class User extends BaseEntity implements UserDetails {
         this.password = password;
     }
 
-    public int getUserId() {
-        return userId;
-    }
-
-    public void setUserId(int userId) {
-        this.userId = userId;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
     @Override
     public String getPassword() {
         return this.password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 
     @Override
@@ -105,33 +84,9 @@ public class User extends BaseEntity implements UserDetails {
         return this.username;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public Timestamp getCreatedTime() {
-        return createdTime;
-    }
-
-    public void setCreatedTime(Timestamp createdTime) {
-        this.createdTime = createdTime;
-    }
-
-    public String getIpAddress() {
-        return ipAddress;
-    }
-
-    public void setIpAddress(String ipAddress) {
-        this.ipAddress = ipAddress;
-    }
-
     @Override
     public List<UserRole> getAuthorities() {
         return this.authorities;
-    }
-
-    public void setAuthorities(List<UserRole> authorities) {
-        this.authorities = authorities;
     }
 
     @Override
@@ -152,43 +107,5 @@ public class User extends BaseEntity implements UserDetails {
     @Override
     public boolean isEnabled() {
         return isEnabled;
-    }
-
-    public void setAccountNonExpired(boolean accountNonExpired) {
-        isAccountNonExpired = accountNonExpired;
-    }
-
-    public void setAccountNonLocked(boolean accountNonLocked) {
-        isAccountNonLocked = accountNonLocked;
-    }
-
-    public void setCredentialsNonExpired(boolean credentialsNonExpired) { isCredentialsNonExpired = credentialsNonExpired; }
-
-    public void setEnabled(boolean enabled) {
-        isEnabled = enabled;
-    }
-
-    public UserPreferences getUserPreferences() { return userPreferences; }
-
-    public void setUserPreferences(UserPreferences userPreferences) { this.userPreferences = userPreferences; }
-
-    public UserInfo getUserInfo() { return userInfo; }
-
-    public void setUserInfo(UserInfo userInfo) { this.userInfo = userInfo; }
-
-    public Set<UsersRating> getUsersRatings() {
-        return usersRatings;
-    }
-
-    public void setUsersRatings(Set<UsersRating> usersRatings) {
-        this.usersRatings = usersRatings;
-    }
-
-    public Set<Bookmark> getBookMarks() {
-        return bookMarks;
-    }
-
-    public void setBookMarks(Set<Bookmark> bookMarks) {
-        this.bookMarks = bookMarks;
     }
 }

@@ -19,8 +19,9 @@ public class UserViewModel {
     private UserInfo userInfo;
     private UsersRating usersRating;
     private List<BookmarkViewModel> bookmarks = new ArrayList<>();
-    private Timestamp createdTime;
+    private Long createdTime;
     private boolean isEnabled;
+    private List<DeviceLogViewModel> deviceLogs = new ArrayList<>();
 
     public static UserViewModel toViewModel(User user) {
         UserViewModel userViewModel = new UserViewModel();
@@ -33,9 +34,10 @@ public class UserViewModel {
 
         List<Movie> movies = user.getBookMarks().stream().map(Bookmark::getMovie).collect(Collectors.toList());
         userViewModel.bookmarks = movies.stream().map(BookmarkViewModel::toViewModel).collect(Collectors.toList());
-
-        userViewModel.setCreatedTime(Timestamp.valueOf(user.getDateTimeCreated()));
+        userViewModel.setCreatedTime(Timestamp.valueOf(user.getDateTimeCreated()).getTime());
         userViewModel.setEnabled(user.isEnabled());
+
+        userViewModel.deviceLogs = user.getDeviceLogs().stream().map(DeviceLogViewModel::toViewModel).collect(Collectors.toList());
 
         return userViewModel;
     }

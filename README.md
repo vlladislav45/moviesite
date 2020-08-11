@@ -7,9 +7,7 @@ that's why if there is a problem, I must be notified
 #TODO:
   * Donate system for an ads
   * Анг/бг менюта
-  * Recent activity (bookmarks, device log, upload movie
-  , make a review, selected theme)
-  * 
+  * Recent activity (bookmarks, upload movies, reviews)
 
 ## Server-side technology
 * Spring Framework
