@@ -1,8 +1,11 @@
 package com.filmi3k.movies.config;
 
+import lombok.NoArgsConstructor;
+
 /**
  * @author Vladislav Enev
  */
+@NoArgsConstructor
 public class Config {
     //Main resource directory
     public static final String BASE_DIR = "/static";
@@ -36,8 +39,6 @@ public class Config {
     //Default 24 hours
     public static final long TOKEN = 24;
 
-    //Default IP
-    public static final String UNKNOWN = "UNKNOWN";
-
-    public Config() { }
+    //Company email
+    public static final String companyEmail = "omegatwentyone@gmail.com";
 }

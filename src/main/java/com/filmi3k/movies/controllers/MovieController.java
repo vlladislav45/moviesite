@@ -4,6 +4,7 @@ import com.filmi3k.movies.domain.entities.Movie;
 import com.filmi3k.movies.domain.entities.MovieGenre;
 import com.filmi3k.movies.domain.entities.User;
 import com.filmi3k.movies.domain.entities.UsersRating;
+import com.filmi3k.movies.domain.models.binding.RequestAuthorFormBindingModel;
 import com.filmi3k.movies.domain.models.view.MovieRatingViewModel;
 import com.filmi3k.movies.domain.models.view.UserRatingViewModel;
 import com.filmi3k.movies.filters.MovieFilters;
@@ -15,6 +16,7 @@ import com.filmi3k.movies.repository.api.MovieRepository;
 import com.filmi3k.movies.services.base.MovieGenreService;
 import com.filmi3k.movies.services.base.MovieService;
 import com.filmi3k.movies.services.base.UserService;
+import com.filmi3k.movies.services.impl.EmailServiceImpl;
 import com.filmi3k.movies.utils.JSONparser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -24,6 +26,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.mail.SendFailedException;
 import java.io.*;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -39,12 +42,14 @@ public class MovieController {
     private final MovieService movieService;
     private final MovieGenreService movieGenreService;
     private final UserService userService;
+    private final EmailServiceImpl emailService;
 
     @Autowired
-    public MovieController(MovieService movieService, MovieGenreService movieGenreService, MovieRepository movieRepository, UserService userService) {
+    public MovieController(MovieService movieService, MovieGenreService movieGenreService, MovieRepository movieRepository, UserService userService, EmailServiceImpl emailService) {
         this.movieService = movieService;
         this.movieGenreService = movieGenreService;
         this.userService = userService;
+        this.emailService = emailService;
     }
 
     @PostMapping("/movies/count")
@@ -181,12 +186,31 @@ public class MovieController {
                 .body(resp);
     }
 
-
     private String generateResponseFromMovie(Page<Movie> movies) {
         List<MovieViewModel> moviesViewModels = movies.stream().map(MovieViewModel::toViewModel).collect(Collectors.toList());
         String resp = "[";
         String moviesJson = moviesViewModels.stream().map(JSONparser::toJson).collect(Collectors.joining(","));
         resp += moviesJson + "]";
         return resp;
+    }
+
+    /***
+     * This method will be used for movie author problems
+     * Send info to the company mail
+     */
+    @PostMapping("movies/authorForm/mail")
+    public ResponseEntity<?> requestAuthorForm(@RequestBody RequestAuthorFormBindingModel requestAuthorFormModel) {
+        if(emailService.requires(requestAuthorFormModel).size() == 0) {
+            try {
+                emailService.sendSimpleMessage(requestAuthorFormModel);
+            } catch (SendFailedException sendFailedException) {
+                return ResponseEntity.ok(Map.of("error", "Mail sent failed"));
+            }
+            return ResponseEntity.ok(Map.of("success", "Mail sent successfully"));
+        }
+        String resp = "[";
+        String errors = emailService.requires(requestAuthorFormModel).stream().map(JSONparser::toJson).collect(Collectors.joining(","));
+        resp += errors + "]";
+        return ResponseEntity.ok(resp);
     }
 }

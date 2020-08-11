@@ -34,6 +34,7 @@ public class UserViewModel {
 
         List<Movie> movies = user.getBookMarks().stream().map(Bookmark::getMovie).collect(Collectors.toList());
         userViewModel.bookmarks = movies.stream().map(BookmarkViewModel::toViewModel).collect(Collectors.toList());
+
         userViewModel.setCreatedTime(Timestamp.valueOf(user.getDateTimeCreated()).getTime());
         userViewModel.setEnabled(user.isEnabled());
 
