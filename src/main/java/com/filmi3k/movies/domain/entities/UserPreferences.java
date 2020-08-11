@@ -16,6 +16,7 @@ import static com.filmi3k.movies.config.Config.BASE_THEME;
 @Getter
 @Setter
 public class UserPreferences {
+    @JsonIgnore
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_preference_id", nullable = false, unique = true, updatable = false)

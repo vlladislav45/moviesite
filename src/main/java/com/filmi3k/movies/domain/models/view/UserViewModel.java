@@ -1,11 +1,10 @@
-package com.filmi3k.movies.models.view;
+package com.filmi3k.movies.domain.models.view;
 
 import com.filmi3k.movies.domain.entities.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 

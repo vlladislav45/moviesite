@@ -3,11 +3,14 @@ package com.filmi3k.movies.controllers;
 import com.filmi3k.movies.domain.entities.Movie;
 import com.filmi3k.movies.domain.entities.MovieGenre;
 import com.filmi3k.movies.domain.entities.User;
+import com.filmi3k.movies.domain.entities.UsersRating;
+import com.filmi3k.movies.domain.models.view.MovieRatingViewModel;
+import com.filmi3k.movies.domain.models.view.UserRatingViewModel;
 import com.filmi3k.movies.filters.MovieFilters;
 import com.filmi3k.movies.filters.MovieSpecification;
-import com.filmi3k.movies.models.binding.UserRatingBindingModel;
-import com.filmi3k.movies.models.view.MovieViewModel;
-import com.filmi3k.movies.models.view.SingleMovieViewModel;
+import com.filmi3k.movies.domain.models.binding.UserRatingBindingModel;
+import com.filmi3k.movies.domain.models.view.MovieViewModel;
+import com.filmi3k.movies.domain.models.view.SingleMovieViewModel;
 import com.filmi3k.movies.repository.api.MovieRepository;
 import com.filmi3k.movies.services.base.MovieGenreService;
 import com.filmi3k.movies.services.base.MovieService;
@@ -136,6 +139,29 @@ public class MovieController {
         response.put("newRating", average);
         return ResponseEntity.ok()
                 .body(response);
+    }
+
+    @GetMapping("/movies/single/reviewsByMovie")
+    public ResponseEntity<?> getReviewsByMovie(@RequestParam int movieId) {
+        Movie movie = movieService.findById(movieId);
+        Set<MovieRatingViewModel> movieRatingViewModels = movie.getUsersRatings().stream().map(MovieRatingViewModel::toViewModel).collect(Collectors.toSet());
+
+        String resp = "[";
+        String moviesJson = movieRatingViewModels.stream().map(JSONparser::toJson).collect(Collectors.joining(","));
+        resp += moviesJson + "]";
+
+        return ResponseEntity.ok(resp);
+    }
+
+    @GetMapping("/movies/single/reviewByAuthorAndMovie")
+    public ResponseEntity<?> getReviewByAuthorAndMovie(@RequestParam int userId, @RequestParam int movieId) {
+        User user = userService.getById(userId);
+        Movie movie = movieService.findById(movieId);
+        UsersRating usersRating = userService.checkRating(user,movie);
+
+        if(usersRating != null)
+            return ResponseEntity.ok(Map.of("success", UserRatingViewModel.toViewModel(usersRating)));
+        return ResponseEntity.ok(Map.of("error", "Doesn't exist rating for this author and movie"));
     }
 
     @GetMapping("/movies/similar")

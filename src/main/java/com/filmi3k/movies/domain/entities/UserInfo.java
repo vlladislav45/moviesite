@@ -16,6 +16,7 @@ import java.util.List;
 @Getter
 @Setter
 public class UserInfo {
+    @JsonIgnore
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_info_id", nullable = false, unique = true, updatable = false)

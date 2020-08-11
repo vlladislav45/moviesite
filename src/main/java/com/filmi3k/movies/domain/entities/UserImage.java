@@ -16,6 +16,7 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 public class UserImage extends BaseEntity {
+    @JsonIgnore
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     @Column(name = "user_image_id", nullable = false, unique = true, updatable = false)

@@ -1,12 +1,11 @@
 package com.filmi3k.movies.services.impl;
 
 import com.filmi3k.movies.domain.entities.Movie;
-import com.filmi3k.movies.models.binding.UserRatingBindingModel;
+import com.filmi3k.movies.domain.models.binding.UserRatingBindingModel;
 import com.filmi3k.movies.repository.api.MovieRepository;
 import com.filmi3k.movies.repository.api.UsersRatingRepository;
 import com.filmi3k.movies.services.base.MovieService;
 import com.filmi3k.movies.utils.Math;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -38,11 +37,6 @@ public class MovieServiceImpl implements MovieService {
     }
 
     @Override
-    public Set<Movie> findAll() {
-        return new HashSet<>(movieRepository.findAll());
-    }
-
-    @Override
     public Page<Movie> findAll(Specification<Movie> specification, Pageable pageable) {
         return movieRepository.findAll(specification,pageable);
     }
@@ -71,10 +65,6 @@ public class MovieServiceImpl implements MovieService {
     @Override
     public Movie findByName(String movieName) {
         return movieRepository.findByMovieName(movieName);
-    }
-
-    @Override
-    public void update(Movie movie) {
     }
 
     @Override

@@ -1,4 +1,4 @@
-package com.filmi3k.movies.models.view;
+package com.filmi3k.movies.domain.models.view;
 
 import com.filmi3k.movies.domain.entities.Movie;
 
