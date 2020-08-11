@@ -3,7 +3,9 @@ package com.filmi3k.movies.controllers;
 import com.filmi3k.movies.domain.entities.Movie;
 import com.filmi3k.movies.domain.entities.MovieGenre;
 import com.filmi3k.movies.domain.entities.User;
+import com.filmi3k.movies.domain.entities.UsersRating;
 import com.filmi3k.movies.domain.models.view.MovieRatingViewModel;
+import com.filmi3k.movies.domain.models.view.UserRatingViewModel;
 import com.filmi3k.movies.filters.MovieFilters;
 import com.filmi3k.movies.filters.MovieSpecification;
 import com.filmi3k.movies.domain.models.binding.UserRatingBindingModel;
@@ -149,6 +151,17 @@ public class MovieController {
         resp += moviesJson + "]";
 
         return ResponseEntity.ok(resp);
+    }
+
+    @GetMapping("/movies/single/reviewByAuthorAndMovie")
+    public ResponseEntity<?> getReviewByAuthorAndMovie(@RequestParam int userId, @RequestParam int movieId) {
+        User user = userService.getById(userId);
+        Movie movie = movieService.findById(movieId);
+        UsersRating usersRating = userService.checkRating(user,movie);
+
+        if(usersRating != null)
+            return ResponseEntity.ok(Map.of("success", UserRatingViewModel.toViewModel(usersRating)));
+        return ResponseEntity.ok(Map.of("error", "Doesn't exist rating for this author and movie"));
     }
 
     @GetMapping("/movies/similar")

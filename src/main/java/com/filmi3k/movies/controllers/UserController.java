@@ -177,7 +177,7 @@ public class UserController {
     }
 
     @GetMapping("/user/userInfo/reviewsByAuthor")
-    public ResponseEntity<?> getReviewsByMovie(@RequestParam int userId) {
+    public ResponseEntity<?> getReviewsByAuthor(@RequestParam int userId) {
         User user = userService.getById(userId);
         Set<UserRatingViewModel> userRatingViewModels = user.getUsersRatings().stream().map(UserRatingViewModel::toViewModel).collect(Collectors.toSet());
 

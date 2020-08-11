@@ -7,15 +7,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.lang.Nullable;
 
-import java.util.Set;
-
 public interface MovieService {
 
     void add(Movie movie);
 
     Movie findById(int id);
-
-    Set<Movie> findAll();
 
     Page<Movie> findAll(@Nullable Specification<Movie> specification, Pageable pageable);
 
@@ -24,8 +20,6 @@ public interface MovieService {
     double updateRating(UserRatingBindingModel movieRatingBindingModel);
 
     Movie findByName(String movieName);
-
-    void update(Movie movie);
 
     void delete(Movie movie);
 }
