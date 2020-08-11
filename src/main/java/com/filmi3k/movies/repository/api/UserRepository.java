@@ -18,6 +18,4 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     boolean isEnabledUser(int id);
 
     Set<User> getAllByIsEnabled(boolean isEnabled);
-
-    User getUserByIpAddress(String ipAddress);
 }

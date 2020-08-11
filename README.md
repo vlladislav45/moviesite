@@ -9,7 +9,7 @@ that's why if there is a problem, I must be notified
   * Анг/бг менюта
   * Recent activity (bookmarks, device log, upload movie
   , make a review, selected theme)
-  * 
+  * Date new Entity
 
 ## Server-side technology
 * Spring Framework

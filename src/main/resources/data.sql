@@ -341,3 +341,8 @@ Later that night, Brian witnesses Dominic and his crew leaving and realizes that
 Some time later, Brian arrives at Dominic''s house to apprehend him as he is reversing his father''s 1970 Dodge Charger R/T out of the garage. Jesse arrives, pleading for protection. Tran and Lance ride by on motorbikes and shoot Jesse for reneging on their bet. Brian and Dominic give chase in their separate vehicles, finding and killing Tran and injuring Lance. Brian then pursues Dominic, with them both eventually acquiescing to a quarter-mile drag race. The pair barely cross a railroad before a train passes, which ends the race in a draw, but Dominic crashes his car into a truck. Instead of arresting him, Brian gives the keys to his own car to Dominic, asserting that he still owes him a 10 second car. Dominic escapes in the Supra as Brian walks away.
 In the post-credits scene, Dominic is seen driving through Baja California, Mexico, in a 1970 Chevrolet Chevelle SS.'
 WHERE movie_name = 'Fast and Furious 1';
+
+UPDATE movie set movie_duration = 725000 WHERE movie_id IN (1,2,3,4,5,6,7,8,9,10,11,12,13);
+--
+-- insert into device_log (device_details, ip_address, last_logged_in, location, user_id) values
+-- ('asgasg', '127.0.0.1', '2020-08-11 12:38:39', 'BG', 1);

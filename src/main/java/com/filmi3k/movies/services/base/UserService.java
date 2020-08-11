@@ -43,8 +43,6 @@ public interface UserService extends UserDetailsService {
 
     Set<User> getBannedUsers();
 
-    User getUserByIpAddress(String ipAddress);
-
     boolean isEnabledUser(int id);
 
     void banUsersByIP(FileParser fileParser);
@@ -54,6 +52,4 @@ public interface UserService extends UserDetailsService {
     void addUserRating(User user, Movie movie, double userRating, String comment);
 
     void changeUserTheme(int userId, String theme);
-
-    String getSelectedTheme(int userId);
 }

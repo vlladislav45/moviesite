@@ -13,6 +13,7 @@ import java.util.Objects;
 @Setter
 abstract class BaseEntity
 {
+    @JsonIgnore
     private final LocalDateTime dateTimeCreated = LocalDateTime.now();
 
     @Override

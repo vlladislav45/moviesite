@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import java.io.FileNotFoundException;
 import java.sql.Timestamp;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -29,10 +30,11 @@ public class UserServiceImpl implements UserService {
     private final UsersRatingRepository usersRatingRepository;
     private final GenderRepository genderRepository;
     private final BookmarkRepository bookmarkRepository;
+    private final DeviceLogRepository deviceLogRepository;
 
     @Autowired
     public UserServiceImpl(UserRepository userRepository, ModelMapper map, BCryptPasswordEncoder bCryptPasswordEncoder, RoleRepository roleRepository, UserImageRepository userImageRepository,
-                           UserPreferencesRepository userPreferencesRepository, UserInfoRepository userInfoRepository, UsersRatingRepository usersRatingRepository, GenderRepository genderRepository, BookmarkRepository bookmarkRepository) {
+                           UserPreferencesRepository userPreferencesRepository, UserInfoRepository userInfoRepository, UsersRatingRepository usersRatingRepository, GenderRepository genderRepository, BookmarkRepository bookmarkRepository, DeviceLogRepository deviceLogRepository) {
         this.userRepository = userRepository;
         this.modelMapper = map;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
@@ -43,12 +45,12 @@ public class UserServiceImpl implements UserService {
         this.usersRatingRepository = usersRatingRepository;
         this.genderRepository = genderRepository;
         this.bookmarkRepository = bookmarkRepository;
+        this.deviceLogRepository = deviceLogRepository;
     }
 
     @Override
     public boolean add(UserRegisterBindingModel userRegisterBindingModel) {
         User userEntity = this.modelMapper.map(userRegisterBindingModel, User.class);
-        userEntity.setIpAddress("127.0.0.1");
         userEntity.setCreatedTime(Timestamp.valueOf(userEntity.getDateTimeCreated()));
 
         userEntity.setPassword(this.bCryptPasswordEncoder.encode(userEntity.getPassword()));
@@ -179,7 +181,9 @@ public class UserServiceImpl implements UserService {
         user.setEnabled(false);
         userRepository.save(user);
 
-        if(fileParser != null) fileParser.addBannedIPAddress(user.getIpAddress()); // To whitelist
+        List<String> ipAddresses = user.getDeviceLogs().stream().map(DeviceLog::getIpAddress).collect(Collectors.toList());
+
+        if(fileParser != null) fileParser.addBannedIPAddress(ipAddresses); // To whitelist
 
         if(!userRepository.isEnabledUser(user.getUserId())) {
             return user;
@@ -190,11 +194,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public Set<User> getBannedUsers() {
         return userRepository.getAllByIsEnabled(false);
-    }
-
-    @Override
-    public User getUserByIpAddress(String ipAddress) {
-        return userRepository.getUserByIpAddress(ipAddress);
     }
 
     @Override
@@ -211,8 +210,8 @@ public class UserServiceImpl implements UserService {
             e.printStackTrace();
         }
         for(String ip : bannedIPs) {
-            if(userRepository.getUserByIpAddress(ip) != null) {
-                User user = userRepository.getUserByIpAddress(ip);
+            if(deviceLogRepository.findByIpAddress(ip) != null) {
+                User user = deviceLogRepository.findByIpAddress(ip).getUser();
 
                 if (userRepository.isEnabledUser(user.getUserId())){
                     this.ban(user, fileParser);
@@ -243,8 +242,4 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    @Override
-    public String getSelectedTheme(int userId) {
-        return userPreferencesRepository.getSelectedThemeByUserId(userId);
-    }
 }

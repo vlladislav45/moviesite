@@ -1,14 +1,8 @@
 package com.filmi3k.movies.services;
 
 import com.filmi3k.movies.MoviesApplication;
-import com.filmi3k.movies.domain.entities.User;
-import com.filmi3k.movies.domain.entities.UserInfo;
-import com.filmi3k.movies.domain.entities.UserPreferences;
-import com.filmi3k.movies.domain.entities.UserRole;
-import com.filmi3k.movies.repository.api.RoleRepository;
-import com.filmi3k.movies.repository.api.UserInfoRepository;
-import com.filmi3k.movies.repository.api.UserPreferencesRepository;
-import com.filmi3k.movies.repository.api.UserRepository;
+import com.filmi3k.movies.domain.entities.*;
+import com.filmi3k.movies.repository.api.*;
 import com.filmi3k.movies.services.base.UserService;
 import com.filmi3k.movies.utils.FileParser;
 import org.junit.Assert;
@@ -16,7 +10,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,6 +20,9 @@ import java.util.List;
 @SpringBootTest(classes = MoviesApplication.class)
 @RunWith(SpringJUnit4ClassRunner.class)
 public class UserServiceTest {
+    @Autowired
+    private DeviceLogRepository deviceLogRepository;
+
     @Autowired
     private UserService userService;
 
@@ -42,14 +38,14 @@ public class UserServiceTest {
             e.printStackTrace();
         }
         for(String ip : bannedIPs) {
-            if(userService.getUserByIpAddress(ip) != null) {
-                User user = userService.getUserByIpAddress(ip);
+            if(deviceLogRepository.findByIpAddress(ip) != null) {
+                User user = deviceLogRepository.findByIpAddress(ip).getUser();
 
                 if (userService.isEnabledUser(user.getUserId())){
                     assert userService.ban(user,parser) != null;
-                    parser.addBannedIPAddress(ip);
                 }
             }
         }
+        parser.addBannedIPAddress(bannedIPs);
     }
 }
