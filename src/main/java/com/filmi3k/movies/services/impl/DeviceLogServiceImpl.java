@@ -63,7 +63,7 @@ public class DeviceLogServiceImpl implements DeviceLogService {
     }
 
     @Override
-    public DeviceLog findDeviceLogByUser(User user) {
-        return deviceLogRepository.findDeviceLogByUser(user);
+    public DeviceLog findDeviceLogByUserAndJwt(User user, String jwt) {
+        return deviceLogRepository.findDeviceLogByUserAndJwt(user, jwt);
     }
 }
