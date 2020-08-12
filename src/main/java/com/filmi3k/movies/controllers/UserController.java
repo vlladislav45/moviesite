@@ -13,6 +13,7 @@ import com.filmi3k.movies.services.base.StorageService;
 import com.filmi3k.movies.services.base.UserService;
 import com.filmi3k.movies.utils.JSONparser;
 import com.filmi3k.movies.utils.JwtUtil;
+import io.jsonwebtoken.MalformedJwtException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -96,13 +97,12 @@ public class UserController {
         return ResponseEntity.ok().body(new AuthenticationResponseBindingModel(jwt));
     }
 
-    @PostMapping("/user_me")
-    public ResponseEntity<?> getUser(@RequestBody AuthenticationResponseBindingModel authenticationResponse) {
-        String username = new JwtUtil().extractUsername(authenticationResponse.getJwt());
-        User user = this.userService.getByUsername(username);
+    @GetMapping("/user_me")
+    public ResponseEntity<?> getUser() {
+        User user = userService.getByUsername(
+                SecurityContextHolder.getContext().getAuthentication().getName());
 
         UserViewModel userViewModel = UserViewModel.toViewModel(user);
-
         return ResponseEntity.ok().body(Map.of("user", userViewModel));
     }
 
