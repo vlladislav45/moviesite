@@ -6,6 +6,7 @@ import com.filmi3k.movies.services.base.DeviceLogService;
 import com.filmi3k.movies.services.base.UserService;
 import com.filmi3k.movies.utils.JwtUtil;
 import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.MalformedJwtException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -43,12 +44,19 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain) throws ServletException, IOException {
         final String authorizationHeader = httpServletRequest.getHeader("Authorization");
 
-        String username;
+        String username = null;
         String jwt;
 
         if(authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             jwt = authorizationHeader.substring(7);
-            username = jwtTokenUtil.extractUsername(jwt);
+            try {
+                username = jwtTokenUtil.extractUsername(jwt);
+            }catch (MalformedJwtException malformedJwtException) {
+                httpServletResponse.setStatus(HttpStatus.OK.value()); // error 401
+                httpServletResponse.setContentType(MediaType.APPLICATION_JSON_VALUE);
+                mapper.writeValue(httpServletResponse.getWriter(), Map.of("error", "Unable to read JSON value"));
+                filterChain.doFilter(httpServletRequest, httpServletResponse);
+            }
 
             DeviceLog deviceLog = deviceLogService.findDeviceLogByUserAndJwt(userService.getByUsername(username), jwt);
             if(deviceLog != null) {
@@ -60,11 +68,10 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                         httpServletResponse.setContentType(MediaType.APPLICATION_JSON_VALUE);
                         mapper.writeValue(httpServletResponse.getWriter(), Map.of("error", "Token is expired"));
                         filterChain.doFilter(httpServletRequest, httpServletResponse);
-                        return;
                     } catch (Exception e) {
                         System.out.println("Catch exception=========================\n");
                         e.printStackTrace();
-                        return;
+                        filterChain.doFilter(httpServletRequest, httpServletResponse);
                     }
 
                     if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
