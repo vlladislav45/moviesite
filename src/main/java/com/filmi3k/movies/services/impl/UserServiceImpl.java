@@ -211,7 +211,7 @@ public class UserServiceImpl implements UserService {
         }
         for(String ip : bannedIPs) {
             if(deviceLogRepository.findByIpAddress(ip) != null) {
-                User user = deviceLogRepository.findByIpAddress(ip).getUser();
+                User user = (User) deviceLogRepository.findByIpAddress(ip).getUser();
 
                 if (userRepository.isEnabledUser(user.getUserId())){
                     this.ban(user, fileParser);

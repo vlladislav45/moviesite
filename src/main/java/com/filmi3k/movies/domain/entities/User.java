@@ -1,12 +1,17 @@
 package com.filmi3k.movies.domain.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.filmi3k.movies.interceptors.JwtRequestFilter;
 import lombok.Data;
 
 import lombok.NoArgsConstructor;
+import org.hibernate.LazyInitializationException;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import javax.servlet.FilterChain;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import java.sql.Timestamp;
 import java.util.*;
 
@@ -107,5 +112,40 @@ public class User extends BaseEntity implements UserDetails {
     @Override
     public boolean isEnabled() {
         return isEnabled;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        User user = (User) o;
+        return userId == user.userId &&
+                email.equals(user.email) &&
+                username.equals(user.username);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), userId, email, username);
+    }
+
+    /**
+     * I dont know who and why calls this method, but since lombok's default implementation
+     * uses all fields, but some of the fields are lazily initiated and we get {@link LazyInitializationException}
+     * thus throwing exception in {@link JwtRequestFilter#doFilter(ServletRequest, ServletResponse, FilterChain)}
+     */
+    @Override
+    public String toString() {
+        return "User{" +
+                "userId=" + userId +
+                ", email='" + email + '\'' +
+                ", username='" + username + '\'' +
+                ", createdTime=" + createdTime +
+                ", isAccountNonExpired=" + isAccountNonExpired +
+                ", isAccountNonLocked=" + isAccountNonLocked +
+                ", isCredentialsNonExpired=" + isCredentialsNonExpired +
+                ", isEnabled=" + isEnabled +
+                '}';
     }
 }
