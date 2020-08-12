@@ -21,8 +21,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @Component
 public class JwtRequestFilter extends OncePerRequestFilter {
@@ -51,42 +50,47 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             jwt = authorizationHeader.substring(7);
             username = jwtTokenUtil.extractUsername(jwt);
 
-            //TODO: get from the db and save into the map
-            //check if token exist in the db
-            DeviceLog deviceLog = deviceLogService.findDeviceLogByUser(userService.getByUsername(username));
-            if(jwt.equals(deviceLog.getJwt())) {
-                try {
-                    boolean isExpired = jwtTokenUtil.isTokenExpired(jwt);
-                } catch (ExpiredJwtException expired) {
+            DeviceLog deviceLog = deviceLogService.findDeviceLogByUserAndJwt(userService.getByUsername(username), jwt);
+            if(deviceLog != null) {
+                if (jwt.equals(deviceLog.getJwt())) {
+                    try {
+                        boolean isExpired = jwtTokenUtil.isTokenExpired(jwt);
+                    } catch (ExpiredJwtException expired) {
+                        httpServletResponse.setStatus(HttpStatus.UNAUTHORIZED.value()); // error 401
+                        httpServletResponse.setContentType(MediaType.APPLICATION_JSON_VALUE);
+                        mapper.writeValue(httpServletResponse.getWriter(), Map.of("error", "Token is expired"));
+                        filterChain.doFilter(httpServletRequest, httpServletResponse);
+                        return;
+                    } catch (Exception e) {
+                        System.out.println("Catch exception=========================\n");
+                        e.printStackTrace();
+                        return;
+                    }
+
+                    if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                        UserDetails userDetails = this.userService.loadUserByUsername(username);
+
+                        //Check if the user is not found in the database but token is still there
+                        //Against front-end manipulating
+                        if (userDetails == null) {
+                            httpServletResponse.setStatus(HttpStatus.UNAUTHORIZED.value()); // error 401
+                            httpServletResponse.setContentType(MediaType.APPLICATION_JSON_VALUE);
+                            mapper.writeValue(httpServletResponse.getWriter(), Map.of("error", "Token is not expired, but the user is not found"));
+                        }
+
+                        if (jwtTokenUtil.validateToken(jwt, userDetails)) {
+                            UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(userDetails,
+                                    null, userDetails.getAuthorities());
+                            usernamePasswordAuthenticationToken
+                                    .setDetails(new WebAuthenticationDetailsSource().buildDetails(httpServletRequest));
+                            SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+                        }
+                    }
+                } else {
                     httpServletResponse.setStatus(HttpStatus.UNAUTHORIZED.value()); // error 401
                     httpServletResponse.setContentType(MediaType.APPLICATION_JSON_VALUE);
                     mapper.writeValue(httpServletResponse.getWriter(), Map.of("error", "Token is expired"));
                     filterChain.doFilter(httpServletRequest, httpServletResponse);
-                    return;
-                } catch (Exception e) {
-                    System.out.println("Catch exception=========================\n");
-                    e.printStackTrace();
-                    return;
-                }
-
-                if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                    UserDetails userDetails = this.userService.loadUserByUsername(username);
-
-                    //Check if the user is not found in the database but token is still there
-                    //Against front-end manipulating
-                    if (userDetails == null) {
-                        httpServletResponse.setStatus(HttpStatus.UNAUTHORIZED.value()); // error 401
-                        httpServletResponse.setContentType(MediaType.APPLICATION_JSON_VALUE);
-                        mapper.writeValue(httpServletResponse.getWriter(), Map.of("error", "Token is not expired, but the user is not found"));
-                    }
-
-                    if (jwtTokenUtil.validateToken(jwt, userDetails)) {
-                        UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(userDetails,
-                                null, userDetails.getAuthorities());
-                        usernamePasswordAuthenticationToken
-                                .setDetails(new WebAuthenticationDetailsSource().buildDetails(httpServletRequest));
-                        SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
-                    }
                 }
             }else {
                 httpServletResponse.setStatus(HttpStatus.UNAUTHORIZED.value()); // error 401

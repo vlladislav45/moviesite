@@ -18,5 +18,5 @@ public interface DeviceLogService {
 
     DeviceLog findBypAddress(String ip);
 
-    DeviceLog findDeviceLogByUser(User user);
+    DeviceLog findDeviceLogByUserAndJwt(User user, String jwt);
 }
