@@ -6,6 +6,7 @@ import com.filmi3k.movies.domain.models.binding.AuthenticationRequestBindingMode
 import com.filmi3k.movies.repository.api.DeviceLogRepository;
 import com.filmi3k.movies.repository.api.UserRepository;
 import com.filmi3k.movies.services.base.DeviceLogService;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -14,11 +15,9 @@ import java.util.List;
 @Service
 public class DeviceLogServiceImpl implements DeviceLogService {
     private final DeviceLogRepository deviceLogRepository;
-    private final UserRepository userRepository;
 
-    public DeviceLogServiceImpl(DeviceLogRepository deviceLogRepository, UserRepository userRepository) {
+    public DeviceLogServiceImpl(DeviceLogRepository deviceLogRepository) {
         this.deviceLogRepository = deviceLogRepository;
-        this.userRepository = userRepository;
     }
 
     @Override
@@ -27,21 +26,22 @@ public class DeviceLogServiceImpl implements DeviceLogService {
     }
 
     @Override
-    public void addNewDeviceLog(AuthenticationRequestBindingModel authenticationRequest, String jwt) {
-        User user = userRepository.getUserByUsername(authenticationRequest.getUsername());
+    public void addNewDeviceLog(AuthenticationRequestBindingModel authenticationRequest, String jwt, UserDetails userDetails) {
 
-        if(deviceLogRepository.findByUserAndIpAddress(user, authenticationRequest.getIp()) == null) {
+        if(deviceLogRepository.findByIpAddress(authenticationRequest.getIp()) == null) {
 
             DeviceLog deviceLog = new DeviceLog(authenticationRequest.getUag(),
                     authenticationRequest.getLoc(),
                     authenticationRequest.getIp(),
                     jwt,
-                    user);
+                    userDetails);
 
             deviceLogRepository.saveAndFlush(deviceLog);
         }else {
-            DeviceLog deviceLog = deviceLogRepository.findByUserAndIpAddress(user, authenticationRequest.getIp());
+            DeviceLog deviceLog = deviceLogRepository.findByIpAddress(authenticationRequest.getIp());
             deviceLog.setLastLoggedIn(Timestamp.valueOf(deviceLog.getDateTimeCreated()));
+            // We update the last logged time, but we generated new token, so we need to update it in DB
+            deviceLog.setJwt(jwt);
 
             deviceLogRepository.saveAndFlush(deviceLog);
         }

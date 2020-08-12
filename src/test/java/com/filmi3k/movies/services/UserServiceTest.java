@@ -39,7 +39,7 @@ public class UserServiceTest {
         }
         for(String ip : bannedIPs) {
             if(deviceLogRepository.findByIpAddress(ip) != null) {
-                User user = deviceLogRepository.findByIpAddress(ip).getUser();
+                User user = (User) deviceLogRepository.findByIpAddress(ip).getUser();
 
                 if (userService.isEnabledUser(user.getUserId())){
                     assert userService.ban(user,parser) != null;

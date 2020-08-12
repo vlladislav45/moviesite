@@ -3,6 +3,7 @@ package com.filmi3k.movies.domain.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
@@ -37,10 +38,10 @@ public class DeviceLog extends BaseEntity {
     @JsonIgnore
     @ManyToOne(targetEntity = User.class)
     @JoinColumn(name = "user_id", nullable = false, updatable = false)
-    private User user;
+    private UserDetails user;
 
     public DeviceLog(String deviceDetails, String location,
-                     String ipAddress, String jwt, User user) {
+                     String ipAddress, String jwt, UserDetails user) {
         this.deviceDetails = deviceDetails;
         this.location = location;
         this.lastLoggedIn = Timestamp.valueOf(getDateTimeCreated());
