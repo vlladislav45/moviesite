@@ -85,6 +85,9 @@ public class UserController {
             );
         }catch (BadCredentialsException badCredentialsException) {
             return ResponseEntity.ok().body(Map.of("error", "Bad credentials"));
+        }catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.ok().body(Map.of("error", "WTF?!"));
         }
 
         final UserDetails userDetails = userService

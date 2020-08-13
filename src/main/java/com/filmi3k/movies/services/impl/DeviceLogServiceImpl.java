@@ -28,7 +28,7 @@ public class DeviceLogServiceImpl implements DeviceLogService {
     @Override
     public void addNewDeviceLog(AuthenticationRequestBindingModel authenticationRequest, String jwt, UserDetails userDetails) {
 
-        if(deviceLogRepository.findByIpAddress(authenticationRequest.getIp()) == null) {
+        if(deviceLogRepository.findByUserAndIpAddress(userDetails, authenticationRequest.getIp()) == null) {
 
             DeviceLog deviceLog = new DeviceLog(authenticationRequest.getUag(),
                     authenticationRequest.getLoc(),
@@ -38,7 +38,7 @@ public class DeviceLogServiceImpl implements DeviceLogService {
 
             deviceLogRepository.saveAndFlush(deviceLog);
         }else {
-            DeviceLog deviceLog = deviceLogRepository.findByIpAddress(authenticationRequest.getIp());
+            DeviceLog deviceLog = deviceLogRepository.findByUserAndIpAddress(userDetails, authenticationRequest.getIp());
             deviceLog.setLastLoggedIn(Timestamp.valueOf(deviceLog.getDateTimeCreated()));
             // We update the last logged time, but we generated new token, so we need to update it in DB
             deviceLog.setJwt(jwt);

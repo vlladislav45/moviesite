@@ -55,7 +55,14 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                 httpServletResponse.setStatus(HttpStatus.OK.value()); // error 401
                 httpServletResponse.setContentType(MediaType.APPLICATION_JSON_VALUE);
                 mapper.writeValue(httpServletResponse.getWriter(), Map.of("error", "Unable to read JSON value"));
-                filterChain.doFilter(httpServletRequest, httpServletResponse);
+            } catch (ExpiredJwtException e) {
+                httpServletResponse.setStatus(HttpStatus.UNAUTHORIZED.value()); // error 401
+                httpServletResponse.setContentType(MediaType.APPLICATION_JSON_VALUE);
+                mapper.writeValue(httpServletResponse.getWriter(), Map.of("error", "Token is expired"));
+            } catch (Exception e) {
+                System.out.println("===========================================");
+                e.printStackTrace();
+                System.out.println("===========================================");
             }
 
             DeviceLog deviceLog = deviceLogService.findDeviceLogByUserAndJwt(userService.getByUsername(username), jwt);
