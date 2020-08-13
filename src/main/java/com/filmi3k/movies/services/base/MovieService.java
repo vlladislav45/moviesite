@@ -1,15 +1,19 @@
 package com.filmi3k.movies.services.base;
 
 import com.filmi3k.movies.domain.entities.Movie;
+import com.filmi3k.movies.domain.models.binding.SingleMovieBindingModel;
 import com.filmi3k.movies.domain.models.binding.UserRatingBindingModel;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.lang.Nullable;
 
-public interface MovieService {
+import java.util.List;
 
-    void add(Movie movie);
+public interface MovieService {
+    void add(SingleMovieBindingModel singleMovieBindingModel);
+
+    List<String> checkMovieFields(SingleMovieBindingModel singleMovieBindingModel);
 
     Movie findById(int id);
 

@@ -33,8 +33,11 @@ public class UserServiceImpl implements UserService {
     private final DeviceLogRepository deviceLogRepository;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, ModelMapper map, BCryptPasswordEncoder bCryptPasswordEncoder, RoleRepository roleRepository, UserImageRepository userImageRepository,
-                           UserPreferencesRepository userPreferencesRepository, UserInfoRepository userInfoRepository, UsersRatingRepository usersRatingRepository, GenderRepository genderRepository, BookmarkRepository bookmarkRepository, DeviceLogRepository deviceLogRepository) {
+    public UserServiceImpl(UserRepository userRepository, ModelMapper map, BCryptPasswordEncoder bCryptPasswordEncoder,
+                           RoleRepository roleRepository, UserImageRepository userImageRepository,
+                           UserPreferencesRepository userPreferencesRepository, UserInfoRepository userInfoRepository,
+                           UsersRatingRepository usersRatingRepository, GenderRepository genderRepository,
+                           BookmarkRepository bookmarkRepository, DeviceLogRepository deviceLogRepository) {
         this.userRepository = userRepository;
         this.modelMapper = map;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
