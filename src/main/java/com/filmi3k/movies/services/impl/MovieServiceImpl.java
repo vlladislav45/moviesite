@@ -57,39 +57,41 @@ public class MovieServiceImpl implements MovieService {
     }
 
     @Override
-    public List<String> checkMovieFields(SingleMovieBindingModel singleMovieBindingModel) {
-        List<String> errors = new ArrayList<>();
+    public Map<String,String> checkMovieFields(SingleMovieBindingModel singleMovieBindingModel) {
+        Map<String, String> errors = new HashMap<>();
         // If movie exists with this name
         if(movieRepository.findByMovieName(singleMovieBindingModel.getMovieName()) != null) {
-            errors.add("* This movie already exists, try again");
+            errors.put("movieName", "* This movie already exists, try again");
             return errors;
         }
         //Check every one parameter
         if(singleMovieBindingModel.getMovieName().isEmpty()) {
-            errors.add("* Require movie name");
+            errors.put("movieName", "* Require movie name");
         }
         if(singleMovieBindingModel.getSummary().isEmpty()) {
-            errors.add("* Require summary");
+            errors.put("summary", "* Require summary");
         }
         if(singleMovieBindingModel.getYear() <= 0) {
-            errors.add("* Require year");
+            errors.put("year", "* Require year");
         }
         if(singleMovieBindingModel.getDirector().isEmpty()) {
-            errors.add("* Require director");
+            errors.put("director", "* Require director");
         }else {
             if(directorRepository.findByDirectorName(singleMovieBindingModel.getDirector()) == null) {
                 directorRepository.saveAndFlush(new Director(singleMovieBindingModel.getDirector()));
             }
         }
         if(singleMovieBindingModel.getPosterName().isEmpty()) {
-            errors.add("* Require poster");
+            errors.put("posterName", "* Require poster name");
         }else{
             //If exists poster with this name
             if(posterRepository.findByPosterName(singleMovieBindingModel.getPosterName()) != null)
-                errors.add("* There is a poster with such a name already");
+                errors.put("posterName", "* There is a poster with such a name already");
         }
+        if(Arrays.toString(singleMovieBindingModel.getPosterBytes()).isEmpty())
+            errors.put("posterBytes", "* Require base64 poster content");
         if(singleMovieBindingModel.getActors().size() <= 0) {
-            errors.add("* Require actor/s");
+            errors.put("actors", "* Require actor/s");
         }else {
             List<String> actors = actorRepository.findByActorNameIn(singleMovieBindingModel.getActors()).stream().map(Actor::getActorName).collect(Collectors.toList());
 
@@ -107,7 +109,7 @@ public class MovieServiceImpl implements MovieService {
             }
         }
         if(singleMovieBindingModel.getGenres().size() <= 0) {
-            errors.add("* Require genres");
+            errors.put("genres", "* Require genres");
         }else {
             List<String> genres = movieGenreRepository.findByMovieGenreNameIn(singleMovieBindingModel.getGenres()).stream().map(MovieGenre::getMovieGenreName).collect(Collectors.toList());
 
@@ -120,12 +122,12 @@ public class MovieServiceImpl implements MovieService {
                     //System.out.println("Missing gender " + gender);
                     //Show missing genders
                     //ONLY FOR ADMINS
-                    errors.add("Missing genre " + genre);
+                    errors.put("genres", "Missing genre " + genre);
                 }
             }
         }
         if(singleMovieBindingModel.getDuration() <= 0) {
-            errors.add("* Require movie duration");
+            errors.put("duration" ,"* Require movie duration");
         }
         return errors;
     }

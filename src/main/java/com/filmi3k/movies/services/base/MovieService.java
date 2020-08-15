@@ -9,11 +9,12 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.lang.Nullable;
 
 import java.util.List;
+import java.util.Map;
 
 public interface MovieService {
     void add(SingleMovieBindingModel singleMovieBindingModel);
 
-    List<String> checkMovieFields(SingleMovieBindingModel singleMovieBindingModel);
+    Map<String, String> checkMovieFields(SingleMovieBindingModel singleMovieBindingModel);
 
     Movie findById(int id);
 

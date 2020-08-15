@@ -8,6 +8,7 @@ that's why if there is a problem, I must be notified
   * Donate system for an ads
   * Анг/бг менюта
   * Recent activity (bookmarks, upload movies, reviews)
+  * Return reviews sorted by date and pagination (return the date too)
 
 ## Server-side technology
 * Spring Framework
