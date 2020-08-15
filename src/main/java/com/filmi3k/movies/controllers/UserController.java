@@ -13,7 +13,6 @@ import com.filmi3k.movies.services.base.StorageService;
 import com.filmi3k.movies.services.base.UserService;
 import com.filmi3k.movies.utils.JSONparser;
 import com.filmi3k.movies.utils.JwtUtil;
-import io.jsonwebtoken.MalformedJwtException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;

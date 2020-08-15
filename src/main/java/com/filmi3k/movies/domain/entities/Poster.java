@@ -1,12 +1,15 @@
 package com.filmi3k.movies.domain.entities;
 
+import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Immutable;
 
 import javax.persistence.*;
 
 @Entity
 @Table(name = "poster")
 @NoArgsConstructor
+@Data
 public class Poster {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
@@ -32,29 +35,5 @@ public class Poster {
     public Poster(String posterName, Anime anime) {
         this.posterName = posterName;
         this.anime = anime;
-    }
-
-    public int getPosterId() {
-        return posterId;
-    }
-
-    public void setPosterId(int posterId) {
-        this.posterId = posterId;
-    }
-
-    public String getPosterName() {
-        return posterName;
-    }
-
-    public void setPosterName(String posterName) {
-        this.posterName = posterName;
-    }
-
-    public Movie getMovie() {
-        return movie;
-    }
-
-    public void setMovie(Movie movie) {
-        this.movie = movie;
     }
 }
