@@ -5,6 +5,7 @@ import com.filmi3k.movies.domain.entities.Movie;
 import com.filmi3k.movies.domain.entities.User;
 import com.filmi3k.movies.domain.models.binding.*;
 import com.filmi3k.movies.domain.models.view.MovieRatingViewModel;
+import com.filmi3k.movies.domain.models.view.SingleUserViewModel;
 import com.filmi3k.movies.domain.models.view.UserRatingViewModel;
 import com.filmi3k.movies.domain.models.view.UserViewModel;
 import com.filmi3k.movies.services.base.DeviceLogService;
@@ -106,6 +107,18 @@ public class UserController {
 
         UserViewModel userViewModel = UserViewModel.toViewModel(user);
         return ResponseEntity.ok().body(Map.of("user", userViewModel));
+    }
+
+    /**
+     * @param username the username of the user
+     * @return only relevant data about the user (id, image, name, maybe activity and authority)
+     */
+    @GetMapping("/{username}")
+    public ResponseEntity<?> getUserByUsername(@PathVariable String username) {
+        User u = this.userService.getByUsername(username);
+        if (u == null)
+            return ResponseEntity.ok(Map.of("error", "No such user"));
+        return ResponseEntity.ok(SingleUserViewModel.toViewModel(u));
     }
 
     @GetMapping("/register/userAvailable/{username}")
