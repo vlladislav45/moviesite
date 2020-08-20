@@ -6,10 +6,12 @@ import com.filmi3k.movies.domain.models.binding.UserRatingBindingModel;
 import com.filmi3k.movies.repository.api.*;
 import com.filmi3k.movies.services.base.MovieService;
 import com.filmi3k.movies.utils.Math;
-import org.modelmapper.ModelMapper;
+import org.hibernate.criterion.Order;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -24,19 +26,17 @@ public class MovieServiceImpl implements MovieService {
     private final ActorRepository actorRepository;
     private final MovieGenreRepository movieGenreRepository;
     private final PosterRepository posterRepository;
-    private final ModelMapper modelMapper;
 
     @Autowired
     public MovieServiceImpl(MovieRepository movieRepository, UsersRatingRepository usersRatingRepository,
                             DirectorRepository directorRepository, ActorRepository actorRepository,
-                            MovieGenreRepository movieGenreRepository, PosterRepository posterRepository, ModelMapper modelMapper) {
+                            MovieGenreRepository movieGenreRepository, PosterRepository posterRepository) {
         this.movieRepository = movieRepository;
         this.usersRatingRepository = usersRatingRepository;
         this.directorRepository = directorRepository;
         this.actorRepository = actorRepository;
         this.movieGenreRepository = movieGenreRepository;
         this.posterRepository = posterRepository;
-        this.modelMapper = modelMapper;
     }
 
     @Override
@@ -171,4 +171,9 @@ public class MovieServiceImpl implements MovieService {
 
     @Override
     public void delete(Movie movie) { movieRepository.delete(movie); }
+
+    @Override
+    public Page<UsersRating> findAllReviewsByMovie(Movie movie, int page, int size) {
+        return usersRatingRepository.findAllByMovie(movie, PageRequest.of(page, size, Sort.by(Sort.Order.desc("createdTime"))));
+    }
 }

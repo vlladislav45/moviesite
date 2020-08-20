@@ -4,6 +4,7 @@ import com.filmi3k.movies.domain.entities.*;
 import com.filmi3k.movies.domain.models.binding.UserInfoBindingModel;
 import com.filmi3k.movies.domain.models.binding.UserRegisterBindingModel;
 import com.filmi3k.movies.utils.FileParser;
+import org.springframework.data.domain.Page;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
 import java.util.Set;
@@ -52,4 +53,6 @@ public interface UserService extends UserDetailsService {
     void addUserRating(User user, Movie movie, double userRating, String comment);
 
     void changeUserTheme(int userId, String theme);
+
+    Page<UsersRating> findAllReviewsByUser(User user, int page, int size);
 }

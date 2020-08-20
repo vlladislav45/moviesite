@@ -147,13 +147,14 @@ public class MovieController {
     }
 
     @GetMapping("/movies/single/reviewsByMovie")
-    public ResponseEntity<?> getReviewsByMovie(@RequestParam int movieId) {
+    public ResponseEntity<?> getReviewsByMovie(@RequestParam int movieId, @RequestParam int page, @RequestParam int size) {
         Movie movie = movieService.findById(movieId);
-        Set<MovieRatingViewModel> movieRatingViewModels = movie.getUsersRatings().stream().map(MovieRatingViewModel::toViewModel).collect(Collectors.toSet());
+        Page<UsersRating> ratingPage = movieService.findAllReviewsByMovie(movie, page, size);
+        List<MovieRatingViewModel> movieRatingViewModels = ratingPage.getContent().stream().map(MovieRatingViewModel::toViewModel).collect(Collectors.toList());
 
         String resp = "[";
-        String moviesJson = movieRatingViewModels.stream().map(JSONparser::toJson).collect(Collectors.joining(","));
-        resp += moviesJson + "]";
+        String movieRatings = movieRatingViewModels.stream().map(JSONparser::toJson).collect(Collectors.joining(","));
+        resp += movieRatings + "]";
 
         return ResponseEntity.ok(resp);
     }

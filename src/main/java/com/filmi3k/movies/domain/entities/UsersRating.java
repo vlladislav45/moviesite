@@ -8,17 +8,17 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.sql.Timestamp;
 
 /**
    * Join table (users_rating)
  */
-
 @Entity
 @Table(name = "users_rating")
 @NoArgsConstructor
 @Setter
 @Getter
-public class UsersRating {
+public class UsersRating extends BaseEntity{
     @JsonIgnore
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -41,10 +41,14 @@ public class UsersRating {
     @Column(nullable = false)
     private String comment;
 
+    @Column(nullable = false)
+    private Timestamp createdTime;
+
     public UsersRating(User user, Movie movie, double userRating, String comment) {
         this.user = user;
         this.movie = movie;
         this.userRating = userRating;
         this.comment = comment;
+        this.createdTime = Timestamp.valueOf(getDateTimeCreated());
     }
 }
