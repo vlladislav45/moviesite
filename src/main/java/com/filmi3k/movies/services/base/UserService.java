@@ -39,7 +39,15 @@ public interface UserService extends UserDetailsService {
 
     boolean checkIfValidOldPassword(User user, String password);
 
+    void createPasswordResetTokenForUser(User user, String token);
+
+    String validatePasswordResetToken(String resetToken);
+
+    User getUserByPasswordResetToken(String resetToken);
+
     void changeUserPassword(User user, String newPassword);
+
+    void deleteResetToken(String resetToken);
 
     User getById(int id);
 

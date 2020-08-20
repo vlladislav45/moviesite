@@ -46,14 +46,10 @@ public class UserRepoTest {
         user.setPassword(this.bCryptPasswordEncoder.encode(user.getPassword()));
 
         if(this.userRepository.findAll().isEmpty()) {
-            List<UserRole> roles = new ArrayList<>();
-            roles.add(roleRepository.getUserRoleByAuthority("USER"));
-            roles.add(roleRepository.getUserRoleByAuthority("ADMIN"));
+            Set<UserRole> roles = new HashSet<>(Set.of(roleRepository.getUserRoleByAuthority("USER"), roleRepository.getUserRoleByAuthority("ADMIN")));
             user.setAuthorities(roles);
         }else {
-            List<UserRole> roles = new ArrayList<>();
-            roles.add(roleRepository.getUserRoleByAuthority("USER"));
-            user.setAuthorities(roles);
+            user.setAuthorities(Set.of(roleRepository.getUserRoleByAuthority("USER")));
         }
 
         this.userRepository.saveAndFlush(user);

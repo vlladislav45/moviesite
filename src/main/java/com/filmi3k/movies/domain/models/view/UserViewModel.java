@@ -14,7 +14,7 @@ public class UserViewModel {
     private int userId;
     private String username;
     private String email;
-    private List<UserRole> authorities = new ArrayList<>();
+    private Set<UserRole> authorities = new HashSet<>();
     private UserPreferences userPreferences;
     private UserInfo userInfo;
     private UsersRating usersRating;

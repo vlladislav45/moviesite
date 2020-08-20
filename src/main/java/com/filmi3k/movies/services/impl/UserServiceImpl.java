@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -35,13 +34,14 @@ public class UserServiceImpl implements UserService {
     private final GenderRepository genderRepository;
     private final BookmarkRepository bookmarkRepository;
     private final DeviceLogRepository deviceLogRepository;
+    private final PasswordTokenRepository passwordTokenRepository;
 
     @Autowired
     public UserServiceImpl(UserRepository userRepository, ModelMapper map, BCryptPasswordEncoder bCryptPasswordEncoder,
                            RoleRepository roleRepository, UserImageRepository userImageRepository,
                            UserPreferencesRepository userPreferencesRepository, UserInfoRepository userInfoRepository,
                            UsersRatingRepository usersRatingRepository, GenderRepository genderRepository,
-                           BookmarkRepository bookmarkRepository, DeviceLogRepository deviceLogRepository) {
+                           BookmarkRepository bookmarkRepository, DeviceLogRepository deviceLogRepository, PasswordTokenRepository passwordTokenRepository) {
         this.userRepository = userRepository;
         this.modelMapper = map;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
@@ -53,6 +53,7 @@ public class UserServiceImpl implements UserService {
         this.genderRepository = genderRepository;
         this.bookmarkRepository = bookmarkRepository;
         this.deviceLogRepository = deviceLogRepository;
+        this.passwordTokenRepository = passwordTokenRepository;
     }
 
     @Override
@@ -69,14 +70,10 @@ public class UserServiceImpl implements UserService {
         userEntity.setEnabled(true);
 
         if(this.userRepository.findAll().isEmpty()) {
-            List<UserRole> roles = new ArrayList<>();
-            roles.add(roleRepository.getUserRoleByAuthority("USER"));
-            roles.add(roleRepository.getUserRoleByAuthority("ADMIN"));
+            Set<UserRole> roles = new HashSet<>(Set.of(roleRepository.getUserRoleByAuthority("USER"), roleRepository.getUserRoleByAuthority("ADMIN")));
             userEntity.setAuthorities(roles);
         }else {
-            List<UserRole> roles = new ArrayList<>();
-            roles.add(roleRepository.getUserRoleByAuthority("USER"));
-            userEntity.setAuthorities(roles);
+            userEntity.setAuthorities(Set.of(roleRepository.getUserRoleByAuthority("USER")));
         }
 
         this.userRepository.saveAndFlush(userEntity);
@@ -180,12 +177,47 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public void createPasswordResetTokenForUser(User user, String token) {
+        PasswordResetToken myToken = new PasswordResetToken(token, user);
+        passwordTokenRepository.save(myToken);
+    }
+
+    @Override
+    public String validatePasswordResetToken(String token) {
+        final PasswordResetToken passToken = passwordTokenRepository.findByToken(token);
+
+        return !isTokenFound(passToken) ? "invalidToken"
+                : isTokenExpired(passToken) ? "expired"
+                : null;
+    }
+
+    private boolean isTokenFound(PasswordResetToken passToken) {
+        return passToken != null;
+    }
+
+    private boolean isTokenExpired(PasswordResetToken passToken) {
+        final Calendar cal = Calendar.getInstance();
+        return passToken.getExpiryDate().before(cal.getTime());
+    }
+
+    @Override
+    public User getUserByPasswordResetToken(String resetToken) {
+        return passwordTokenRepository.findByToken(resetToken).getUser();
+    }
+
+    @Override
     public void changeUserPassword(User user, String newPassword) {
         //Do not check if the user exist
         //That's already done in checkIfValidOldPassword
         User u = userRepository.getUserByUsername(user.getUsername());
         u.setPassword(bCryptPasswordEncoder.encode(newPassword));
         userRepository.saveAndFlush(u);
+    }
+
+    @Override
+    public void deleteResetToken(String resetToken) {
+        PasswordResetToken passwordResetToken =  passwordTokenRepository.findByToken(resetToken);
+        passwordTokenRepository.delete(passwordResetToken);
     }
 
     @Override
