@@ -9,32 +9,30 @@ import com.filmi3k.movies.domain.models.view.MovieRatingViewModel;
 import com.filmi3k.movies.domain.models.view.SingleUserViewModel;
 import com.filmi3k.movies.domain.models.view.UserRatingViewModel;
 import com.filmi3k.movies.domain.models.view.UserViewModel;
-import com.filmi3k.movies.services.base.DeviceLogService;
-import com.filmi3k.movies.services.base.MovieService;
-import com.filmi3k.movies.services.base.StorageService;
-import com.filmi3k.movies.services.base.UserService;
+import com.filmi3k.movies.services.base.*;
 import com.filmi3k.movies.utils.JSONparser;
 import com.filmi3k.movies.utils.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.filmi3k.movies.config.Config.*;
@@ -47,15 +45,17 @@ public class UserController {
     private final JwtUtil jwtTokenUtil;
     private final StorageService storageService;
     private final DeviceLogService deviceLogService;
+    private final EmailService emailService;
 
     @Autowired
-    public UserController(UserService userService, MovieService movieService, AuthenticationManager authenticationManager, JwtUtil jwtTokenUtil, StorageService storageService, DeviceLogService deviceLogService) {
+    public UserController(UserService userService, MovieService movieService, AuthenticationManager authenticationManager, JwtUtil jwtTokenUtil, StorageService storageService, DeviceLogService deviceLogService, EmailService emailService) {
         this.userService = userService;
         this.movieService = movieService;
         this.authenticationManager = authenticationManager;
         this.jwtTokenUtil = jwtTokenUtil;
         this.storageService = storageService;
         this.deviceLogService = deviceLogService;
+        this.emailService = emailService;
     }
 
     @PostMapping("/register_user")
@@ -142,7 +142,7 @@ public class UserController {
         }});
     }
 
-    @GetMapping("/user/{username}/{pictureName}")
+    @GetMapping("/user/picture/{username}/{pictureName}")
     public ResponseEntity<byte[]> getUserPicture(@PathVariable String username, @PathVariable String pictureName) throws IOException {
         URL url = getClass().getResource(BASE_DIR + "/profile-picture/" + username + "/" + pictureName);
         File imagePoster = new File(url.getFile());
@@ -173,7 +173,6 @@ public class UserController {
     }
 
     /***
-     * TODO: This method can get only movieId, the user can be get it by Authorization header
      * @param userId
      * @param movieId
      * @return
@@ -220,7 +219,7 @@ public class UserController {
         return ResponseEntity.ok(resp);
     }
 
-    @PostMapping("/user/userPreferences/theme")
+    @PostMapping("/settings/userPreferences/theme")
     public ResponseEntity<?> selectTheme(@RequestBody UserSelectedThemeBindingModel userSelectedThemeModel) {
         //Get user by token username
         User user = userService.getByUsername(
@@ -235,7 +234,12 @@ public class UserController {
         return ResponseEntity.ok().body(Map.of("error", "Wrong theme"));
     }
 
-    @PostMapping("/user/security/updatePassword")
+    /**
+     * This method is NOT like reset password method
+     * @param userChangePasswordModel
+     * @return
+     */
+    @PostMapping("/settings/security/updatePassword")
     public ResponseEntity<?> changeUserPassword(@RequestBody UserChangePasswordBindingModel userChangePasswordModel) {
         //Get user by token username
         User user = userService.getByUsername(
@@ -249,7 +253,51 @@ public class UserController {
         return ResponseEntity.ok().body(Map.of("success", "Update password successfully"));
     }
 
-    @PostMapping("/user/security/deleteAccount")
+    @PostMapping("/settings/security/resetPassword")
+    public ResponseEntity<?> resetPassword(HttpServletRequest request,
+                                         @RequestBody EmailBindingModel emailBindingModel) throws MessagingException {
+        User user = userService.getByEmail(emailBindingModel.getEmail());
+        if (user == null) {
+            ResponseEntity.ok().body(Map.of("error", "User not found"));
+        }
+        String token = UUID.randomUUID().toString();
+        userService.createPasswordResetTokenForUser(user, token);
+        emailService.constructResetTokenEmail(request.getHeader("host"), token, user);
+        return ResponseEntity.ok().body(Map.of("success", "Reset password email is sent"));
+    }
+
+    @GetMapping("/settings/security/changePassword")
+    public ResponseEntity<?> showChangePasswordPage(@RequestParam String token) {
+        String result = userService.validatePasswordResetToken(token);
+        if(result != null) { // Invalid token, expired or null
+            userService.deleteResetToken(token);
+            return ResponseEntity.ok().body(Map.of("error", "&resetToken=" + result));
+        } else {
+            return ResponseEntity.ok().body(Map.of("success", "ResetToken: " + token));
+        }
+    }
+
+    @PostMapping("/settings/security/savePassword")
+    public ResponseEntity<?> savePassword(@RequestBody ResetPasswordBindingModel resetPasswordBindingModel) {
+
+        String result = userService.validatePasswordResetToken(resetPasswordBindingModel.getToken());
+
+        if(result != null) {
+            return ResponseEntity.ok().body(Map.of("error", "&message=" + result));
+        }
+
+        User user = userService.getUserByPasswordResetToken(resetPasswordBindingModel.getToken());
+        if(user != null) {
+            userService.changeUserPassword(user, resetPasswordBindingModel.getNewPassword());
+            //Save the new password of the user and delete the reset token
+            userService.deleteResetToken(resetPasswordBindingModel.getToken());
+            return ResponseEntity.ok().body(Map.of("success", "Reset password successfully"));
+        } else {
+            return ResponseEntity.ok().body(Map.of("error", "Invalid user"));
+        }
+    }
+
+    @PostMapping("/settings/security/deleteAccount")
     public ResponseEntity<?> deleteAccount() {
         //Get user by token username
         User user = userService.getByUsername(
@@ -262,7 +310,7 @@ public class UserController {
         return ResponseEntity.ok().body(Map.of("error", "This user is invalid"));
     }
 
-    @PostMapping("/user/security/deleteDeviceLog")
+    @PostMapping("/settings/security/deleteDeviceLog")
     public ResponseEntity<?> deleteDeviceLog(@RequestBody IpAddressBindingModel ipAddressModel, HttpServletRequest httpServletRequest) {
         //Get user by token username
         User user = userService.getByUsername(

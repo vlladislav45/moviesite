@@ -6,9 +6,10 @@ that's why if there is a problem, I must be notified
 
 #TODO:
   * Donate system for an ads
-  * Анг/бг менюта
+  * UK/BG language system
   * Recent activity (bookmarks, upload movies, reviews)
-  * Return genres by alphabetically
+  * Adding a clip (admin-panel)
+  * Delete profile picture from the system when it's deleted from db
 
 ## Server-side technology
 * Spring Framework

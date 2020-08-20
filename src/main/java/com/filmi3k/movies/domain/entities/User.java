@@ -45,7 +45,7 @@ public class User extends BaseEntity implements UserDetails {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
-    private List<UserRole> authorities = new ArrayList<>();
+    private Set<UserRole> authorities = new HashSet<>();
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private UserPreferences userPreferences;
@@ -61,6 +61,10 @@ public class User extends BaseEntity implements UserDetails {
 
     @OneToMany(mappedBy = "user",  cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private List<DeviceLog> deviceLogs = new ArrayList<>();
+
+    @JsonIgnore
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    private PasswordResetToken passwordResetToken;
 
     @JsonIgnore
     private boolean isAccountNonExpired;
@@ -90,7 +94,7 @@ public class User extends BaseEntity implements UserDetails {
     }
 
     @Override
-    public List<UserRole> getAuthorities() {
+    public Set<UserRole> getAuthorities() {
         return this.authorities;
     }
 
