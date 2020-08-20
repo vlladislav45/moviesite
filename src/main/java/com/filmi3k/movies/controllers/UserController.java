@@ -3,6 +3,7 @@ package com.filmi3k.movies.controllers;
 import com.filmi3k.movies.domain.entities.DeviceLog;
 import com.filmi3k.movies.domain.entities.Movie;
 import com.filmi3k.movies.domain.entities.User;
+import com.filmi3k.movies.domain.entities.UsersRating;
 import com.filmi3k.movies.domain.models.binding.*;
 import com.filmi3k.movies.domain.models.view.MovieRatingViewModel;
 import com.filmi3k.movies.domain.models.view.SingleUserViewModel;
@@ -15,6 +16,7 @@ import com.filmi3k.movies.services.base.UserService;
 import com.filmi3k.movies.utils.JSONparser;
 import com.filmi3k.movies.utils.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -31,8 +33,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.filmi3k.movies.config.Config.*;
@@ -181,6 +183,12 @@ public class UserController {
         return ResponseEntity.ok().body(Map.of("success", "Bookmark is deleted successfully"));
     }
 
+    /***
+     * TODO: This method can get only movieId, the user can be get it by Authorization header
+     * @param userId
+     * @param movieId
+     * @return
+     */
     @GetMapping("/user/isRated")
     public ResponseEntity<Map<String,Object>> isRated(@RequestParam int userId, @RequestParam int movieId) {
         Map<String,Object> response = new HashMap<>();
@@ -189,7 +197,7 @@ public class UserController {
             Movie movie = movieService.findById(movieId);
 
             if (userService.checkRating(user, movie) != null) { // check if the user has voted for the movie
-                response.put("userRating",JSONparser.toJson(MovieRatingViewModel.toViewModel(userService.checkRating(user, movie)).getMovieRating()));
+                response.put("userRating",JSONparser.toJson(MovieRatingViewModel.toViewModel(userService.checkRating(user, movie)).getUserRating()));
                 response.put("comment", MovieRatingViewModel.toViewModel(userService.checkRating(user, movie)).getComment());
                 return ResponseEntity.ok().body(response);
             }
@@ -199,13 +207,14 @@ public class UserController {
     }
 
     @GetMapping("/user/userInfo/reviewsByAuthor")
-    public ResponseEntity<?> getReviewsByAuthor(@RequestParam int userId) {
+    public ResponseEntity<?> getReviewsByAuthor(@RequestParam int userId, @RequestParam int page, @RequestParam int size) {
         User user = userService.getById(userId);
-        Set<UserRatingViewModel> userRatingViewModels = user.getUsersRatings().stream().map(UserRatingViewModel::toViewModel).collect(Collectors.toSet());
+        Page<UsersRating> ratingPage = userService.findAllReviewsByUser(user, page, size);
+        List<UserRatingViewModel> userRatingViewModels = ratingPage.getContent().stream().map(UserRatingViewModel::toViewModel).collect(Collectors.toList());
 
         String resp = "[";
-        String moviesJson = userRatingViewModels.stream().map(JSONparser::toJson).collect(Collectors.joining(","));
-        resp += moviesJson + "]";
+        String userRatings = userRatingViewModels.stream().map(JSONparser::toJson).collect(Collectors.joining(","));
+        resp += userRatings + "]";
 
         return ResponseEntity.ok(resp);
     }
@@ -258,9 +267,7 @@ public class UserController {
         User user = userService.getByUsername(
                 SecurityContextHolder.getContext().getAuthentication().getName());
 
-        /***
-         * Check if the user exist and there ip's are from him
-         */
+        //Check if the user exist and there ip's are from him
         if(user != null && deviceLogService.findBypAddress(ipAddressModel.getIpAddress()) != null) {
             DeviceLog deviceLog = deviceLogService.findByUserAndIpAddress(user,ipAddressModel.getIpAddress());
             

@@ -8,6 +8,9 @@ import com.filmi3k.movies.services.base.UserService;
 import com.filmi3k.movies.utils.FileParser;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -245,4 +248,8 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    @Override
+    public Page<UsersRating> findAllReviewsByUser(User user, int page, int size) {
+        return usersRatingRepository.findAllByUser(user, PageRequest.of(page, size, Sort.by(Sort.Order.desc("createdTime"))));
+    }
 }

@@ -1,6 +1,7 @@
 package com.filmi3k.movies.services.base;
 
 import com.filmi3k.movies.domain.entities.Movie;
+import com.filmi3k.movies.domain.entities.UsersRating;
 import com.filmi3k.movies.domain.models.binding.SingleMovieBindingModel;
 import com.filmi3k.movies.domain.models.binding.UserRatingBindingModel;
 import org.springframework.data.domain.Page;
@@ -27,4 +28,6 @@ public interface MovieService {
     Movie findByName(String movieName);
 
     void delete(Movie movie);
+
+    Page<UsersRating> findAllReviewsByMovie(Movie movie, int page, int size);
 }
