@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -84,6 +85,24 @@ public class UserServiceImpl implements UserService {
         this.userPreferencesRepository.saveAndFlush(new UserPreferences(userEntity)); // Create the relationship between User and User Preferences
 
         return true;
+    }
+
+    @Override
+    public Map<String, String> checkRegisterUser(UserRegisterBindingModel userRegisterBindingModel) {
+        Map<String, String> errors = new HashMap<>();
+        //Check user
+        if(this.checkUsernameAvailable(userRegisterBindingModel.getUsername())) {
+            errors.put("email", "* This user is already registered");
+        }
+        if(this.isEmailAvailable(userRegisterBindingModel.getEmail()))
+            errors.put("email", "* This email is not available");
+        if(userRegisterBindingModel.getPassword().length() < 8) {
+            errors.put("password", "* The password have been more than 8 symbols");
+        }
+        if(!userRegisterBindingModel.getPassword().equals(userRegisterBindingModel.getConfirmPassword())) {
+            errors.put("password", "* The password does not match the confirmation password");
+        }
+        return errors;
     }
 
     @Override

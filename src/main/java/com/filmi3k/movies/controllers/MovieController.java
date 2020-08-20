@@ -108,9 +108,14 @@ public class MovieController {
     }
 
     @GetMapping("/movies/genres")
-    public ResponseEntity<Set<MovieGenre>> getGenres() {
+    public ResponseEntity<?> getGenres() {
+        // Sort genres by reversed alphabetically and map them by genre names
+        List<String> genreNames = movieGenreService.findAll().stream()
+                .map(MovieGenre::getMovieGenreName)
+                .sorted(Comparator.reverseOrder())
+                .collect(Collectors.toList());
         return ResponseEntity.ok()
-                .body(movieGenreService.findAll());
+                .body(genreNames);
     }
 
     @PostMapping("movies/single/rating")
@@ -146,6 +151,18 @@ public class MovieController {
                 .body(response);
     }
 
+    @GetMapping("/movies/single/reviewsByMovie/count")
+    public ResponseEntity<?> countReviewsByMovie(@RequestParam int movieId, @RequestParam int page, @RequestParam int size) {
+        Movie movie = movieService.findById(movieId);
+        Page<UsersRating> ratingPage = movieService.findAllReviewsByMovie(movie, page, size);
+
+        //If has a rating
+        if(ratingPage.getContent().size() > 0) {
+            return ResponseEntity.ok(Map.of("ratingCount", ratingPage.getTotalElements()));
+        }
+        return ResponseEntity.ok(Map.of("error", "No such ratings"));
+    }
+
     @GetMapping("/movies/single/reviewsByMovie")
     public ResponseEntity<?> getReviewsByMovie(@RequestParam int movieId, @RequestParam int page, @RequestParam int size) {
         Movie movie = movieService.findById(movieId);
@@ -153,8 +170,8 @@ public class MovieController {
         List<MovieRatingViewModel> movieRatingViewModels = ratingPage.getContent().stream().map(MovieRatingViewModel::toViewModel).collect(Collectors.toList());
 
         String resp = "[";
-        String movieRatings = movieRatingViewModels.stream().map(JSONparser::toJson).collect(Collectors.joining(","));
-        resp += movieRatings + "]";
+        String ratings = movieRatingViewModels.stream().map(JSONparser::toJson).collect(Collectors.joining(","));
+        resp += ratings + "]";
 
         return ResponseEntity.ok(resp);
     }

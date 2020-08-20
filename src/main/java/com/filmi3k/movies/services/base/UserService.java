@@ -7,10 +7,13 @@ import com.filmi3k.movies.utils.FileParser;
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
+import java.util.Map;
 import java.util.Set;
 
 public interface UserService extends UserDetailsService {
     boolean add(UserRegisterBindingModel u);
+
+    Map<String, String> checkRegisterUser(UserRegisterBindingModel userRegisterBindingModel);
 
     void addProfilePicture(String data, String username);
 

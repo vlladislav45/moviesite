@@ -59,24 +59,13 @@ public class UserController {
     }
 
     @PostMapping("/register_user")
-    public ResponseEntity<Map<String,Object>> register(@RequestBody UserRegisterBindingModel userRegisterBindingModel) {
-        Map<String,Object> response = new HashMap<>();
-        if(!userRegisterBindingModel.getPassword().equals(userRegisterBindingModel.getConfirmPassword())) {
-            response.put("error", "The password does not match the confirmation password");
-            return ResponseEntity.ok().body(response);
-        }else {
-            if(userService.checkUsernameAvailable(userRegisterBindingModel.getUsername()) || userService.isEmailAvailable(userRegisterBindingModel.getEmail())) {
-                response.put("error", "This user is already registered");
-                return ResponseEntity.ok().body(response);
-            }
-            if(userRegisterBindingModel.getPassword().length() < 8) {
-                response.put("error", "The password have been more than 8 symbols");
-                return ResponseEntity.ok().body(response);
-            }
-            this.userService.add(userRegisterBindingModel);
+    public ResponseEntity<?> register(@RequestBody UserRegisterBindingModel userRegisterBindingModel) {
+        Map<String,String> errors = userService.checkRegisterUser(userRegisterBindingModel);
+        if(errors.size() > 0) { // If has errors
+            return ResponseEntity.ok().body(errors);
         }
-        response.put("success", "Your successfully register an account");
-        return ResponseEntity.ok().body(response);
+        userService.add(userRegisterBindingModel);
+        return ResponseEntity.ok().body(Map.of("success", "You successfully registered an account"));
     }
 
     @PostMapping("/login")
@@ -204,6 +193,18 @@ public class UserController {
         }
         response.put("error", "null");
         return ResponseEntity.ok().body(response);
+    }
+
+    @GetMapping("/user/userInfo/reviewsByAuthor/count")
+    public ResponseEntity<?> countReviewsByAuthor(@RequestParam int userId, @RequestParam int page, @RequestParam int size) {
+        User user = userService.getById(userId);
+        Page<UsersRating> ratingPage = userService.findAllReviewsByUser(user, page, size);
+
+        //If has a rating
+        if(ratingPage.getContent().size() > 0) {
+            return ResponseEntity.ok(Map.of("ratingCount", ratingPage.getTotalElements()));
+        }
+        return ResponseEntity.ok(Map.of("error", "No such ratings"));
     }
 
     @GetMapping("/user/userInfo/reviewsByAuthor")
