@@ -170,7 +170,9 @@ public class MovieServiceImpl implements MovieService {
     }
 
     @Override
-    public void delete(Movie movie) { movieRepository.delete(movie); }
+    public void delete(Movie movie) {
+        movieRepository.delete(movie);
+    }
 
     @Override
     public Page<UsersRating> findAllReviewsByMovie(Movie movie, int page, int size) {

@@ -216,7 +216,7 @@ public class MovieController {
      * This method will be used for movie author problems
      * Send info to the company mail
      */
-    @PostMapping("movies/authorForm/mail")
+    @PostMapping("/movies/authorForm/mail")
     public ResponseEntity<?> requestAuthorForm(@RequestBody RequestAuthorFormBindingModel requestAuthorFormModel) {
         if(emailService.requires(requestAuthorFormModel).size() == 0) {
             try {

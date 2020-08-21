@@ -1,9 +1,6 @@
 package com.filmi3k.movies.controllers;
 
-import com.filmi3k.movies.domain.entities.DeviceLog;
-import com.filmi3k.movies.domain.entities.Movie;
-import com.filmi3k.movies.domain.entities.User;
-import com.filmi3k.movies.domain.entities.UsersRating;
+import com.filmi3k.movies.domain.entities.*;
 import com.filmi3k.movies.domain.models.binding.*;
 import com.filmi3k.movies.domain.models.view.MovieRatingViewModel;
 import com.filmi3k.movies.domain.models.view.SingleUserViewModel;
@@ -32,6 +29,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -304,6 +302,18 @@ public class UserController {
                 SecurityContextHolder.getContext().getAuthentication().getName());
 
         if(user != null) {
+            //Delete all profile pictures of the user which is gonna be deleted
+            if(user.getUserInfo().getUserImages().size() > 0) {
+                List<UserImage> userImages = user.getUserInfo().getUserImages();
+                for(UserImage userImage : userImages) {
+                    URL url = getClass().getResource(BASE_DIR + "/profile-picture/" + user.getUsername() + "/" + userImage.getImageName());
+                    File file = new File(url.getPath());
+
+                    boolean successDelete = file.delete();
+                    if(!successDelete) return ResponseEntity.ok().body(Map.of("error", "Profile picture wasn't deleted from the system, try again"));
+                }
+            }
+
             userService.delete(user);
             return ResponseEntity.ok().body(Map.of("success", "Account is deleted successfully"));
         }
@@ -324,5 +334,32 @@ public class UserController {
             return ResponseEntity.ok().body(Map.of("success", "Device log is deleted successfully"));
         }
         return ResponseEntity.ok().body(Map.of("error", "This device log cannot be deleted"));
+    }
+
+    @PostMapping("/user/movie/deleteMovie")
+    public ResponseEntity<?> deleteMovie(@RequestParam int movieId) {
+        Movie movie = movieService.findById(movieId);
+
+        //Get user by token username
+        User user = userService.getByUsername(
+                SecurityContextHolder.getContext().getAuthentication().getName());
+
+        if(movie != null && user != null) {
+            List<String> currentUserAuthorities = user.getAuthorities()
+                    .stream().map(UserRole::getAuthority).collect(Collectors.toList());
+
+            if(currentUserAuthorities.contains("ADMIN")) {
+                URL url = getClass().getResource(BASE_DIR + "/posters/" + movie.getPoster().getPosterName());
+                File poster = new File(url.getFile());
+
+                boolean successDelete = poster.delete();
+
+                if(successDelete) {
+                    movieService.delete(movie);
+                    return ResponseEntity.ok().body(Map.of("success", "Movie was deleted"));
+                }
+            }
+        }
+        return ResponseEntity.ok().body(Map.of("error", "Movie was not deleted, try again"));
     }
 }

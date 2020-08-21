@@ -16,7 +16,7 @@ public class UserViewModel {
     private String email;
     private Set<UserRole> authorities = new HashSet<>();
     private UserPreferences userPreferences;
-    private UserInfo userInfo;
+    private UserInfoViewModel userInfoViewModel;
     private UsersRating usersRating;
     private List<BookmarkViewModel> bookmarks = new ArrayList<>();
     private Long createdTime;
@@ -29,7 +29,7 @@ public class UserViewModel {
         userViewModel.setEmail(user.getEmail());
         userViewModel.setAuthorities(user.getAuthorities());
         userViewModel.setUserPreferences(user.getUserPreferences());
-        userViewModel.setUserInfo(user.getUserInfo());
+        userViewModel.userInfoViewModel = UserInfoViewModel.toViewModel(user.getUserInfo());
         userViewModel.setUserId(user.getUserId());
 
         List<Movie> movies = user.getBookMarks().stream().map(Bookmark::getMovie).collect(Collectors.toList());

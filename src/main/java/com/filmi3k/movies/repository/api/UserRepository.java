@@ -2,6 +2,7 @@ package com.filmi3k.movies.repository.api;
 
 import com.filmi3k.movies.domain.entities.PasswordResetToken;
 import com.filmi3k.movies.domain.entities.User;
+import com.filmi3k.movies.domain.entities.UserRole;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
