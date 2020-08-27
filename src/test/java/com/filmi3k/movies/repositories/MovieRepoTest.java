@@ -84,12 +84,4 @@ public class MovieRepoTest {
         Movie actual = movieRepository.findByMovieName("Onward");
         Assert.assertEquals("Movie is not exist", movie, actual);
     }
-
-    @Test
-    void takeActors() {
-       Movie movie = movieRepository.findByMovieName("Fast and Furious 1");
-       for(Actor actor : movie.getActors()) {
-           System.out.println(actor.getActorName());
-       }
-    }
 }
