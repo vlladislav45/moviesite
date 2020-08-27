@@ -25,20 +25,22 @@ public class UserViewModel {
 
     public static UserViewModel toViewModel(User user) {
         UserViewModel userViewModel = new UserViewModel();
-        userViewModel.setUsername(user.getUsername());
-        userViewModel.setEmail(user.getEmail());
-        userViewModel.setAuthorities(user.getAuthorities());
-        userViewModel.setUserPreferences(user.getUserPreferences());
-        userViewModel.userInfoViewModel = UserInfoViewModel.toViewModel(user.getUserInfo());
-        userViewModel.setUserId(user.getUserId());
+        if(user != null) {
+            userViewModel.setUsername(user.getUsername());
+            userViewModel.setEmail(user.getEmail());
+            userViewModel.setAuthorities(user.getAuthorities());
+            userViewModel.setUserPreferences(user.getUserPreferences());
+            userViewModel.userInfoViewModel = UserInfoViewModel.toViewModel(user.getUserInfo());
+            userViewModel.setUserId(user.getUserId());
 
-        List<Movie> movies = user.getBookMarks().stream().map(Bookmark::getMovie).collect(Collectors.toList());
-        userViewModel.bookmarks = movies.stream().map(BookmarkViewModel::toViewModel).collect(Collectors.toList());
+            List<Movie> movies = user.getBookMarks().stream().map(Bookmark::getMovie).collect(Collectors.toList());
+            userViewModel.bookmarks = movies.stream().map(BookmarkViewModel::toViewModel).collect(Collectors.toList());
 
-        userViewModel.setCreatedTime(Timestamp.valueOf(user.getDateTimeCreated()).getTime());
-        userViewModel.setEnabled(user.isEnabled());
+            userViewModel.setCreatedTime(Timestamp.valueOf(user.getDateTimeCreated()).getTime());
+            userViewModel.setEnabled(user.isEnabled());
 
-        userViewModel.deviceLogs = user.getDeviceLogs().stream().map(DeviceLogViewModel::toViewModel).collect(Collectors.toList());
+            userViewModel.deviceLogs = user.getDeviceLogs().stream().map(DeviceLogViewModel::toViewModel).collect(Collectors.toList());
+        }
 
         return userViewModel;
     }

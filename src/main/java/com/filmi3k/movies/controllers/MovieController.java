@@ -11,13 +11,14 @@ import com.filmi3k.movies.filters.MovieFilters;
 import com.filmi3k.movies.filters.MovieSpecification;
 import com.filmi3k.movies.domain.models.binding.UserRatingBindingModel;
 import com.filmi3k.movies.domain.models.view.MovieViewModel;
-import com.filmi3k.movies.domain.models.view.SingleMovieViewModel;
 import com.filmi3k.movies.repository.api.MovieRepository;
 import com.filmi3k.movies.services.base.MovieGenreService;
 import com.filmi3k.movies.services.base.MovieService;
 import com.filmi3k.movies.services.base.UserService;
 import com.filmi3k.movies.services.impl.EmailServiceImpl;
 import com.filmi3k.movies.utils.JSONparser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -91,9 +92,9 @@ public class MovieController {
     }
 
     @GetMapping("/movies/single/{id}")
-    public ResponseEntity<SingleMovieViewModel> getMovieInformation(@PathVariable int id) {
+    public ResponseEntity<MovieViewModel> getMovieInformation(@PathVariable int id) {
         return ResponseEntity.ok()
-                .body(SingleMovieViewModel.toViewModel(movieService.findById(id)));
+                .body(MovieViewModel.toViewModel(movieService.findById(id)));
     }
 
     @GetMapping("/movies/single/hdPoster/{posterName}")
@@ -119,11 +120,10 @@ public class MovieController {
     }
 
     @PostMapping("movies/single/rating")
-    public ResponseEntity<Map<String, Object>> voteSingleMovie(@RequestBody UserRatingBindingModel userRatingBindingModel) {
-        Map<String, Object> response = new HashMap<>();
-        /**
-         * check if the user already exists at the system
-         * and protection against vote-rigging by the front end
+    public ResponseEntity<?> voteSingleMovie(@RequestBody UserRatingBindingModel userRatingBindingModel) {
+        /*
+          check if the user already exists at the system
+          and protection against vote-rigging by the front end
          */
         if (userService.getById(userRatingBindingModel.getUserId()) != null && movieService.findById(userRatingBindingModel.getMovieId()) != null
                 && userRatingBindingModel.getMovieRating() >= MIN_VOTE && userRatingBindingModel.getMovieRating() <= MAX_VOTE) {
@@ -135,20 +135,16 @@ public class MovieController {
             if (userService.checkRating(user, movie) == null) // check if the user has not yet voted for the movie
                 userService.addUserRating(user, movie, userRatingBindingModel.getMovieRating(), userRatingBindingModel.getComment());
             else {
-                response.put("error", "User has already rated");
-                return ResponseEntity.ok().body(response);
+                return ResponseEntity.ok().body(Map.of("error", "User has already rated"));
             }
         } else {
-            response.put("error", "Could not rate movie");
-            return ResponseEntity.ok().body(response);
+            return ResponseEntity.ok().body(Map.of("error", "Could not rate movie"));
         }
 
         // average rating of single movie
         double average = movieService.updateRating(userRatingBindingModel);
-
-        response.put("newRating", average);
         return ResponseEntity.ok()
-                .body(response);
+                .body(Map.of("newRating", average));
     }
 
     @GetMapping("/movies/single/reviewsByMovie/count")

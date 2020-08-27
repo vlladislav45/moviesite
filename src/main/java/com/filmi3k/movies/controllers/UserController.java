@@ -2,10 +2,7 @@ package com.filmi3k.movies.controllers;
 
 import com.filmi3k.movies.domain.entities.*;
 import com.filmi3k.movies.domain.models.binding.*;
-import com.filmi3k.movies.domain.models.view.MovieRatingViewModel;
-import com.filmi3k.movies.domain.models.view.SingleUserViewModel;
-import com.filmi3k.movies.domain.models.view.UserRatingViewModel;
-import com.filmi3k.movies.domain.models.view.UserViewModel;
+import com.filmi3k.movies.domain.models.view.*;
 import com.filmi3k.movies.services.base.*;
 import com.filmi3k.movies.utils.JSONparser;
 import com.filmi3k.movies.utils.JwtUtil;
@@ -320,8 +317,32 @@ public class UserController {
         return ResponseEntity.ok().body(Map.of("error", "This user is invalid"));
     }
 
+    @GetMapping("/settings/security/deviceLogs")
+    public ResponseEntity<?> getDeviceLogs() {
+        //Get user by token username
+        User user = userService.getByUsername(
+                SecurityContextHolder.getContext().getAuthentication().getName());
+
+        //Check if the user exists
+        if(user != null) {
+            List<DeviceLogViewModel> deviceLogs = deviceLogService.findAllByUser(user)
+                    .stream()
+                    .map(DeviceLogViewModel::toViewModel)
+                    .collect(Collectors.toList());
+
+            if(deviceLogs.size() > 0) {
+                String resp = "[";
+                String ratings = deviceLogs.stream().map(JSONparser::toJson).collect(Collectors.joining(","));
+                resp += ratings + "]";
+
+                return ResponseEntity.ok().body(resp);
+            }
+        }
+        return ResponseEntity.ok().body(Map.of("error", "No such user"));
+    }
+
     @PostMapping("/settings/security/deleteDeviceLog")
-    public ResponseEntity<?> deleteDeviceLog(@RequestBody IpAddressBindingModel ipAddressModel, HttpServletRequest httpServletRequest) {
+    public ResponseEntity<?> deleteDeviceLog(@RequestBody IpAddressBindingModel ipAddressModel) {
         //Get user by token username
         User user = userService.getByUsername(
                 SecurityContextHolder.getContext().getAuthentication().getName());
