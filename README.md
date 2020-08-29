@@ -9,7 +9,7 @@ that's why if there is a problem, I must be notified
   * UK/BG language system
   * Recent activity (bookmarks, upload movies, reviews)
   * Adding a clip (admin-panel)
-  * Delete profile picture from the system when it's deleted from db
+  * FIX WTF error on login page
 
 ## Server-side technology
 * Spring Framework
