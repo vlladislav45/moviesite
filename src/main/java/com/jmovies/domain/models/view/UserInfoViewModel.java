@@ -10,9 +10,9 @@ import java.util.List;
 @NoArgsConstructor
 @Data
 public class UserInfoViewModel {
-    private String firstName = "";
-    private String lastName = "";
-    private String gender = "";
+    private String firstName;
+    private String lastName;
+    private String gender;
     private List<UserImage> userImages;
 
     public static UserInfoViewModel toViewModel(UserInfo userInfo) {

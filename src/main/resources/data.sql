@@ -6,18 +6,20 @@ INSERT INTO user_role (authority) VALUES ('MODERATOR');
 INSERT INTO user_role (authority) VALUES ('ADMIN');
 
 INSERT INTO movie_genre (movie_genre_name) VALUES ('Horror');
-INSERT INTO movie_genre (movie_genre_name) VALUES ('Science');
+INSERT INTO movie_genre (movie_genre_name) VALUES ('Sci-Fi');
 INSERT INTO movie_genre (movie_genre_name) VALUES ('Animation');
 INSERT INTO movie_genre (movie_genre_name) VALUES ('Adventure');
 INSERT INTO movie_genre (movie_genre_name) VALUES ('Thriller');
 INSERT INTO movie_genre (movie_genre_name) VALUES ('Comedy');
 INSERT INTO movie_genre (movie_genre_name) VALUES ('Drama');
 INSERT INTO movie_genre (movie_genre_name) VALUES ('Action');
-INSERT INTO movie_genre (movie_genre_name) VALUES ('Wars');
+INSERT INTO movie_genre (movie_genre_name) VALUES ('War');
 INSERT INTO movie_genre (movie_genre_name) VALUES ('Crime');
 INSERT INTO movie_genre (movie_genre_name) VALUES ('Fantasy');
 INSERT INTO movie_genre (movie_genre_name) VALUES ('Mystery');
 INSERT INTO movie_genre (movie_genre_name) VALUES ('Anime');
+INSERT INTO movie_genre (movie_genre_name) VALUES ('Romance');
+INSERT INTO movie_genre (movie_genre_name) VALUES ('Short');
 
 INSERT INTO director (director_name) VALUES ('James Wan');
 INSERT INTO director (director_name) VALUES ('Justin Lin');
