@@ -71,22 +71,26 @@ public class MovieController {
                 PageRequest.of(page, size));
 
 
-        String resp = generateResponseFromMovie(filteredMovies);
+        String resp = generateResponseFromMovie(filteredMovies.getContent());
         return ResponseEntity.ok()
                 .body(resp);
     }
 
     @GetMapping("/movies/poster/{posterName}")
-    public ResponseEntity<byte[]> getPoster(@PathVariable String posterName) throws IOException, URISyntaxException {
+    public ResponseEntity<?> getPoster(@PathVariable String posterName) throws IOException, URISyntaxException {
         URL url = getClass().getResource(BASE_DIR + "/posters/" + posterName);
-        File imagePoster = new File(url.getFile());
-        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        if(url != null) {
+            File imagePoster = new File(url.getFile());
+            ByteArrayOutputStream output = new ByteArrayOutputStream();
 
-        compressImage(imagePoster, output);
+            compressImage(imagePoster, output);
 
-        return ResponseEntity.ok()
-                .contentType(MediaType.valueOf(MediaType.IMAGE_JPEG_VALUE))
-                .body(output.toByteArray());
+            //ResponseEntity<byte[]>
+            return ResponseEntity.ok()
+                    .contentType(MediaType.valueOf(MediaType.IMAGE_JPEG_VALUE))
+                    .body(output.toByteArray());
+        }
+        return ResponseEntity.ok().body(Map.of("error", posterName + " doesn't exists anymore"));
     }
 
     @GetMapping("/movies/single/{id}")
@@ -111,7 +115,7 @@ public class MovieController {
         // Sort genres by reversed alphabetically and map them by genre names
         List<String> genreNames = movieGenreService.findAll().stream()
                 .map(MovieGenre::getMovieGenreName)
-                .sorted(Comparator.reverseOrder())
+                .sorted(Comparator.naturalOrder())
                 .collect(Collectors.toList());
         return ResponseEntity.ok()
                 .body(genreNames);
@@ -183,22 +187,30 @@ public class MovieController {
 
     @GetMapping("/movies/similar")
     public ResponseEntity<?> getSimilarMovies(@RequestParam int id, @RequestParam int page, @RequestParam int size) {
-        Movie movie = movieService.findById(id);
+        Movie movie = movieService.findById(id); //Current movie
         List<String> genreNames = movie.getMovieGenres().stream().map(MovieGenre::getMovieGenreName).collect(Collectors.toList());
         String genre = "";
         if (!genreNames.isEmpty())
             genre = genreNames.get(0);
         //Similar movies by genres
-        Page<Movie> similarMovies = movieService.findAll(Specification.where(
+        Page<Movie> pageWithSimilarMovies = movieService.findAll(Specification.where(
                 MovieSpecification.withGenres(List.of(genre))
         ), PageRequest.of(page, size));
+
+        /*
+        Delete the current movie from similar movies
+        Without new ArrayList the object(current movie)
+        is not removed
+         */
+        List<Movie> similarMovies = new ArrayList<>(pageWithSimilarMovies.getContent());
+        similarMovies.remove(movie);
 
         String resp = generateResponseFromMovie(similarMovies);
         return ResponseEntity.ok()
                 .body(resp);
     }
 
-    private String generateResponseFromMovie(Page<Movie> movies) {
+    private String generateResponseFromMovie(List<Movie> movies) {
         List<MovieViewModel> moviesViewModels = movies.stream().map(MovieViewModel::toViewModel).collect(Collectors.toList());
         String resp = "[";
         String moviesJson = moviesViewModels.stream().map(JSONparser::toJson).collect(Collectors.joining(","));
@@ -208,9 +220,10 @@ public class MovieController {
 
     /***
      * This method will be used for movie author problems
-     * Send info to the company mail
+     * or just for contact
+     * TODO: Send the user a letter that the message has been successfully sent
      */
-    @PostMapping("/movies/authorForm/mail")
+    @PostMapping("/movies/mail")
     public ResponseEntity<?> requestAuthorForm(@RequestBody RequestAuthorFormBindingModel requestAuthorFormModel) {
         if(emailService.requires(requestAuthorFormModel).size() == 0) {
             try {

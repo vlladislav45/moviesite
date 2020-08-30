@@ -13,8 +13,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -68,9 +70,12 @@ public class UserController {
             );
         }catch (BadCredentialsException badCredentialsException) {
             return ResponseEntity.ok().body(Map.of("error", "Bad credentials"));
-        }catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.ok().body(Map.of("error", "WTF?!"));
+        }catch (AuthenticationException authenticationException) {
+            /*
+            User not found exception
+            UserDetails is null
+             */
+            return ResponseEntity.ok().body(Map.of("error", "User not found"));
         }
 
         final UserDetails userDetails = userService
@@ -135,14 +140,17 @@ public class UserController {
     }
 
     @GetMapping("/user/picture/{username}/{pictureName}")
-    public ResponseEntity<byte[]> getUserPicture(@PathVariable String username, @PathVariable String pictureName) throws IOException {
+    public ResponseEntity<?> getUserPicture(@PathVariable String username, @PathVariable String pictureName) throws IOException {
         URL url = getClass().getResource(BASE_DIR + "/profile-picture/" + username + "/" + pictureName);
-        File imagePoster = new File(url.getFile());
-        byte[] fileContent = Files.readAllBytes(imagePoster.toPath());
+        if(url != null) {
+            File imagePoster = new File(url.getFile());
+            byte[] fileContent = Files.readAllBytes(imagePoster.toPath());
 
-        return ResponseEntity.ok()
-                .contentType(MediaType.valueOf(MediaType.IMAGE_JPEG_VALUE))
-                .body(fileContent);
+            return ResponseEntity.ok()
+                    .contentType(MediaType.valueOf(MediaType.IMAGE_JPEG_VALUE))
+                    .body(fileContent);
+        }
+        return ResponseEntity.ok().body(Map.of("error", pictureName + " doesn't exists anymore for " + username));
     }
 
     @PostMapping("user/userInfo")
@@ -352,32 +360,5 @@ public class UserController {
             return ResponseEntity.ok().body(Map.of("success", "Device log is deleted successfully"));
         }
         return ResponseEntity.ok().body(Map.of("error", "This device log cannot be deleted"));
-    }
-
-    @PostMapping("/user/movie/deleteMovie")
-    public ResponseEntity<?> deleteMovie(@RequestParam int movieId) {
-        Movie movie = movieService.findById(movieId);
-
-        //Get user by token username
-        User user = userService.getByUsername(
-                SecurityContextHolder.getContext().getAuthentication().getName());
-
-        if(movie != null && user != null) {
-            List<String> currentUserAuthorities = user.getAuthorities()
-                    .stream().map(UserRole::getAuthority).collect(Collectors.toList());
-
-            if(currentUserAuthorities.contains("ADMIN")) {
-                URL url = getClass().getResource(BASE_DIR + "/posters/" + movie.getPoster().getPosterName());
-                File poster = new File(url.getFile());
-
-                boolean successDelete = poster.delete();
-
-                if(successDelete) {
-                    movieService.delete(movie);
-                    return ResponseEntity.ok().body(Map.of("success", "Movie was deleted"));
-                }
-            }
-        }
-        return ResponseEntity.ok().body(Map.of("error", "Movie was not deleted, try again"));
     }
 }
