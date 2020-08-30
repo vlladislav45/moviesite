@@ -1,27 +1,36 @@
 package com.jmovies.controllers;
 
+import com.jmovies.domain.entities.Movie;
+import com.jmovies.domain.entities.User;
+import com.jmovies.domain.entities.UserRole;
 import com.jmovies.domain.models.binding.SingleMovieBindingModel;
 import com.jmovies.services.base.MovieService;
 import com.jmovies.config.Config;
+import com.jmovies.services.base.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.*;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
+import java.util.stream.Collectors;
+
+import static com.jmovies.config.Config.BASE_DIR;
 
 @RestController
 public class AdminController {
     private final MovieService movieService;
+    private final UserService userService;
 
     @Autowired
-    public AdminController(MovieService movieService) {
+    public AdminController(MovieService movieService, UserService userService) {
         this.movieService = movieService;
+        this.userService = userService;
     }
 
     @PostMapping("/admin/movie/add")
@@ -43,5 +52,41 @@ public class AdminController {
         }
         movieService.add(singleMovieModel);
         return ResponseEntity.ok(Map.of("success", singleMovieModel.getMovieName() + " is added successfully"));
+    }
+
+    @GetMapping("/admin/movie/delete")
+    public ResponseEntity<?> deleteMovie(@RequestParam int movieId) {
+        Movie movie = movieService.findById(movieId);
+
+        //Get user by token username
+        User user = userService.getByUsername(
+                SecurityContextHolder.getContext().getAuthentication().getName());
+
+        if(movie != null && user != null) {
+            List<String> currentUserAuthorities = user.getAuthorities()
+                    .stream().map(UserRole::getAuthority).collect(Collectors.toList());
+
+            if(currentUserAuthorities.contains("ADMIN")) {
+                URL url = getClass().getResource(BASE_DIR + "/posters/" + movie.getPoster().getPosterName());
+                /*
+                In this case there will be no poster in the movie
+                Just delete from database
+                 */
+                if(url == null) {
+                    movieService.delete(movie);
+                    return ResponseEntity.ok().body(Map.of("success", "Movie was deleted"));
+                }
+                File poster = new File(url.getFile());
+
+                boolean successDelete = poster.delete();
+
+                if(successDelete) {
+                    //Delete from database and from system hard drive
+                    movieService.delete(movie);
+                    return ResponseEntity.ok().body(Map.of("success", "Movie was deleted"));
+                }
+            }
+        }
+        return ResponseEntity.ok().body(Map.of("error", "Something is wrong, please try again"));
     }
 }
