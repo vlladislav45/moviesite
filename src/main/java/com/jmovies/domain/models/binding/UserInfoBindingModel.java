@@ -10,8 +10,5 @@ public class UserInfoBindingModel {
     private String gender;
 
     public UserInfoBindingModel() {
-        firstName = "";
-        lastName = "";
-        gender = "";
     }
 }

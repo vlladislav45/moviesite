@@ -4,17 +4,25 @@ import com.jmovies.services.base.StorageService;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 public class StorageServiceImpl implements StorageService {
     private static final String TARGET_DIR = "./target/classes/";
     private static final String BASE_DIR = "./src/main/resources/";
     private static final String BASE_IMAGE_DIR = BASE_DIR + "static/profile-picture/";
+    private static final String BASE_MOVIE_DIR = BASE_DIR + "static/movies/";
+
+    private Map<String, OutputStream> openStreams;
+
+    public StorageServiceImpl() {
+        this.openStreams = new HashMap<>();
+    }
 
     @Override
     public boolean store(MultipartFile file) {
@@ -48,17 +56,19 @@ public class StorageServiceImpl implements StorageService {
     }
 
     @Override
-    public boolean storeInChunks(MultipartFile file, String path, int chunkSize) {
+    public boolean storeInChunks(MultipartFile file, String path, boolean isStart) {
         try {
-            // TODO: Finish
-            boolean flag = true;
-            while(flag) {
+            String filePath = BASE_MOVIE_DIR + path;
+            if (isStart) {
+                Files.write(Paths.get(filePath),
+                        file.getBytes());
+            } else {
                 Files.write(
-                        Paths.get(BASE_DIR + path + "/" + file.getOriginalFilename()),
+                        Paths.get(filePath),
                         file.getBytes(),
+                        StandardOpenOption.WRITE,
                         StandardOpenOption.APPEND);
             }
-
             return true;
         } catch (IOException e) {
             e.printStackTrace();

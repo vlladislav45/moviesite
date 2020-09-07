@@ -206,7 +206,7 @@ public class UserController {
         return ResponseEntity.ok(Map.of("error", "No such ratings"));
     }
 
-    @GetMapping("/user/userInfo/reviewsByAuthor")
+    @GetMapping("hte o")
     public ResponseEntity<?> getReviewsByAuthor(@RequestParam int userId, @RequestParam int page, @RequestParam int size) {
         User user = userService.getById(userId);
         Page<UsersRating> ratingPage = userService.findAllReviewsByUser(user, page, size);

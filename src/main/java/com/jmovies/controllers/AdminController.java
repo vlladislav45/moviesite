@@ -6,16 +6,20 @@ import com.jmovies.domain.entities.UserRole;
 import com.jmovies.domain.models.binding.SingleMovieBindingModel;
 import com.jmovies.services.base.MovieService;
 import com.jmovies.config.Config;
+import com.jmovies.services.base.StorageService;
 import com.jmovies.services.base.UserService;
+import org.apache.tomcat.util.http.fileupload.FileItemIterator;
+import org.apache.tomcat.util.http.fileupload.FileItemStream;
+import org.apache.tomcat.util.http.fileupload.FileUploadException;
+import org.apache.tomcat.util.http.fileupload.servlet.ServletFileUpload;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import javax.servlet.http.HttpServletRequest;
+import java.io.*;
 import java.net.URL;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -26,11 +30,13 @@ import static com.jmovies.config.Config.BASE_DIR;
 public class AdminController {
     private final MovieService movieService;
     private final UserService userService;
+    private final StorageService storageService;
 
     @Autowired
-    public AdminController(MovieService movieService, UserService userService) {
+    public AdminController(MovieService movieService, UserService userService, StorageService storageService) {
         this.movieService = movieService;
         this.userService = userService;
+        this.storageService = storageService;
     }
 
     @PostMapping("/admin/movie/add")
@@ -52,6 +58,25 @@ public class AdminController {
         }
         movieService.add(singleMovieModel);
         return ResponseEntity.ok(Map.of("success", singleMovieModel.getMovieName() + " is added successfully"));
+    }
+
+    /**
+     * Add movie file by chunks we expect a file with file name in this format:
+     * movieName_userName_chunkNumber
+     * @param file the file to upload
+     * @return 200OK if success else TODO: What other errors?
+     */
+    @PostMapping("/admin/movie/upload")
+    public ResponseEntity<?> addMovieFile(MultipartFile file) {
+        String[] fileNameTokens = file.getOriginalFilename().
+                split("_");
+        String movieName = fileNameTokens[0];
+        String uploadedBy = fileNameTokens[1];
+        int chunkNumber = Integer.parseInt(fileNameTokens[2]);
+        boolean isSuccess = storageService.storeInChunks(file, movieName, chunkNumber == 0);
+        return isSuccess
+                ? ResponseEntity.ok(Map.of("success", "chunk uploaded successfully"))
+                : ResponseEntity.unprocessableEntity().body(Map.of("error", "Something went wrong"));
     }
 
     @GetMapping("/admin/movie/delete")

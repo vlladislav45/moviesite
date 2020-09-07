@@ -20,8 +20,8 @@ public interface StorageService {
             * Store a file in chunks with given path, relative to resource folder
      * @param file the file
      * @param path the path relative to resource folder
-     * @param chunkSize the chunkSize
+     * @param isStart is the start of the chunks
      * @return true if successfull
      */
-    boolean storeInChunks(MultipartFile file, String path, int chunkSize);
+    boolean storeInChunks(MultipartFile file, String path, boolean isStart);
 }
