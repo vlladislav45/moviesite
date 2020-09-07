@@ -46,6 +46,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 "/user/picture/{username}/{pictureName}", "/register/userAvailable/**", "/stream/mp4/Kenpachi",
                 "/settings/security/resetPassword", "/settings/security/changePassword", "/settings/security/savePassword").permitAll()
                 .antMatchers("/posters/**", "/movies/**", "/anime/**").permitAll()
+                .antMatchers("/admin/movie/upload").permitAll()
                 .antMatchers("/admin**").hasAuthority("ADMIN")
                 .anyRequest().authenticated()
             .and()
