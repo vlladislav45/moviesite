@@ -1,8 +1,10 @@
 ## moviesite back-end
 
 ## Comment 
-* JDK is updated to 14.0.2, 
-that's why if there is a problem, I must be notified
+* Implemented docker container for run MySQL 5 database 
+use this command :sudo docker-compose up -d
+* For a while will be approval application.properties file
+* JDK is updated to the 15 release
 
 #TODO:
   * Donate system for an ads

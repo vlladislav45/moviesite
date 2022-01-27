@@ -59,4 +59,4 @@ release.properties
 ##########################
 ## SPRING
 ##########################
-application.properties
+#application.properties
